@@ -1,4 +1,4 @@
-# XYZGator
+# XYZGator (Group 84)
 # Project Members
 Bradley Dantas, Vishal Janapati, Akhilesh Makam, Carolyn Wang
 # Front End
