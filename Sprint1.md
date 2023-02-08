@@ -1,10 +1,23 @@
-*User Stories
+# User Stories
+-
+-
+-
+-
+-
 
+# Issues Addressed
+-
+-
+-
 
-*Issues Addressed
+# Successfully Completed Issues
+-
+-
+-
+-
 
-
-*Successfully Completed Issues
-
-
-*Incomplete Issues and Reasoning
+# Incomplete Issues and Reasoning
+-
+-
+-
+-
