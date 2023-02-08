@@ -7,6 +7,7 @@
 
 # Issues Addressed
 - The installation of GO and its accompanying libraries, Gorilla Mux and GORM
+- The backend portion of the login page
 -
 
 # Successfully Completed Issues
