@@ -11,7 +11,10 @@
 - The installation of GO and its accompanying libraries, Gorilla Mux and GORM
 - The backend portion of the login page
 - Implementing the games/exercises of the website
-- 
+- The installation of Angular and Node.js
+- The Dashboard
+- The Sign-in page
+- The layout of the website
 
 # Successfully Completed Issues
 - Created a login portal using golang for backend, administrator account established.
