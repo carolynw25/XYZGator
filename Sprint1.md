@@ -3,7 +3,8 @@
 - As a young child, I want to be able to play multiple games and complete activities that are both fun and educational, so that I can learn and grow in a way that feels natural and enjoyable.
 - As a young child / student, I want to be able to explore new topics and subjects at my own pace, so that I can learn and grow at a pace that is right for me.
 - As a child, I want the user interface to be colorful, so that it looks more interesting.
--
+- As a user, I want to have a point system and rewards, so that I can keep track of what I have done.
+- As a parent, I want my kids to improve in concepts they struggle with most so can improve their understanding
 -
 -
 
