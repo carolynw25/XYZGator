@@ -1,5 +1,7 @@
 # User Stories
-- 
+- As a parent, I want the site to have a simple interface, so my child can understand the site easily.
+- As a young child, I want to be able to play multiple games and complete activities that are both fun and educational, so that I can learn and grow in a way that feels natural and enjoyable.
+
 -
 -
 -
