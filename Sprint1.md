@@ -5,8 +5,9 @@
 - As a child, I want the user interface to be colorful, so that it looks more interesting.
 - As a user, I want to have a point system and rewards, so that I can keep track of what I have done.
 - As a parent, I want my kids to improve in concepts they struggle with most so can improve their understanding
--
--
+- As a parent, I want to be able to easily find educational games and activities for my child, so that I can provide fun and engaging learning experiences for them.
+- As a teacher, I want the site to enforce the curriculum in the students’ classrooms, so that it can help strengthen their foundational knowledge.
+
 
 # Issues Addressed
 - The installation of GO and its accompanying libraries, Gorilla Mux and GORM
