@@ -30,5 +30,6 @@
 - Need to incorporate an actual database using Gorilla Mux and GORM to store account info. 
 - Was not able to add GORM to main.go, we will use an alternative library such as MongoDB or something else if this issue persists. Currently we only have login info for an administrator, need to use Gorilla Mux and GORM/MongoDB for login/registration through a database
 - Need to merge angular frontend page witht the backend login code, running into installation issues.
--
--
+- We need to work on making the sign in page, but we have to learn how to integrate the frontend with backend
+- Need to modify the game page and start making the different educational games for the users. Currently, we have to discuss more about the implementation of the games and integration of frontend with backend.
+- We didn't complete the about page and explain our XYZgator project because we are thinking of ways to implement it and make it look visually appealing
