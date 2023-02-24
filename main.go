@@ -1,48 +1,29 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	//"gorm.io/gorm"
+	//"gorm.io/driver/sqlite"
 )
 
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			renderLoginPage(w, r)
-			return
-		}
-		username := r.FormValue("username")
-		password := r.FormValue("password")
-		if username == "admin" && password == "admin" {
-			fmt.Fprintln(w, "Welcome, admin!")
-			return
-		}
-		fmt.Fprintln(w, "Invalid username or password")
-	})
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		fmt.Println(err)
-	}
+func initializeRouter() {
+	r := mux.NewRouter() //creates the router
+
+	//user methods
+	r.HandleFunc("/users", GetUsers).Methods("GET")
+	r.HandleFunc("/users/{id}", GetUser).Methods("GET")
+	r.HandleFunc("/users", CreateUser).Methods("POST")
+	r.HandleFunc("/users/{id}", UpdateUser).Methods("PUT")
+	r.HandleFunc("/users/{id}", DeleteUser).Methods("DELETE")
+
+	//launch server
+	log.Fatal(http.ListenAndServe(":9000", r))
 }
 
-func renderLoginPage(w http.ResponseWriter, r *http.Request) {
-    html := `
-        <html>
-            <head>
-                <title>Login</title>
-            </head>
-            <body>
-                <form action="/" method="post">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username">
-                    <br>
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password">
-                    <br>
-                    <input type="submit" value="Submit">
-                </form>
-            </body>
-        </html>
-    `
-    fmt.Fprintln(w, html)
+func main() {
+	initializeRouter()
+
 }
