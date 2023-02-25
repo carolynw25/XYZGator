@@ -38,7 +38,7 @@
           </a>
         </li>
 
-        <li class="nav-item btn-rotate" ngbDropdown placement="bottom-left">
+        <!-- <li class="nav-item btn-rotate" ngbDropdown placement="bottom-left">
           <a class="nav-link" ngbDropdownToggle id="navbarDropdownMenuLink" >
             <i class="nc-icon nc-bell-55"></i>
             <p>
@@ -50,14 +50,28 @@
             <a ngbDropdownItem href="javascript:void(0)">Another action</a>
             <a ngbDropdownItem href="javascript:void(0)">Something else here</a>
           </div>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link btn-rotate" href="javascript:void(0)">
+            <i class="nc-icon nc-bell-55"></i>
+            <p>
+              <span class="d-lg-none d-md-block">Account</span>
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item btn-rotate" ngbDropdown placement="bottom-left">
+          <a class="nav-link" ngbDropdownToggle id="navbarDropdownMenuLink">
             <i class="nc-icon nc-settings-gear-65"></i>
             <p>
               <span class="d-lg-none d-md-block">Account</span>
             </p>
           </a>
+          <div ngbDropdownMenu aria-labelledby="navbarDropdownMenuLink" class="dropdown-menu dropdown-menu-right">
+            <a ngbDropdownItem href="javascript:void(0)">Sign In</a>
+            <a ngbDropdownItem href="javascript:void(0)">Sign Up</a>
+            <a ngbDropdownItem href="javascript:void(0)">Sign Out</a>
+          </div>
         </li>
       </ul>
     </div>
