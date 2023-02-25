@@ -21,7 +21,7 @@ type User struct {
 var DB *gorm.DB
 var err error
 
-const DNS = "root:admin@tcp(127.0.0.1:3306)/credentials?charset=utf8mb48p"
+const DNS = "root:<password>@tcp(127.0.0.1:3306)/credentials?charset=utf8mb48p" //vishal put wrong password for his,
 
 func InitialMigration() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
