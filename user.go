@@ -12,7 +12,7 @@ import (
 type User struct {
 	gorm.Model
 	UserName  string `json:"username"`
-	password  string `json:"password"`
+	Password  string `json:"password"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Email     string `json:"email"`
@@ -21,7 +21,7 @@ type User struct {
 var DB *gorm.DB
 var err error
 
-const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset" //vishal put wrong password for his,
+const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
 
 func InitialMigration() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
