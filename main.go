@@ -20,7 +20,8 @@ func initializeRouter() {
 	r.HandleFunc("/users/{id}", DeleteUser).Methods("DELETE")
 
 	//launch server
-	log.Fatal(http.ListenAndServe(":9000", r))
+	//log.Fatal(http.ListenAndServe(":9000", r))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", r))
 }
 
 func main() {

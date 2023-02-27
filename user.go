@@ -4,24 +4,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model
-	UserName  string `json:"username"`
-	Password  string `json:"password"`
-	FirstName string `json:"firstname"`
-	LastName  string `json:"lastname"`
-	Email     string `json:"email"`
+	UserName  string    `json:"username"`
+	Password  string    `json:"password"`
+	FirstName string    `json:"firstname"`
+	LastName  string    `json:"lastname"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `gorm:"-"`
+	UpdatedAt time.Time `gorm:"-"`
+	DeletedAt time.Time `gorm:"-"`
 }
 
 var DB *gorm.DB
 var err error
 
-const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
+// const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
+const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
@@ -64,9 +70,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 	DB.First(&user, params["id"])
 	json.NewDecoder(r.Body).Decode(&user)
-	DB.save(&user)
+	DB.Save(&user)
 	json.NewEncoder(w).Encode(user)
-
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
