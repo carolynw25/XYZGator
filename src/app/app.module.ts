@@ -17,13 +17,13 @@ import { SignupComponent } from './signup/signup.component';
 import {HttpClientModule} from '@angular/common/http'
 import { ReactiveFormsModule } from "@angular/forms";
 import { FormsModule } from "@angular/forms";
-
 @NgModule({
   declarations: [
     AppComponent,
     AdminLayoutComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    //UserListComponent,
   ],
   imports: [
     BrowserAnimationsModule,
