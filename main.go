@@ -18,6 +18,7 @@ func initializeRouter() {
 	r.HandleFunc("/api/users", CreateUser).Methods("POST")
 	r.HandleFunc("/api/users/{id}", UpdateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", DeleteUser).Methods("DELETE")
+	r.HandleFunc("/api/login", login).Methods("POST")
 
 	//launch server
 	//log.Fatal(http.ListenAndServe(":9000", r))

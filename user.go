@@ -81,3 +81,29 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	DB.Delete(&user, params["id"])
 	json.NewEncoder(w).Encode("The user has been deleted successfully")
 }
+
+func login(w http.ResponseWriter, r *http.Request) {
+	// Parse the login credentials from the request body
+	var user User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Query the database for the user with the given username and password
+	var dbUser User
+	result := DB.Where("user_name = ? AND password = ?", user.UserName, user.Password).First(&dbUser)
+	if result.Error != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// If the query was successful, return the user ID to the frontend
+	response := struct {
+		UserID uint `json:"userId"`
+	}{
+		UserID: dbUser.ID,
+	}
+	json.NewEncoder(w).Encode(response)
+}
