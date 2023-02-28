@@ -11,13 +11,15 @@
                         <form>
                             <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label">Username</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                            <input [(ngModel)]="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
                             </div>
                             <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1">
+                            <input [(ngModel)]="password" class="form-control" id="exampleInputPassword1">
                             </div>
-                            <a routerLink="/main"><button type="submit" class="btn btn-primary" routerLink="/main">Login</button></a>
+                            <!--<a routerLink="/main"><button type="submit" class="btn btn-primary" routerLink="/main">Login</button></a> -->
+                            <button (click)="checkUser()" class="btn btn-primary">Login</button>
+
                         </form>
                     </form>
                     <a style="color: white; margin-top:10px;" routerLink="/signup">New user? Click to signup!!</a>
@@ -25,4 +27,11 @@
             </div>
         </div>
     </div>
+</div>
+
+<div *ngFor="let userLogin of userLogin">
+    <div>{{userLogin.username}}</div>
+    <div>{{userLogin.password}}</div>
+    <br>
+
 </div>
