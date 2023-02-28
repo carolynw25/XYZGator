@@ -5,12 +5,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	//"github.com/rs/cors"
 	//"gorm.io/gorm"
 	//"gorm.io/driver/sqlite"
 )
 
 func initializeRouter() {
 	r := mux.NewRouter() //creates the router
+
+	//adds CORS middleware
+	c := cors.Default()
+	r.Use(c.Handler)
 
 	//user methods
 	r.HandleFunc("/api/users", GetUsers).Methods("GET")
