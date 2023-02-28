@@ -107,3 +107,39 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(response)
 }
+
+func signUp(w http.ResponseWriter, r *http.Request) {
+	// Parse the sign-up credentials from the request body
+	var user User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Query the database for an existing user with the same username or email
+	var dbUser User
+	result := DB.Where("user_name = ? OR email = ?", user.UserName, user.Email).First(&dbUser)
+	if result.RowsAffected > 0 {
+		http.Error(w, "User Name or email already taken", http.StatusConflict)
+		return
+	}
+
+	// If no user is found, create a new user with the passed-in credentials
+	newUser := User{
+		UserName: user.UserName,
+		Password: user.Password,
+		FirstName: user.FirstName,
+		LastName: user.LastName,
+		Email: user.Email,
+	}
+	DB.Create(&newUser)
+
+	// Return the new user's ID to the frontend
+	response := struct {
+		UserID uint `json:"userId"`
+	}{
+		UserID: newUser.ID,
+	}
+	json.NewEncoder(w).Encode(response)
+}
