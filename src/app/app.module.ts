@@ -16,13 +16,17 @@ import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import {HttpClientModule} from '@angular/common/http'
 import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule } from '@angular/forms';
+
+//import {UserListComponent} from './login/login.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     AdminLayoutComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    //UserListComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -35,7 +39,8 @@ import { ReactiveFormsModule } from "@angular/forms";
     FooterModule,
     ReactiveFormsModule,
     FixedPluginModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
