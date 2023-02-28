@@ -7,27 +7,26 @@
                     <h6>Register yourself!!</h6>
                 </div>
                 <form>
-                    <form>
+                    <form [formGroup]="signupForm" (ngSubmit)="signUp()">
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input formControlName="firstname" type="text" class="form-control" id="">
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input formControlName="lastname" type="text" class="form-control" id="">
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputPassword1" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input formControlName="email" type="text" class="form-control" id="">
                         </div>
                         <div class="mb-3">
-                          <label for="exampleInputEmail1" class="form-label">Username</label>
-                          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                          <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                            <label for="exampleInputPassword1" class="form-label">Username</label>
+                            <input formControlName="username" type="text" class="form-control" id="">
                         </div>
                         <div class="mb-3">
                           <label for="exampleInputPassword1" class="form-label">Password</label>
-                          <input type="password" class="form-control" id="exampleInputPassword1">
+                          <input formControlName="password" type="password" class="form-control" id="">
                         </div>
                         <button type="submit" class="btn btn-primary">Sign Up</button>
                       </form>

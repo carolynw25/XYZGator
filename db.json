@@ -13,7 +13,106 @@
       "postId": 1
     }
   ],
-  "profile": {
-    "name": "typicode"
-  }
+  "signupUsers": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    },
+    {
+      "fullname": "dsfasdf",
+      "email": "asdf",
+      "password": "asdfasdf",
+      "mobile": "asdfa",
+      "id": 2
+    },
+    {
+      "username": "",
+      "password": "",
+      "firstname": "",
+      "lastname": "",
+      "email": "",
+      "id": 3
+    },
+    {
+      "username": "",
+      "password": "",
+      "firstname": "",
+      "lastname": "",
+      "email": "h",
+      "id": 4
+    },
+    {
+      "username": "brad",
+      "password": "boo",
+      "firstname": "",
+      "lastname": "",
+      "email": "dantas#nfkdaf",
+      "id": 5
+    },
+    {
+      "username": "",
+      "password": "",
+      "firstname": "bradddddd",
+      "lastname": "",
+      "email": "",
+      "id": 6
+    },
+    {
+      "username": "carcarVibes",
+      "password": "theBest",
+      "firstname": "car",
+      "lastname": "wan",
+      "email": "carVroom",
+      "id": 7
+    },
+    {
+      "username": "jaosdkj",
+      "password": "saldkjaslk",
+      "firstname": "Jonathan",
+      "lastname": "Kahn",
+      "email": "asdlkajsd@gmail.com",
+      "id": 8
+    },
+    {
+      "username": "",
+      "password": "321",
+      "firstname": "",
+      "lastname": "",
+      "email": "",
+      "id": 9
+    }
+  ],
+  "users": [
+    {
+      "code": "202201",
+      "name": "Smith",
+      "salary": 10000,
+      "role": "admin"
+    },
+    {
+      "code": "202202",
+      "name": "Walsh",
+      "salary": 20000,
+      "role": "user"
+    },
+    {
+      "code": "202203",
+      "name": "dillon",
+      "salary": 10000,
+      "role": "superuser"
+    },
+    {
+      "code": "202204",
+      "name": "kevin",
+      "salary": 10000,
+      "role": "user"
+    },
+    {
+      "code": "202205",
+      "name": "robert",
+      "salary": 30000,
+      "role": "superuser"
+    }
+  ]
 }
