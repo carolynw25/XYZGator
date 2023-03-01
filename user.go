@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	//"database/sql"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -82,8 +84,24 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("The user has been deleted successfully")
 }
 
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+/*
+	func generateToken(user User) (string, error) {
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"id":       user.ID,
+			"username": user.UserName,
+			"email":    user.Email,
+			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+		})
+		return token.SignedString([]byte("secret"))
+	}
+*/
 func login(w http.ResponseWriter, r *http.Request) {
-	// Parse the login credentials from the request body
+	//Parse the login credentials from the request body
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -91,7 +109,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Query the database for the user with the given username and password
+	//Query the database for the user with the given username and password
 	var dbUser User
 	result := DB.Where("user_name = ? AND password = ?", user.UserName, user.Password).First(&dbUser)
 	if result.Error != nil {
@@ -99,7 +117,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If the query was successful, return the user ID to the frontend
+	//If the query was successful, return the user ID to the frontend
 	response := struct {
 		UserID uint `json:"userId"`
 	}{
@@ -127,11 +145,11 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
 	// If no user is found, create a new user with the passed-in credentials
 	newUser := User{
-		UserName: user.UserName,
-		Password: user.Password,
+		UserName:  user.UserName,
+		Password:  user.Password,
 		FirstName: user.FirstName,
-		LastName: user.LastName,
-		Email: user.Email,
+		LastName:  user.LastName,
+		Email:     user.Email,
 	}
 	DB.Create(&newUser)
 
