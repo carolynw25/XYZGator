@@ -142,6 +142,8 @@ export class LoginComponent implements OnInit {
         // If the login is unsuccessful, display an error message
         console.log(error);
         //this.router.navigate(['/main']);
+        
+        
 
       }
     );
