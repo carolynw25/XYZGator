@@ -14,9 +14,11 @@ import { AppRoutes } from './app.routing';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import {HttpClientModule} from '@angular/common/http'
+import { HttpClientModule } from '@angular/common/http'
 import { ReactiveFormsModule } from "@angular/forms";
 import { FormsModule } from "@angular/forms";
+import { AuthService } from "./service/restapi.service";
+import { BrowserModule } from "@angular/platform-browser";
 @NgModule({
   declarations: [
     AppComponent,
@@ -37,9 +39,10 @@ import { FormsModule } from "@angular/forms";
     ReactiveFormsModule,
     FixedPluginModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    BrowserModule,
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

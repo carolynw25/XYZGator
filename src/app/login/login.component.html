@@ -17,9 +17,8 @@
                             <label for="exampleInputPassword1" class="form-label">Password</label>
                             <input [(ngModel)]="password" class="form-control" id="exampleInputPassword1">
                             </div>
-                            <!--<a routerLink="/main"><button type="submit" class="btn btn-primary" routerLink="/main">Login</button></a> -->
-                            <button (click)="checkUser()" class="btn btn-primary">Login</button>
-
+                            <!-- <a routerLink="/main"><button type="submit" class="btn btn-primary" routerLink="/main">Login</button></a> -->
+                            <button (click)="onSubmit()" class="btn btn-primary">Login</button>
                         </form>
                     </form>
                     <a style="color: white; margin-top:10px;" routerLink="/signup">New user? Click to signup!!</a>
