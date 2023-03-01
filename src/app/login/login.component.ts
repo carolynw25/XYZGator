@@ -88,11 +88,10 @@ import { UserService } from 'app/service/restapi.service';
 //}
 
 //TAKE 2
-import {FormGroup, FormBuilder} from "@angular/forms"
+import {FormGroup, FormBuilder} from '@angular/forms'
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/service/restapi.service';
-import { HttpHeaders } from '@angular/common/http'
+
 
 export interface IuserLogin{
   username: string
@@ -156,7 +155,7 @@ export class LoginComponent implements OnInit {
        password : 'gg',
     }
   ]
-
+}
   // public signupForm !: FormGroup;
   // checkUser(){
   //   this.userLogin.push({
@@ -167,7 +166,7 @@ export class LoginComponent implements OnInit {
   //   this.password = ''
   // }
 
-  checkData() {
+  // checkData() {
     // const User = new AuthService(this.http);
     // User.login(this.username, this.password).subscribe(
     // (response) => {
@@ -179,7 +178,7 @@ export class LoginComponent implements OnInit {
     // }
 
 
-  }
+  // }
   // ngOnInit(): void {
     
   //   this.signupForm = this.formBuilder.group({
@@ -189,7 +188,7 @@ export class LoginComponent implements OnInit {
 
   // }
 
-}
+
 
 
 
