@@ -15,7 +15,7 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { HttpClientModule } from '@angular/common/http'
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "./service/restapi.service";
 import { BrowserModule } from "@angular/platform-browser";
@@ -42,7 +42,8 @@ import { BrowserModule } from "@angular/platform-browser";
     FormsModule,
     BrowserModule,
   ],
-  providers: [AuthService],
+  providers: [AuthService,
+  FormBuilder],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
