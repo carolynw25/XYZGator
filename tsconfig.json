@@ -1,5 +1,10 @@
 {
   "compileOnSave": false,
+  //include this for Cypress
+  "exclude": [
+    "**/*.spec.ts"
+  ],
+  //end of it
   "compilerOptions": {
     "downlevelIteration": true,
     "importHelpers": true,
@@ -19,5 +24,6 @@
       "es2020",
       "dom"
     ]
+
   }
 }
