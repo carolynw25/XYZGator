@@ -5,17 +5,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	//"github.com/rs/cors"
+	"github.com/rs/cors"
 	//"gorm.io/gorm"
 	//"gorm.io/driver/sqlite"
 )
 
 func initializeRouter() {
 	r := mux.NewRouter() //creates the router
-
-	//adds CORS middleware
-	c := cors.Default()
-	r.Use(c.Handler)
 
 	//user methods
 	r.HandleFunc("/api/users", GetUsers).Methods("GET")
@@ -24,11 +20,18 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{id}", UpdateUser).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", DeleteUser).Methods("DELETE")
 	r.HandleFunc("/api/login", login).Methods("POST")
-	r.HandleFunc("/api/signUp",signUp).Methods("POST")
+	r.HandleFunc("/api/signUp", signUp).Methods("POST")
 
+	//adds CORS middleware
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(r)
 	//launch server
 	//log.Fatal(http.ListenAndServe(":9000", r))
-	log.Fatal(http.ListenAndServe("0.0.0.0:8080", r))
+	log.Fatal(http.ListenAndServe("localhost:8080", handler))
+	//log.Fatal(http.ListenAndServe("128.227.1.31:61478", r))
 }
 
 func main() {
