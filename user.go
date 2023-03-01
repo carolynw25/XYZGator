@@ -118,11 +118,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//If the query was successful, return the user ID to the frontend
-	response := struct {
-		UserID uint `json:"userId"`
-	}{
-		UserID: dbUser.ID,
-	}
+	response := "Login Successful"
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -154,10 +150,6 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	DB.Create(&newUser)
 
 	// Return the new user's ID to the frontend
-	response := struct {
-		UserID uint `json:"userId"`
-	}{
-		UserID: newUser.ID,
-	}
+	response := "Sign-up Successful"
 	json.NewEncoder(w).Encode(response)
 }
