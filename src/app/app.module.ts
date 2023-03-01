@@ -20,12 +20,14 @@ import { FormBuilder } from '@angular/forms';
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "./service/restapi.service";
 import { BrowserModule } from "@angular/platform-browser";
+import { ButtonComponent } from './button/button.component';
 @NgModule({
   declarations: [
     AppComponent,
     AdminLayoutComponent,
     LoginComponent,
     SignupComponent,
+    ButtonComponent,
     //UserListComponent,
   ],
   imports: [
