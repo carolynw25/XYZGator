@@ -1,10 +1,16 @@
 {
   "compileOnSave": false,
   //include this for Cypress
-  "exclude": [
-    "**/*.spec.ts"
-  ],
+  // "exclude": [
+  //   "**/*.spec.ts"
+  // ],
   //end of it
+  //attempt two at exluding Cypress to let .toBeTruthy work, but also let spec files run
+  "include": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/**/*.cy.ts"
+  ],
   "compilerOptions": {
     "downlevelIteration": true,
     "importHelpers": true,
