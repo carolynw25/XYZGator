@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
+	//"fmt"
+	//"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -16,6 +16,38 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestLogin(t *testing.T) {
+	// Initialize a new router instance and register the Login function as a handler for the POST request
+	r := mux.NewRouter()
+	r.HandleFunc("/login", login).Methods("POST")
+
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
+
+	// Create a new request to the /login endpoint with a username and password in the request body
+	loginData := []byte(`{"username": "vishalj0525", "password": "wack"}`)
+	req, err := http.NewRequest("POST", "/login", bytes.NewBuffer(loginData))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the Login function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	login(w, req)
+
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Assert that the response body contains the expected message
+	expectedMessage := "Login Successful"
+	if !strings.Contains(w.Body.String(), expectedMessage) {
+		t.Errorf("Handler returned unexpected body: got %v want %v",
+			w.Body.String(), expectedMessage)
+	}
+}
 func TestGetUser(t *testing.T) {
 	// Initialize a new router instance and register the GetUser function as a handler for the GET request
 	r := mux.NewRouter()
@@ -59,157 +91,84 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	// Create a new router and server
+	// Initialize a new router instance and register the UpdateUser function as a handler for the PUT request
 	r := mux.NewRouter()
-	r.HandleFunc("/api/users/{id}", UpdateUser).Methods("PUT")
-	server := httptest.NewServer(r)
-	defer server.Close()
+	r.HandleFunc("/users/{id}", UpdateUser).Methods("PUT")
 
-	// Add a user to the database
-	user := User{
-		UserName:  "testuser",
-		Password:  "testpassword",
-		FirstName: "Test",
-		LastName:  "User",
-		Email:     "test.user@example.com",
-	}
-	DB.Create(&user)
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
 
-	// Update the user's last name
-	updatedUser := User{
-		UserName:  "testuser",
-		Password:  "testpassword",
-		FirstName: "Test",
-		LastName:  "Updated User",
-		Email:     "test.user@example.com",
+	// Create a new request to the /users/{id} endpoint with an id of 1 and a request body containing updated user data
+	updateUser := User{
+		UserName:  "vishalj0525",
+		Password:  "wack",
+		FirstName: "Vishal",
+		LastName:  "Janapati",
+		Email:     "vjanapati05@gmail.com",
 	}
-	updatedUserJSON, err := json.Marshal(updatedUser)
+	updateUserJSON, _ := json.Marshal(updateUser)
+	req, err := http.NewRequest("PUT", "/users/1", bytes.NewReader(updateUserJSON))
 	if err != nil {
-		t.Errorf("Error marshaling updated user: %v", err)
+		t.Fatal(err)
 	}
 
-	// Create a PUT request to update the user
-	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/users/%d", server.URL, user.ID), bytes.NewBuffer(updatedUserJSON))
-	if err != nil {
-		t.Errorf("Error creating PUT request: %v", err)
-	}
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Errorf("Error sending PUT request: %v", err)
-	}
-	defer res.Body.Close()
+	// Call the UpdateUser function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	UpdateUser(w, req)
 
-	// Verify that the response code is 200 OK
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("Expected status code 200, but got %d", res.StatusCode)
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
 	}
 
 	// Retrieve the updated user from the database
-	var retrievedUser User
-	DB.First(&retrievedUser, user.ID)
+	var updatedUser User
+	DB.First(&updatedUser, 1)
 
-	// Verify that the last name was updated
-	if retrievedUser.LastName != updatedUser.LastName {
-		t.Errorf("Expected last name to be %s, but got %s", updatedUser.LastName, retrievedUser.LastName)
+	// Assert that the updated user data in the database matches the request body data
+	if updatedUser.UserName != updateUser.UserName || updatedUser.Password != updateUser.Password ||
+		updatedUser.FirstName != updateUser.FirstName || updatedUser.LastName != updateUser.LastName ||
+		updatedUser.Email != updateUser.Email {
+		t.Errorf("Handler did not update user data correctly: got %v want %v",
+			updatedUser, updateUser)
 	}
-
-	// Clean up the user from the database
-	DB.Delete(&retrievedUser)
 }
-
-/*
-func TestDeleteUser(t *testing.T) {
-	// Create a new router and server
+func TestSignUp(t *testing.T) {
+	// Initialize a new router instance and register the signUp function as a handler for the POST request
 	r := mux.NewRouter()
-	r.HandleFunc("/api/users/{id}", DeleteUser).Methods("DELETE")
-	server := httptest.NewServer(r)
-	defer server.Close()
+	r.HandleFunc("/signUp", signUp).Methods("POST")
 
-	// Create a new user to add to the database
-	newUser := User{
-		Model:     gorm.Model{},
-		UserName:  "testuser",
-		Password:  "testpassword",
-		FirstName: "Test",
-		LastName:  "User",
-		Email:     "test.user@example.com",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		DeletedAt: time.Time{},
-	}
-	DB.Create(&newUser)
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
 
-	// Send a DELETE request to the server to delete the user
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/users/%d", server.URL, newUser.ID), nil)
-	if err != nil {
-		t.Errorf("Failed to create request: %v", err)
-		return
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		t.Errorf("Failed to send request: %v", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	// Check that the response has a success status code and the expected message
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Expected status OK, but got %v", resp.StatusCode)
-		return
-	}
-	var message string
-	if err := json.NewDecoder(resp.Body).Decode(&message); err != nil {
-		t.Errorf("Failed to decode response: %v", err)
-		return
-	}
-	expectedMessage := "The user has been deleted successfully"
-	if message != expectedMessage {
-		t.Errorf("Expected message '%v', but got '%v'", expectedMessage, message)
-		return
-	}
-
-	// Check that the user has been deleted from the database
-	var deletedUser User
-	if err := DB.First(&deletedUser, newUser.ID).Error; err == nil {
-		t.Errorf("Expected user to be deleted, but got: %+v", deletedUser)
-	}
-}*/
-
-func TestLogin(t *testing.T) {
-	// Initialize a new in-memory sqlite database for testing
-
-	db, err := gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	// Create a new request to the /signUp endpoint with sign-up credentials in the request body
+	signUpData := []byte(`{
+		"username": "random",
+		"password": "random",
+		"firstname": "random",
+		"lastname": "random",
+		"email": "random@example.com"
+	}`)
+	req, err := http.NewRequest("POST", "/signUp", bytes.NewBuffer(signUpData))
 	if err != nil {
 		t.Fatal(err)
 	}
-	db.AutoMigrate(&User{})
-	user := User{UserName: "cwang", Password: "wangus"}
-	body, _ := json.Marshal(user)
-	// Create a new HTTP request with the appropriate method, URL, and request body
-	//requestBody := []byte(`{"username":"cwang","password":"wangus"}`)
-	request, err := http.NewRequest("POST", "/api/login", bytes.NewBuffer(body))
-	if err != nil {
-		t.Fatal(err)
-	}
-	request.Header.Set("Content-Type", "application/json")
-	// Create a new HTTP response writer to capture the response
-	response := httptest.NewRecorder()
 
-	// Call the login function with the request and response writer
-	login(response, request)
+	// Call the signUp function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	signUp(w, req)
 
-	// Check the response status code
-	if response.Code != http.StatusOK {
-		t.Errorf("Expected status code %d but got %d", http.StatusOK, response.Code)
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
 	}
 
-	// Check the response body
-	responseBody, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	expectedResponseBody := "Login Successful"
-	if string(responseBody) != expectedResponseBody {
-		t.Errorf("Expected response body %q but got %q", expectedResponseBody, string(responseBody))
+	// Assert that the response body contains the expected message
+	expectedMessage := "Sign-up Successful"
+	if !strings.Contains(w.Body.String(), expectedMessage) {
+		t.Errorf("Handler returned unexpected body: got %v want %v",
+			w.Body.String(), expectedMessage)
 	}
 }
