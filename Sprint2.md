@@ -165,9 +165,119 @@ describe('SignupComponent', () => {
  });
 ```
 
+This is the unit tests for the app-component: It just makes sure that the app compiles.
+```
+import { TestBed, async } from '@angular/core/testing';
+import { AppComponent } from './app.component';
 
 
+describe('AppComponent', () => {
+ beforeEach(async(() => {
+   TestBed.configureTestingModule({
+     declarations: [
+       AppComponent
+     ],
+   }).compileComponents();
+ }));
 
+
+ //this test case checks that the AppComponent can be created successfully,
+ //which verifies that the Angular application is functioning correctly.
+ it('should create the app', async(() => {
+   const fixture = TestBed.createComponent(AppComponent);
+   const app = fixture.debugElement.componentInstance;
+   expect(app).toBeTruthy();
+ }));
+});
+```
+
+These are the unit tests for the navbar component: These cases test whether the dropdown menu responds when clicked, whether there is a button for them to open the dropdown, checks to see if the bell icon displays and whether the geat setting icon displays, checks that the dropdown links to the correct pages, make sure there are 3 items in the dropdown, and checks whether there are actual, viable, links in the dropdown menu.
+
+```
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NavbarComponent } from './navbar.component';
+
+
+describe('NavbarComponent', () => {
+ let component: NavbarComponent;
+ let fixture: ComponentFixture<NavbarComponent>;
+ let debugElement: DebugElement;
+ let htmlElement: HTMLElement;
+
+
+ beforeEach(async () => {
+   await TestBed.configureTestingModule({
+     imports: [RouterTestingModule],
+     declarations: [ NavbarComponent ]
+   })
+   .compileComponents();
+ });
+
+
+ beforeEach(() => {
+   fixture = TestBed.createComponent(NavbarComponent);
+   component = fixture.componentInstance;
+   fixture.detectChanges();
+   debugElement = fixture.debugElement;
+   htmlElement = debugElement.nativeElement;
+ });
+
+
+ it('should create the component', () => {
+   expect(component).toBeTruthy();
+ });
+//Checks to make sure that the dropdown responds correctly when it is clicked
+ it('should toggle the sidebar when navbar-toggler is clicked', () => {
+   spyOn(component, 'sidebarToggle');
+   const navbarToggler = debugElement.query(By.css('.navbar-toggler')).nativeElement;
+   navbarToggler.click();
+   expect(component.sidebarToggle).toHaveBeenCalled();
+ });
+
+
+ //Checks whether the carrot button is on the sidebar
+ it('should have a button to toggle the sidebar', () => {
+   const navbarToggle = debugElement.query(By.css('.navbar-toggle')).nativeElement;
+   expect(navbarToggle).toBeTruthy();
+ });
+
+
+ // checks if the nc-bell-55 element exists in the HTML.
+ it('should have a bell icon to access account notifications', () => {
+   const bellIcon = debugElement.query(By.css('.nc-bell-55')).nativeElement;
+   expect(bellIcon).toBeTruthy();
+ });
+
+
+ //checks if the nc-settings-gear-65 element exists in the HTML.
+ it('should have a cog icon to access account settings', () => {
+   const cogIcon = debugElement.query(By.css('.nc-settings-gear-65')).nativeElement;
+   expect(cogIcon).toBeTruthy();
+ });
+
+
+ //checks that each dropdown goes to the correct place, whether that's the
+ //login or register page
+ it('should have a dropdown menu with correct links', () => {
+   const dropdownMenu = debugElement.query(By.css('.dropdown-menu')).nativeElement;
+   const dropdownItems = dropdownMenu.querySelectorAll('a');
+
+
+   // Check the number of items in the dropdown menu
+   expect(dropdownItems.length).toBe(3);
+
+
+   // Check the links in the dropdown menu
+   expect(dropdownItems[0].getAttribute('routerLink')).toBe('/login');
+   expect(dropdownItems[1].getAttribute('routerLink')).toBe('/signup');
+   expect(dropdownItems[2].getAttribute('routerLink')).toBe('/login');
+ });
+
+});
+```
 
 
 
