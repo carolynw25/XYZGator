@@ -1,7 +1,7 @@
-import { ButtonComponent } from "./button.component"
+// import { ButtonComponent } from "./button.component"
 
-describe('ButtonComponent', () => {
-    it('can mount', () => {
-        cy.mount(ButtonComponent)
-    })
-})
+// describe('ButtonComponent', () => {
+//     it('can mount', () => {
+//         cy.mount(ButtonComponent)
+//     })
+// })

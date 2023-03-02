@@ -11,11 +11,25 @@ describe('AppComponent', () => {
     }).compileComponents();
   }));
 
+  //this test case checks that the AppComponent can be created successfully, 
+  //which verifyies that the Angular application is functioning correctly.
   it('should create the app', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
+});
+
+
+
+
+
+
+
+
+
+
+
 
   // it(`should have as title 'app'`, async(() => {
   //   const fixture = TestBed.createComponent(AppComponent);
@@ -30,4 +44,4 @@ describe('AppComponent', () => {
   //   expect(compiled.querySelector('h1').textContent).toContain('Welcome to app!!');
   // }));
 
-});
+
