@@ -2,6 +2,174 @@
 ## FrontEnd
 - We have completed a working sign-in page, complete with integration to the backend that checks if the user is valid or not.
 - Our sign-in page, sign-up/registration page, and dashboard of our site are all connected.
+- We have a shell of a sign-up/registration page that is linked to the sign-in page and stores user data, but still have to connect it with the database.
+- We also have an almost-finished About page that will be updated as more ideas come up.
+- Our navigation from the sign-in, log-out, and registration page are all linked to a dropdown menu in the dashboard
+- We also have 14 unit tests and a cypress test detailed below
+
+
+### Cypress test
+This test checks to see if the link for “New user? Click to signup!!” goes to the correct link to register.
+```
+describe('home page', () => {
+ it('clicking "New user? Click to signup!!" navigates to a new url of the signup page', () => {
+   cy.visit('http://localhost:4200')
+   cy.contains('New user? Click to signup!!').click()
+   cy.url().should('include', '/signup')
+ })
+})
+```
+
+### Unit Tests
+These are the unit tests for the login component, the signup component, the navigation bar, and the app module.
+
+These are the unit tests for the login component: These includes tests for if the username and password are empty strings to begin with and if the username and password are updated correctly when user input is. 
+```
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LoginComponent } from './login.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
+describe('LoginComponent', () => {
+ let component: LoginComponent;
+ let fixture: ComponentFixture<LoginComponent>;
+
+
+ beforeEach(async () => {
+   await TestBed.configureTestingModule({
+     declarations: [ LoginComponent ],
+     imports: [ ReactiveFormsModule, HttpClientModule, FormsModule ]
+   })
+   .compileComponents();
+
+
+   fixture = TestBed.createComponent(LoginComponent);
+   component = fixture.componentInstance;
+   fixture.detectChanges();
+ });
+
+ //checks if the SignupComponent instance is created successfully
+ //using the expect function. If the component is created successfully,
+ //the toBeTruthy matcher returns true, indicating that the component
+ //is truthy and exists.
+ it('should create', () => {
+   expect(component).toBeTruthy();
+ });
+
+ //tests whether the username and password properties of the component
+ // are empty strings on initialization.
+ it('should have an empty username and password on initialization', () => {
+   expect(component.username).toEqual('');
+   expect(component.password).toEqual('');
+ });
+
+ //tests whether the username and password properties of the component are
+ //updated correctly when the input fields change.
+ it('should update the username and password properties when the input fields change', () => {
+   const inputUsername = fixture.nativeElement.querySelector('#exampleInputEmail1');
+   const inputPassword = fixture.nativeElement.querySelector('#exampleInputPassword1');
+
+   inputUsername.value = 'testuser';
+   inputUsername.dispatchEvent(new Event('input'));
+
+   inputPassword.value = 'testpassword';
+   inputPassword.dispatchEvent(new Event('input'));
+
+   expect(component.username).toEqual('testuser');
+   expect(component.password).toEqual('testpassword');
+ });
+
+ /*
+ How the above code works: select input fields for username and password using querySelector method
+ and stored in inputUsername and inputPassword variables. Then, it simulates the user input by
+ setting the value property of the input fields to 'testuser' and 'testpassword'. Then puts
+ an input event on each input field using dispatchEvent method. This simulates user typing in the
+ input fields thus trigger input events. Then, it checks that the username and password properties
+ of the component have been updated to 'testuser' and 'testpassword', using expect method.
+ If the components U and P are not updated as expected, the test will fail.
+ */
+});
+```
+
+
+These are the unit tests for the sign-up component: These tests include checking if the addUser function successfully saves and logs a user and if the input fields are cleared after the user is added.
+```
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+
+import { SignupComponent } from './signup.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
+describe('SignupComponent', () => {
+ let component: SignupComponent;
+ let fixture: ComponentFixture<SignupComponent>;
+
+
+ beforeEach(async () => {
+   await TestBed.configureTestingModule({
+     declarations: [ SignupComponent ],
+     imports: [ FormsModule, ReactiveFormsModule ]
+   })
+   .compileComponents();
+
+
+   fixture = TestBed.createComponent(SignupComponent);
+   component = fixture.componentInstance;
+   fixture.detectChanges();
+ });
+
+
+ it('should create', () => {
+   expect(component).toBeTruthy();
+ });
+
+
+ //Test case to check if addUser() function adds a new user to the user list
+ it('should add a new user to the user list when addUser() is called', () => {
+   const initialUserCount = component.userInfo.length;
+   component.username = 'tUser';
+   component.password = 'tPass';
+   component.firstname = 'Huey';
+   component.lastname = 'Magooey';
+   component.email = 'HuMagoo@gmail.com';
+   component.addUser();
+   const newUserCount = component.userInfo.length;
+   expect(newUserCount).toEqual(initialUserCount + 1);
+   expect(component.userInfo[newUserCount - 1]).toEqual({
+     username: 'tUser',
+     password: 'tPass',
+     firstname: 'Huey',
+     lastname: 'Magooey',
+     email: 'HuMagoo@gmail.com'
+   });
+ });
+
+
+ //Test case to check if the input fields are cleared after addUser() is called
+ it('should clear the input fields after addUser() is called', () => {
+   component.username = 'tUser';
+   component.password = 'tPass';
+   component.firstname = 'Huey';
+   component.lastname = 'Magooey';
+   component.email = 'HuMagoo@gmail.com';
+   component.addUser();
+   expect(component.username).toEqual('');
+   expect(component.password).toEqual('');
+   expect(component.firstname).toEqual('');
+   expect(component.lastname).toEqual('');
+   expect(component.email).toEqual('');
+ });
+
+
+ });
+```
+
+
+
+
+
+
 
 ## BackEnd
 
