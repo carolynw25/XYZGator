@@ -1,3 +1,11 @@
+#Detailed work completed in Sprint 2
+##FrontEnd
+- We have completed a working sign-in page, complete with integration to the backend that checks if the user is valid or not.
+- Our sign-in page, sign-up/registration page, and dashboard of our site are all connected.
+
+##BackEnd
+
+
 # BackEnd Documentation for REST API using Gorilla Mux Router and GORM
  This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 
