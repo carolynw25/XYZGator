@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import Swal from 'sweetalert2';
 
 
 interface Card {
@@ -13,18 +14,28 @@ interface Card {
  selector: 'app-card',
  template: `
 <div class ="outer">
+  <div class="top-bar">
+    <div class="lowestTime">
+      <div *ngIf="lowestTime !== null" class="lowest-time"> lowestTime: {{ lowestTime.minutes }}:{{ lowestTime.seconds | number: '2.0' }}</div>
+      <div *ngIf="lowestTime == null" class="lowest-time"> lowestTime: </div>
+    </div>
+    <div class="reset">
+      <button (click)="reset()">Reset</button>
+    </div>
+    <div class="timer"> timer: {{ minutes }}:{{ seconds | number: '2.0' }}</div>
+    <div class="return">
+      <button routerLink="/notifications">Return</button>
+    </div>
+  </div>
   <div class="cards">
     <div class="card" [class.flipped]="card.isFlipped" *ngFor="let card of cards" (click)="flipCard(card)" [ngStyle]="{ 'background-color': card.isFlipped ? card.color : ''}">
+      <div class="card-content">
+        <h2 *ngIf="card.isFlipped">{{ card.color }}</h2>
+      </div>
       <div class="card-inner">
-        <div class="card-front" [ngStyle]="{ 'background-color': card.isFlipped ? card.color : ''}">
-          <div class="card-content">
-            <h2>{{ card.content }}</h2>
-          </div>
+        <div class="card-front">
         </div>
-        <div class="card-back" [ngStyle]="{ 'background-color': card.isFlipped ? card.color : ''}">
-          <div class="card-content">
-            <h2>{{ card.content }} </h2>
-          </div>
+        <div class="card-back" >
         </div>
       </div>
     </div>
@@ -37,18 +48,44 @@ interface Card {
       min-height: 100vh;
       background-color: lavender;
     }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .lowestTime{
+      font-size: 2rem;
+      text-align: left;
+      justify-content: flex-start;
+    }
+    .timer {
+      font-size: 2rem;
+      text-align: left;
+      justify-content: flex-start;
+    }
+    .reset{
+      font-size: 2rem;
+      margin-right: 20px;
+      justify-content: center;
+    }
+    .return{
+      font-size: 2rem;
+      margin-right: 20px;
+      justify-content: flex-end;
+    }
+
    .cards {
      display: grid;
      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-     gap: 5px;
-     margin: 20px;
-     margin-top: 200px;
+     gap: 1px;
+     margin: 50px;
+     margin-top: 40px;
    }
 
 
    .card {
-     width: 150px;
-     height: 150px;
+     width: 130px;
+     height: 130px;
      position: relative;
      perspective: 1000px;
      cursor: pointer;
@@ -107,23 +144,19 @@ interface Card {
 
 
    .card-content {
-     padding: 1rem;
+     padding: 0rem;
      position: relative;
      z-index: 1;
    }
 
-
    .card-content h2 {
-     font-size: 1.5rem;
-     margin-bottom: 0.5rem;
+    background-color: rgb(243, 242, 239);
+    color: black;
+    text-align: center;
+    padding: 0.07rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
    }
-
-
-   .card-content p {
-     font-size: 1rem;
-     line-height: 1.2;
-   }
-
 
    /* Shadow effect */
    .card-front::before,
@@ -154,15 +187,21 @@ interface Card {
 
 
 export class CardComponent {
-cards: Card[] = [];
-disableCards = false;
+  cards: Card[] = [];
+  disableCards = false;
+  minutes = 0;
+  seconds = 0;
+  timer: any;
+  lowestTime = null;
+  newRecord = false;
 
 constructor() {
+  this.newRecord = false;
   const cardColors = ['red', 'green', 'blue', 'yellow', 'orange', 'black', 'purple', 'violet', 'gray', 'lime', 'white', 'teal', 'pink', 'brown'];
-  
-
-
     const uniqueCards: Card[] = [];
+    //start timer
+    this.stopTimer();
+    this.startTimer();
 
     // Generate unique pairs of cards
     for (let i = 1; i <= cardColors.length; i++) {
@@ -183,6 +222,37 @@ constructor() {
       if (flippedCards.length === 2) {
         if (flippedCards[0].color === flippedCards[1].color) {
           flippedCards.forEach(c => c.isMatched = true);
+          if (this.cards.every(card => card.isMatched)) {
+            // Update lowest time if necessary
+            // update lowestTime if current time is lower than previous time
+            if (this.lowestTime === null || this.minutes < this.lowestTime.minutes || (this.minutes === this.lowestTime.minutes && this.seconds < this.lowestTime.seconds)) {
+              this.lowestTime = { minutes: this.minutes, seconds: this.seconds };
+              this.newRecord = true;
+            }
+            // Show win popup with time here
+            clearInterval(this.timer);
+            setTimeout(() => {
+              Swal.fire({
+                title: `Congratulations, you won in ${this.minutes}:${this.seconds < 10 ? '0' : ''}${this.seconds}!`,
+                text: `Lowest Time ${this.lowestTime.minutes}:${this.lowestTime.seconds < 10 ? '0' : ''}${this.lowestTime.seconds}${this.newRecord ? ' (newwwww)' : ''}`,
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK',
+                padding: '3em',
+                color: '#716add',
+                //background: '#fab url("assets/img/cuteGator.png")',
+                ...(this.newRecord? {
+                  backdrop: `
+                  rgba(0,0,123,0.4)
+                  url("assets/img/nyan-cat-gif.webp")
+                  left top
+                  no-repeat
+                `
+                } : {})
+              });
+            }, 1000);
+            }
+            //this.newRecord = false;
         } else {
           this.disableCards = true;
           setTimeout(() => {
@@ -207,4 +277,37 @@ constructor() {
 
     return array;
   }
+
+
+  reset() {
+    this.newRecord = false;
+    this.cards.forEach(card => {
+      card.isFlipped = false;
+      card.isMatched = false;
+    });
+    this.cards = this.shuffle(this.cards);
+    this.disableCards = false;
+    this.stopTimer();
+    this.startTimer();
+  }
+
+
+  startTimer() {
+    this.timer = setInterval(() => {
+      if (this.seconds < 59) {
+        this.seconds++;
+      } else {
+        this.minutes++;
+        this.seconds = 0;
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    clearInterval(this.timer);
+    this.minutes = 0;
+    this.seconds = 0;
+  }
+
+
 }
