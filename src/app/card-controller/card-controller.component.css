@@ -1,0 +1,15 @@
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .card-container .card {
+    margin: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .card-container .card.flipped {
+    transform: rotateY(180deg);
+  }
+  

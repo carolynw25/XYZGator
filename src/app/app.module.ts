@@ -21,6 +21,8 @@ import { FormsModule } from "@angular/forms";
 import { AuthService } from "./service/restapi.service";
 import { BrowserModule } from "@angular/platform-browser";
 import { ButtonComponent } from './button/button.component';
+import { CardComponent } from './card/card.component';
+import { CardControllerComponent } from './card-controller/card-controller.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +30,8 @@ import { ButtonComponent } from './button/button.component';
     LoginComponent,
     SignupComponent,
     ButtonComponent,
+    CardComponent,
+    CardControllerComponent,
     //UserListComponent,
   ],
   imports: [

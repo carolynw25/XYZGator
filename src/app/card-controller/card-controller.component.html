@@ -1,0 +1,14 @@
+<!-- Card controller with title and card grid -->
+<div class="card-controller">
+    <h1>Flip Cards</h1>
+    <div class="card-grid">
+      <!-- Loop through cards array and create a card component for each -->
+      <app-card
+        *ngFor="let card of cards"
+        [isFlipped]="card.isFlipped"
+        [value]="card.value"
+        (click)="flipCard(card)"
+      ></app-card>
+    </div>
+  </div>
+  
