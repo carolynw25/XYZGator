@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   //ID variable
-  public ID: any;
+  //public ID: any;
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
       username: [''],
@@ -55,21 +55,21 @@ export class LoginComponent implements OnInit {
 
     this.http.post('http://127.0.0.1:8080/api/login', body, {headers}).subscribe
       (response => {
-        this.http.post('http://127.0.0.1:8080/api/getID', {}, {headers}).subscribe(
-          response => {
-            //this.ID = response['id'];
-            const id = response['id'];
-            localStorage.setItem('userID', id); // save the ID to localStorage
-            this.router.navigate(['/main']);
-          },
-          error => {
-            console.log(error);
-          }
-        );
+        // this.http.post('http://127.0.0.1:8080/api/getID', {}, {headers}).subscribe(
+        //   response => {
+        //     //this.ID = response['id'];
+        //     const id = response['id'];
+        //     localStorage.setItem('userID', id); // save the ID to localStorage
+        //     this.router.navigate(['/main']);
+        //   },
+        //   error => {
+        //     console.log(error);
+        //   }
+        // );
         
         
         // If the login is successful, redirect the user to the dashboard page
-        //this.router.navigate(['/main']);
+        this.router.navigate(['/main']);
         //document.write("Welcome to the Web Page!");
       },
       error => {

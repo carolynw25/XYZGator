@@ -17,11 +17,11 @@ export class DashboardComponent implements OnInit{
   public chartHours;
 
   //edits
-  public userID: any;
+  //public userID: any;
 
     ngOnInit(){
       //edits
-      this.userID = localStorage.getItem('userID'); // retrieve the ID from localStorage
+      //this.userID = localStorage.getItem('userID'); // retrieve the ID from localStorage
 
 
 
