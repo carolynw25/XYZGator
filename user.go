@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -28,7 +29,7 @@ type User struct {
 var DB *gorm.DB
 var err error
 
-// const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
+//const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
 const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
@@ -66,7 +67,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 
 }*/
-
+/*
 func getID(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
 
@@ -94,7 +95,7 @@ func getID(w http.ResponseWriter, r *http.Request) {
     }
     json.NewEncoder(w).Encode(response)
 }
-
+*/
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -130,7 +131,7 @@ type Credentials struct {
 	}
 */
 func login(w http.ResponseWriter, r *http.Request) {
-	//Parse the login credentials from the request body
+	// Parse the login credentials from the request body
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -138,47 +139,38 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Query the database for the user with the given username and password
+	// Query the database for the user with the given username
 	var dbUser User
-	result := DB.Where("user_name = ? AND password = ?", user.UserName, user.Password).First(&dbUser)
+	result := DB.Where("user_name = ?", user.UserName).First(&dbUser)
 	if result.Error != nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
-	//If the query was successful, return the user ID to the frontend
+	// Compare the hashed password of the user in the database with the hashed password of the user in the request body
+	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+	if err != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// If the passwords match, return the user ID to the frontend
 	response := "Login Successful"
 	json.NewEncoder(w).Encode(response)
 }
 
 func signUp(w http.ResponseWriter, r *http.Request) {
-	// Parse the sign-up credentials from the request body
-	var user User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
+    w.Header().Set("Content-Type", "application/json")
+    var user User
+    json.NewDecoder(r.Body).Decode(&user)
 
-	// Query the database for an existing user with the same username or email
-	var dbUser User
-	result := DB.Where("user_name = ? OR email = ?", user.UserName, user.Email).First(&dbUser)
-	if result.RowsAffected > 0 {
-		http.Error(w, "User Name or email already taken", http.StatusConflict)
-		return
-	}
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+    if err != nil {
+        http.Error(w, "Error hashing password", http.StatusInternalServerError)
+        return
+    }
 
-	// If no user is found, create a new user with the passed-in credentials
-	newUser := User{
-		UserName:  user.UserName,
-		Password:  user.Password,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-	}
-	DB.Create(&newUser)
-
-	// Return the new user's ID to the frontend
-	response := "Sign-up Successful"
-	json.NewEncoder(w).Encode(response)
+    user.Password = string(hashedPassword)
+    DB.Create(&user)
+    json.NewEncoder(w).Encode(user)
 }

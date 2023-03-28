@@ -8,6 +8,7 @@ import (
 	"github.com/rs/cors"
 	//"gorm.io/gorm"
 	//"gorm.io/driver/sqlite"
+	//"golang.org/x/crypto/bcrypt"
 )
 
 func initializeRouter() {
@@ -21,7 +22,7 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{id}", DeleteUser).Methods("DELETE")
 	r.HandleFunc("/api/login", login).Methods("POST")
 	r.HandleFunc("/api/signUp", signUp).Methods("POST")
-	r.HandleFunc("/api/getID", getID).Methods("POST")
+	//r.HandleFunc("/api/getID", getID).Methods("POST")
 	//r.HandleFunc("/api/test", login).Methods("POST")
 
 	//adds CORS middleware
@@ -39,5 +40,4 @@ func initializeRouter() {
 func main() {
 	InitialMigration()
 	initializeRouter()
-
 }
