@@ -29,7 +29,7 @@ var DB *gorm.DB
 var err error
 
 // const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
-const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
+const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
@@ -66,6 +66,34 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 
 }*/
+
+func getID(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+
+    // Parse the login credentials from the request body
+    var creds Credentials
+    err := json.NewDecoder(r.Body).Decode(&creds)
+    if err != nil {
+        http.Error(w, "Error parsing request body", http.StatusBadRequest)
+        return
+    }
+
+    // Query the database for the user with the given username and password
+    var user User
+    result := DB.Where("user_name = ? AND password = ?", creds.Username, creds.Password).First(&user)
+    if result.Error != nil {
+        http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+        return
+    }
+
+    // If the query was successful, return the user ID to the frontend
+    response := struct {
+        ID uint `json:"id"`
+    }{
+        ID: user.ID,
+    }
+    json.NewEncoder(w).Encode(response)
+}
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
