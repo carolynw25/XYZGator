@@ -8,7 +8,7 @@
             <div class="col-md-6 ml-auto mr-auto text-center">
               <h4 class="card-title">
                 Game selection
-                <p class="category">Click to play the selected game</p>
+                <p class="category"></p>
               </h4>
             </div>
           </div>
@@ -16,10 +16,11 @@
             <div class="col-lg-8 ml-auto mr-auto">
               <div class="row">
                 <div class="col-md-4">
-                  <button class="btn btn-primary btn-block" routerLink="/game1">Game1</button>
+                  <button class="btn btn-primary btn-block" routerLink="/game1" style="margin: 0;">Memory Game</button>
+                  <p style="border: 1px solid rgb(92, 237, 235); background-color: rgb(231, 236, 255); padding: 10px; margin-top: 0;">There are matching cards and you need to flip/click on them to see their color. The goal is to match the same color cards as quick as possible.</p>
                 </div>
                 <div class="col-md-4">
-                  <button class="btn btn-primary btn-block" routerLink="/game2">Game2</button>
+                  <button class="btn btn-primary btn-block" routerLink="/game2">Speed Math Game</button>
                 </div>
                 <div class="col-md-4">
                   <button class="btn btn-primary btn-block" (click)="showNotification('top','right')">Game3</button>
