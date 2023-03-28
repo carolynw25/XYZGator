@@ -55,9 +55,6 @@ export class SignupComponent implements OnInit {
       error => {
         // If the login is unsuccessful, display an error message
         console.log(error);
-        //this.router.navigate(['/main']);
-        
-        
 
       }
     );

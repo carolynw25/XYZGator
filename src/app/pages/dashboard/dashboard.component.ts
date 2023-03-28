@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Chart from 'chart.js';
-
+import { ViewChild } from '@angular/core';
 
 @Component({
     selector: 'dashboard-cmp',
@@ -16,7 +16,15 @@ export class DashboardComponent implements OnInit{
   public chartEmail;
   public chartHours;
 
+  //edits
+  public userID: any;
+
     ngOnInit(){
+      //edits
+      this.userID = localStorage.getItem('userID'); // retrieve the ID from localStorage
+
+
+
       this.chartColor = "#FFFFFF";
 
       this.canvas = document.getElementById("chartHours");
