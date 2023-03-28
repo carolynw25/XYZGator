@@ -23,6 +23,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { ButtonComponent } from './button/button.component';
 import { CardComponent } from './card/card.component';
 import { CardControllerComponent } from './card-controller/card-controller.component';
+import { MathComponent } from './math/math.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,6 +33,7 @@ import { CardControllerComponent } from './card-controller/card-controller.compo
     ButtonComponent,
     CardComponent,
     CardControllerComponent,
+    MathComponent,
     //UserListComponent,
   ],
   imports: [
