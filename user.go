@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
@@ -29,7 +29,7 @@ type User struct {
 var DB *gorm.DB
 var err error
 
-//const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
+// const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
 const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
@@ -106,6 +106,48 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+func UpdateUsername(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	username, ok := data["username"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing username field"})
+		return
+	}
+	user.UserName = username
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	password, ok := data["password"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing password field"})
+		return
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to hash password"})
+		return
+	}
+	user.Password = string(hashedPassword)
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -160,17 +202,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func signUp(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    var user User
-    json.NewDecoder(r.Body).Decode(&user)
+	w.Header().Set("Content-Type", "application/json")
+	var user User
+	json.NewDecoder(r.Body).Decode(&user)
 
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-    if err != nil {
-        http.Error(w, "Error hashing password", http.StatusInternalServerError)
-        return
-    }
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		return
+	}
 
-    user.Password = string(hashedPassword)
-    DB.Create(&user)
-    json.NewEncoder(w).Encode(user)
+	user.Password = string(hashedPassword)
+	DB.Create(&user)
+	json.NewEncoder(w).Encode(user)
 }
