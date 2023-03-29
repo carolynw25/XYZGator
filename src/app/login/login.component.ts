@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'app/service/restapi.service';
 import { HttpHeaders } from '@angular/common/http'
 import { EventEmitter } from 'stream';
+import { UserIdService } from 'app/userIdService'
 
 export interface IuserLogin{
   username: string
@@ -29,7 +30,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder : FormBuilder, 
     private http : HttpClient, 
-    private router:Router
+    private router:Router,
+    private userIdService: UserIdService
   ) { }
 
   //ID variable
@@ -40,7 +42,17 @@ export class LoginComponent implements OnInit {
       password: [''],
     });
   }
-
+  saveUserID(username: string, password: string) {
+    const url = 'http://127.0.0.1:8080/api/getID'; // replace with your actual API endpoint
+    const credentials = { username, password };
+    this.http.post<{ id: number }>(url, credentials).subscribe(response => {
+      const userID = response.id;
+      // Do something with the userID, such as storing it in a variable or using it to make another API request
+      this.userIdService.setUserId(userID);
+    }, error => {
+      console.error(error);
+    });
+  }
   onSubmit(): void {
   
     // this.onLogin.emit({
@@ -55,6 +67,7 @@ export class LoginComponent implements OnInit {
 
     this.http.post('http://127.0.0.1:8080/api/login', body, {headers}).subscribe
       (response => {
+        this.saveUserID(this.username, this.password)
         // this.http.post('http://127.0.0.1:8080/api/getID', {}, {headers}).subscribe(
         //   response => {
         //     //this.ID = response['id'];
