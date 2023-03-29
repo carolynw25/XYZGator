@@ -25,6 +25,7 @@ export class DashboardComponent implements OnInit{
       //edits
       //this.userID = localStorage.getItem('userID'); // retrieve the ID from localStorage
       this.userID = this.userIDService.getUserId();
+      console.log('User ID bleh: ', this.userID);
       
 
 

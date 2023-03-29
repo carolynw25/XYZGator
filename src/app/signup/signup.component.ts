@@ -40,7 +40,7 @@ export class SignupComponent implements OnInit {
     private router:Router
     ) { }
 
-  addUser() {
+  addUserData() {
     const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email} ;
     const headers = {
       'Content-Type': 'application/json'
@@ -62,21 +62,21 @@ export class SignupComponent implements OnInit {
 
 
 //Before connecting with Backend
-  // addUser(){
-  //   this.userInfo.push({
-  //     username: this.username,
-  //     password: this.password,
-  //     firstname: this.firstname,
-  //     lastname: this.lastname,
-  //     email: this.email
-  //   })
-  //   this.username = ''
-  //   this.password = ''
-  //   this.firstname = ''
-  //   this.lastname = ''
-  //   this.email = ''
+  addUser(){
+    this.userInfo.push({
+      username: this.username,
+      password: this.password,
+      firstname: this.firstname,
+      lastname: this.lastname,
+      email: this.email
+    })
+    this.username = ''
+    this.password = ''
+    this.firstname = ''
+    this.lastname = ''
+    this.email = ''
   
-  // }
+  }
 
 
 

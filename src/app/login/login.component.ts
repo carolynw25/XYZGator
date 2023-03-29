@@ -68,6 +68,7 @@ export class LoginComponent implements OnInit {
     this.http.post('http://127.0.0.1:8080/api/login', body, {headers}).subscribe
       (response => {
         this.saveUserID(this.username, this.password)
+        
         // this.http.post('http://127.0.0.1:8080/api/getID', {}, {headers}).subscribe(
         //   response => {
         //     //this.ID = response['id'];
