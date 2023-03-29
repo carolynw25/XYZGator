@@ -7,10 +7,7 @@ import Swal from 'sweetalert2';
 <div class ="outer">
   <div class="top-bar">
   <div class="correct-count">Correct: {{ numCorrect }}</div>
-    <div class="lowestTime">
-      <div *ngIf="lowestTime !== null" class="lowest-time"> lowestTime: {{ lowestTime.minutes }}:{{ lowestTime.seconds | number: '2.0' }}</div>
-      <div *ngIf="lowestTime == null" class="lowest-time"> lowestTime: </div>
-    </div>
+    <div class="highScore"> HighScore: 0 </div>
     <div class="reset">
       <button (click)="reset()">Reset</button>
     </div>
@@ -19,10 +16,12 @@ import Swal from 'sweetalert2';
       <button (click)="reset()" routerLink="/notifications">Return</button>
     </div>
   </div>
-  <div class="question"> Solve: {{ number1 }} + {{ number2 }} </div>
+  <div class="container">
+    <div class="question"> Solve: {{ number1 }} + {{ number2 }} </div>
+  </div>
   <div *ngFor="let row of rows" class="row">
     <div *ngFor="let num of row" class="number"
-    [ngClass]="{'clickable': num === (number1 + number2), 'incorrect': num === numClicked && num !== (number1 + number2)}" 
+    [ngClass]="{'incorrect': num === numClicked && num !== (number1 + number2), 'correct': num === numClicked && num === (number1 + number2), 'clickable': num === (number1 + number2)}" 
     (click)="checkSum(num)">{{ num }} </div>
   </div>
   <!-- [ngClass]="{'clickable': !numClicked && num !== (number1 + number2), 'incorrect': !numClicked && num !== (number1 + number2)}"  -->
@@ -46,7 +45,7 @@ styles: [`
   justify-content: space-between;
   margin-bottom: 40px;
 }
-.lowestTime{
+.highScore{
   font-size: 2rem;
   text-align: left;
   justify-content: flex-start;
@@ -66,23 +65,46 @@ styles: [`
   margin-right: 20px;
   justify-content: flex-end;
 }
+.container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .question{
+  background-color: white;
+  border: 10px solid rgb(166, 176, 183);
   font-size: 4rem;
+  width: 770px;
   text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  left: 100%;
 }
 .row {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin-bottom: 15px;
 }
 .number {
+  background-color: rgb(219, 237, 252);
   width: 70px;
   height: 70px;
-  border: 1px solid black;
+  border: 2px solid rgb(166, 176, 183);
   text-align: center;
   margin-right: 15px;
   margin-bottom: 15px;
   cursor: pointer;
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
 }
 
 .incorrect {
@@ -90,6 +112,9 @@ styles: [`
 }
 .clickable {
   cursor: pointer;
+}
+.correct {
+  background-color: green;
 }
 /* .red {
   background-color: red;
@@ -132,11 +157,11 @@ export class MathComponent implements OnInit {
     //this.numClicked = true;
     if (clickedNumber === (this.number1 + this.number2)) {
       this.numCorrect++;
-      Swal.fire({
-        title: 'Congratulations!',
-        text: `You clicked ${clickedNumber}, which is the sum of ${this.number1} and ${this.number2}.`,
-        icon: 'success'
-      });
+      // Swal.fire({
+      //   title: 'Congratulations!',
+      //   text: `You clicked ${clickedNumber}, which is the sum of ${this.number1} and ${this.number2}.`,
+      //   icon: 'success'
+      // });
 
     // Change the number1 and number2 variables to generate a new problem
     this.number1 = Math.floor(Math.random() * 15) + 1;
@@ -163,6 +188,8 @@ export class MathComponent implements OnInit {
       const clickedElement = event.target as HTMLElement;
       clickedElement.classList.remove('clickable');
       clickedElement.classList.add('incorrect');
+      //clickedElement.classList.add('correct');
+
     }
   }
 
