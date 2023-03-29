@@ -1,6 +1,10 @@
 .outer{
     height: 100vh;
-    background: lavender;
+    background: rgba(87, 10, 125, 0.42);
+}
+.container{
+    display: flex;
+    justify-content: center;
 }
 .card{
     border: none;
