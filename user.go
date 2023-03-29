@@ -57,7 +57,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	var user User
 	DB.First(&user, params["id"])
 	json.NewEncoder(w).Encode(user)
-
 }
 
 /*
@@ -292,6 +291,7 @@ func GetMathScore(w http.ResponseWriter, r *http.Request) {
     DB.First(&user, params["id"])
     json.NewEncoder(w).Encode(user.MathScore)
 }
+
 func setMathScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -304,7 +304,7 @@ func setMathScore(w http.ResponseWriter, r *http.Request) {
 
 	// Parse the new math score from the request body
 	var score struct {
-		Score int `json:"score"`
+		Score int `json:"mathScore"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&score)
 	if err != nil {
@@ -312,12 +312,14 @@ func setMathScore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update the user's math score
-	user.MathScore = score.Score
-	result = DB.Save(&user)
-	if result.Error != nil {
-		http.Error(w, "Error updating math score", http.StatusInternalServerError)
-		return
+	// Update the user's math score if the new score is higher
+	if score.Score > user.MathScore {
+		user.MathScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating math score", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	json.NewEncoder(w).Encode(user)
@@ -333,9 +335,9 @@ func setMatchScore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse the new match score from the request body
+	// Parse the new math score from the request body
 	var score struct {
-		Score int `json:"score"`
+		Score int `json:"matchScore"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&score)
 	if err != nil {
@@ -343,12 +345,14 @@ func setMatchScore(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Update the user's match score
-	user.MatchScore = score.Score
-	result = DB.Save(&user)
-	if result.Error != nil {
-		http.Error(w, "Error updating match score", http.StatusInternalServerError)
-		return
+	// Update the user's math score if the new score is higher
+	if score.Score > user.MatchScore {
+		user.MatchScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	json.NewEncoder(w).Encode(user)
