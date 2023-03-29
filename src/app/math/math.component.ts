@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-math',
@@ -24,12 +25,6 @@ import Swal from 'sweetalert2';
     [ngClass]="{'incorrect': num === numClicked && num !== (number1 + number2), 'correct': num === numClicked && num === (number1 + number2), 'clickable': num === (number1 + number2)}" 
     (click)="checkSum(num)">{{ num }} </div>
   </div>
-  <!-- [ngClass]="{'clickable': !numClicked && num !== (number1 + number2), 'incorrect': !numClicked && num !== (number1 + number2)}"  -->
-  <!-- [ngClass]="{'clickable': num === (number1 + number2)}"  -->
-
-  <!-- [ngClass]="{'clickable': num === (number1 + number2), 'incorrect': num !== (number1 + number2)}"  -->
-  <!-- (click)="checkSum(num, $event.target)">{{ num }} </div> -->
-
 
 </div>
 `,
@@ -116,13 +111,11 @@ styles: [`
 .correct {
   background-color: green;
 }
-/* .red {
-  background-color: red;
-} */
+
 .correct-count {
   font-size: 2rem;
   text-align: left;
-  /*flex-grow: 1; */
+
 }
 `]
 })
@@ -154,7 +147,6 @@ export class MathComponent implements OnInit {
     }
   }
   checkSum(clickedNumber: number) {
-    //this.numClicked = true;
     if (clickedNumber === (this.number1 + this.number2)) {
       this.numCorrect++;
       // Swal.fire({
@@ -175,15 +167,6 @@ export class MathComponent implements OnInit {
     numberElements.forEach((element) => {
       element.classList.remove('incorrect');
     });
-      // const numberElements = document.querySelectorAll('.number');
-      // numberElements.forEach((element) => {
-      //   const num = parseInt(element.textContent);
-      //   if (num === clickedNumber) {
-      //     element.classList.add('red');
-      //   } else {
-      //     element.classList.remove('red');
-      //   }
-      // });
     } else {
       const clickedElement = event.target as HTMLElement;
       clickedElement.classList.remove('clickable');
@@ -193,7 +176,7 @@ export class MathComponent implements OnInit {
     }
   }
 
-  constructor() {
+  constructor(public router: Router) {
     //the numbers
     this.generateNumbers();
     //start timer
@@ -202,10 +185,11 @@ export class MathComponent implements OnInit {
     //numbers
     this.number1 = Math.floor(Math.random() * 15) + 1;
     this.number2 = Math.floor(Math.random() * 15) + 1;
-
+    
   }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    //removed to fix unit test, don't think it's needed maybe
+    //throw new Error('Method not implemented.');
   }
 
   reset() {
@@ -213,6 +197,7 @@ export class MathComponent implements OnInit {
     this.stopTimer();
     this.startTimer();
     this.numCorrect = 0;
+    
 
     // Remove the "incorrect" class from all number elements
     const numberElements = document.querySelectorAll('.number');
