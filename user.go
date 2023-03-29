@@ -148,6 +148,60 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+func UpdateFirstName(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	firstName, ok := data["firstName"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing firstName field"})
+		return
+	}
+	user.FirstName = firstName
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+
+func UpdateLastName(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	lastName, ok := data["lastName"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing lastName field"})
+		return
+	}
+	user.LastName = lastName
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+
+func UpdateEmail(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	email, ok := data["email"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing email field"})
+		return
+	}
+	user.Email = email
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
