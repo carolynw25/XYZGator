@@ -19,15 +19,21 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{id}", GetUser).Methods("GET")
 	//r.HandleFunc("/api/users", CreateUser).Methods("POST")
 	r.HandleFunc("/api/users/{id}", UpdateUser).Methods("PUT")
-	r.HandleFunc("/api/users/{id}/name", UpdateUsername).Methods("PUT")
-	r.HandleFunc("/api/users/{id}/pass", UpdatePassword).Methods("PUT")
-	r.HandleFunc("/api/users/{id}/first", UpdateFirstName).Methods("PUT")
-	r.HandleFunc("/api/users/{id}/last", UpdateLastName).Methods("PUT")
-	r.HandleFunc("/api/users/{id}/email}", UpdateEmail).Methods("PUT")
 	r.HandleFunc("/api/users/{id}", DeleteUser).Methods("DELETE")
 	r.HandleFunc("/api/login", login).Methods("POST")
 	r.HandleFunc("/api/signUp", signUp).Methods("POST")
-	//r.HandleFunc("/api/getID", getID).Methods("POST")
+	r.HandleFunc("/api/getID", getID).Methods("POST")
+	r.HandleFunc("/api/users/{id}/name", UpdateUsername).Methods("PUT")
+    r.HandleFunc("/api/users/{id}/pass", UpdatePassword).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/first", UpdateFirstName).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/last", UpdateLastName).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/email}", UpdateEmail).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/matchscore", GetMatchScore).Methods("GET")
+	r.HandleFunc("/api/users/{id}/mathscore", GetMathScore).Methods("GET")
+	r.HandleFunc("/api/users/{id}/setMath", setMathScore).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/setMatch", setMatchScore).Methods("PUT")
+	
+    
 	//r.HandleFunc("/api/test", login).Methods("POST")
 
 	//adds CORS middleware
