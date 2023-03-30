@@ -179,7 +179,7 @@ describe('MathComponent', () => {
 ```
 
 These are the unit test cases for the card matching game. Each test cases is individually explained about what it does directly above the case.
-``` go
+```go
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { CardComponent } from './card.component';
@@ -322,8 +322,7 @@ This is an overview of the unit tests for the code implementation. The code pack
 
 ## TestLogin()
 This test function ensures that the login endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /login endpoint with a username and password in the request body. The login function is then called with the response recorder and request objects. The function returns a JSON response with a message stating whether the login was successful or not. The test asserts that the response status code is 200 OK and that the response body contains the expected message.
-```
-go
+```go
 	func TestLogin(t *testing.T) {
 	// Initialize a new router instance and register the Login function as a handler for the POST request
 	r := mux.NewRouter()
@@ -359,8 +358,7 @@ go
 ```
 ## TestGetUser()
 This test function ensures that the getUser endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /users/{id} endpoint with an id of 1. The getUser function is then called with the response recorder and request objects. The function returns a JSON response with user data. The test asserts that the response status code is 200 OK and that the response body contains the expected user data.
-```
-go
+```go
 	func TestGetUser(t *testing.T) {
 	// Initialize a new router instance and register the GetUser function as a handler for the GET request
 	r := mux.NewRouter()
@@ -403,33 +401,30 @@ go
 	}
 }
 ```
-## TestUpdateUser()
-This test function ensures that the updateUser endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /users/{id} endpoint with an id of 1 and a request body containing updated user data. The updateUser function is then called with the response recorder and request objects. The function updates the user data in the MySQL database. The test asserts that the response status code is 200 OK and that the updated user data in the database matches the request body data.
-```func TestUpdateUser(t *testing.T) {
-	// Initialize a new router instance and register the UpdateUser function as a handler for the PUT request
+## TestUpdateUsername()
+This test function ensures that the updateUsername endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /users/{id}/name endpoint with an id of 1 and a request body containing the updated username. The updateUsername function is then called with the response recorder and request objects. The function updates the username in the MySQL database. The test asserts that the response status code is 200 OK and that the updated username in the database matches the request body data.
+```go
+func TestUpdateUsername(t *testing.T) {
+	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
 	r := mux.NewRouter()
-	r.HandleFunc("/users/{id}", UpdateUser).Methods("PUT")
+	r.HandleFunc("/users/{id}/name", UpdateUsername).Methods("PUT")
 
 	// Create a new instance of httptest.ResponseRecorder to record the response
 	w := httptest.NewRecorder()
 
-	// Create a new request to the /users/{id} endpoint with an id of 1 and a request body containing updated user data
+	// Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
 	updateUser := User{
-		UserName:  "vishalj0525",
-		Password:  "wack",
-		FirstName: "Vishal",
-		LastName:  "Janapati",
-		Email:     "vjanapati05@gmail.com",
+		UserName: "newusername",
 	}
 	updateUserJSON, _ := json.Marshal(updateUser)
-	req, err := http.NewRequest("PUT", "/users/1", bytes.NewReader(updateUserJSON))
+	req, err := http.NewRequest("PUT", "/users/1/name", bytes.NewReader(updateUserJSON))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Call the UpdateUser function with the response recorder and request objects
+	// Call the UpdateUsername function with the response recorder and request objects
 	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-	UpdateUser(w, req)
+	UpdateUsername(w, req)
 
 	// Assert that the response status code is 200 OK
 	if status := w.Code; status != http.StatusOK {
@@ -442,18 +437,71 @@ This test function ensures that the updateUser endpoint works as expected. It cr
 	DB.First(&updatedUser, 1)
 
 	// Assert that the updated user data in the database matches the request body data
-	if updatedUser.UserName != updateUser.UserName || updatedUser.Password != updateUser.Password ||
-		updatedUser.FirstName != updateUser.FirstName || updatedUser.LastName != updateUser.LastName ||
-		updatedUser.Email != updateUser.Email {
-		t.Errorf("Handler did not update user data correctly: got %v want %v",
+	if updatedUser.UserName != updateUser.UserName {
+		t.Errorf("Handler did not update username data correctly: got %v want %v",
+			updatedUser.UserName, updateUser.UserName)
+	}
+
+	// Assert that the updated user data in the database does not match the data for other fields
+	if updatedUser.Password != "wack" || updatedUser.FirstName != "Vishal" ||
+		updatedUser.LastName != "Janapati" || updatedUser.Email != "vjanapati05@gmail.com" {
+		t.Errorf("Handler updated other user data: got %v want %v",
+			updatedUser, updateUser)
+	}
+}
+```
+## TestUpdateEmail()
+This test function ensures that the updateEmail endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /users/{id}/email endpoint with an id of 1 and a request body containing the updated email address. The updateEmail function is then called with the response recorder and request objects. The function updates the email address in the MySQL database. The test asserts that the response status code is 200 OK and that the updated email address in the database matches the request body data.
+```go
+func TestUpdateUsername(t *testing.T) {
+	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
+	r := mux.NewRouter()
+	r.HandleFunc("/users/{id}/name", UpdateUsername).Methods("PUT")
+
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
+
+	// Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
+	updateUser := User{
+		UserName: "newusername",
+	}
+	updateUserJSON, _ := json.Marshal(updateUser)
+	req, err := http.NewRequest("PUT", "/users/1/name", bytes.NewReader(updateUserJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the UpdateUsername function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	UpdateUsername(w, req)
+
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Retrieve the updated user from the database
+	var updatedUser User
+	DB.First(&updatedUser, 1)
+
+	// Assert that the updated user data in the database matches the request body data
+	if updatedUser.UserName != updateUser.UserName {
+		t.Errorf("Handler did not update username data correctly: got %v want %v",
+			updatedUser.UserName, updateUser.UserName)
+	}
+
+	// Assert that the updated user data in the database does not match the data for other fields
+	if updatedUser.Password != "wack" || updatedUser.FirstName != "Vishal" ||
+		updatedUser.LastName != "Janapati" || updatedUser.Email != "vjanapati05@gmail.com" {
+		t.Errorf("Handler updated other user data: got %v want %v",
 			updatedUser, updateUser)
 	}
 }
 ```
 ## TestSignUp()
 This test function ensures that the signUp endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /signUp endpoint with a JSON request body containing user data. The signUp function is then called with the response recorder and request objects. The function adds the new user data to the MySQL database. The test asserts that the response status code is 200 OK and that the new user data is correctly added to the database.
-```
-go
+```go
 	func TestSignUp(t *testing.T) {
 	// Initialize a new router instance and register the signUp function as a handler for the POST request
 	r := mux.NewRouter()
@@ -521,8 +569,7 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 
 The initializeRouter() function creates a router using the Gorilla Mux package. The API endpoints are then defined using the r.HandleFunc() function. Finally, CORS middleware is added to the router using the cors.New() and c.Handler() functions. The server is then launched using the http.ListenAndServe() function.
 
-```
-go
+```go
 func initializeRouter() {
 	r := mux.NewRouter() //creates the router
 
@@ -548,9 +595,7 @@ func initializeRouter() {
 
 ## main()
 The main() function is the entry point of the program. It calls the InitialMigration() and initializeRouter() functions.
-```
-go
-Copy code
+```go
 func main() {
 	InitialMigration()
 	initializeRouter()
@@ -559,8 +604,7 @@ func main() {
 
 ## InitialMigration()
 The InitialMigration() function initializes a connection to the database and runs the migrations. It uses the GORM package to connect to the database using the gorm.Open() function. It then runs the migrations using the DB.AutoMigrate() function.
-```
-go
+```go
 func InitialMigration() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
 	if err != nil {
@@ -573,8 +617,7 @@ func InitialMigration() {
 
 ## GetUser()
 The GetUser() function retrieves a user from the database by their ID using the mux.Vars() function to get the ID from the request parameters and the DB.First() function to query the database. It then returns the user as a JSON-encoded response using the json.NewEncoder() function.
-```
-go
+```go
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -587,22 +630,49 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 ## UpdateUsername()
 UpdateUsername() is a handler function for updating a user's username. It accepts an HTTP request with a user ID parameter and the updated username information in the request body, updates the username in the database, and returns the updated username as a JSON response.
-```
-go
-put the username code here
+```go
+func UpdateUsername(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	username, ok := data["username"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing username field"})
+		return
+	}
+	user.UserName = username
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
 }
 ```
 ## UpdateEmail()
 UpdateEmail() is a handler function for updating a user's email address. It accepts an HTTP request with a user ID parameter and the updated user email address information in the request body, updates the email address in the database, and returns the updated email address information as a JSON response.
-```
-go
-put the email code here
+```go
+func UpdateEmail(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	email, ok := data["email"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing email field"})
+		return
+	}
+	user.Email = email
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
 }
 ```
 ## DeleteUser()
 DeleteUser() is a handler function for deleting a user's information. It accepts an HTTP request with a user ID parameter, deletes the user from the database, and returns a success message as a JSON response.
-```
-go 
+```go 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -613,8 +683,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 ```
 ## login()
 login() is a handler function for authenticating a user. It accepts an HTTP request with a user's login credentials in the request body, queries the database for the user with the given username and password, and returns a success message as a JSON response if the user exists in the database.
-```
-go
+```go
 func login(w http.ResponseWriter, r *http.Request) {
 	//Parse the login credentials from the request body
 	var user User
@@ -639,8 +708,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 ```
 ## SignUp()
 signUp() is a handler function for registering a new user. It accepts an HTTP request with a user's registration credentials in the request body, queries the database for an existing user with the same username or email, creates a new user if no user is found, and returns a success message as a JSON response.
-```
-go
+```go
 func signUp(w http.ResponseWriter, r *http.Request) {
 	// Parse the sign-up credentials from the request body
 	var user User
