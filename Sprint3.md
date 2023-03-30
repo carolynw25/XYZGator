@@ -1,5 +1,11 @@
 # Work completed in Sprint 3
 ## Frontend
+- Created two games: a matching game and a math game
+	- Matching game (completely finished):
+	- Math Game (missing a few points): Has a timer, keeps a score, and shows wrong answers and changes questions when the right answers
+- Linked frontEnd to backEnd for signUp page to create new users
+- Made a file to help retrieve the ID from the backend (to help get user data in the future)
+- Modified signUp and signIn page to look neater and more centered
 ## Backend
 - Created function to get the user's ID when needed
 - Updated signup function so that the password is hashed - this provides more security for the user's information
