@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-math',
@@ -183,7 +183,7 @@ export class MathComponent implements OnInit {
     
   }
 
-  constructor(public router: Router) {
+  constructor(public router: Router, private route: ActivatedRoute) {
     //the numbers
     this.generateNumbers();
     //start timer
@@ -232,7 +232,7 @@ export class MathComponent implements OnInit {
         this.seconds = 59;
         this.minutes--;
       }
-      if (this.minutes === 0 && this.seconds === 0) {
+      if (this.minutes === 0 && this.seconds === 0 && this.router.url === '/game2') {
         clearInterval(this.timer);
         //update high score
         if (this.numCorrect > this.highScore) {
