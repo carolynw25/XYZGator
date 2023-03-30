@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
     </div>
     <div class="timer"> timer: {{ minutes }}:{{ seconds | number: '2.0' }}</div>
     <div class="return">
-      <button (click)="reset()" routerLink="/notifications">Return</button>
+      <button (click)="stopTimer()" routerLink="/notifications">Return</button>
     </div>
   </div>
   <div class="container">
@@ -197,7 +197,9 @@ export class MathComponent implements OnInit {
     this.stopTimer();
     this.startTimer();
     this.numCorrect = 0;
-    
+    //numbers
+    this.number1 = Math.floor(Math.random() * 15) + 1;
+    this.number2 = Math.floor(Math.random() * 15) + 1;
 
     // Remove the "incorrect" class from all number elements
     const numberElements = document.querySelectorAll('.number');
@@ -209,7 +211,7 @@ export class MathComponent implements OnInit {
 
   startTimer() {
     //count down from 1 minute
-    const startingTime = 60; // Start from 1 minute (60 seconds) (+ a second for loading time)
+    const startingTime = 6; // Start from 1 minute (60 seconds) (+ a second for loading time)
     this.minutes = Math.floor(startingTime / 60);
     this.seconds = startingTime % 60;
   
@@ -223,8 +225,22 @@ export class MathComponent implements OnInit {
       if (this.minutes === 0 && this.seconds === 0) {
         clearInterval(this.timer);
         Swal.fire({
-          title: 'Time is up!',
-          icon: 'error'
+          title: `Congratulations, you won in=!`,
+          text: `Lowest Time  ' (newwwww)' : ''}`,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+          padding: '3em',
+          color: '#716add',
+          //background: '#fab url("assets/img/cuteGator.png")',
+          ...(this.newRecord? {
+            backdrop: `
+            rgba(0,0,123,0.4)
+            url("assets/img/nyan-cat-gif.webp")
+            left top
+            no-repeat
+          `
+          } : {})
         });
         //this.lowestTime = { minutes: 1, seconds: 0 };
         return;
