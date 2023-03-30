@@ -494,7 +494,7 @@ go
 }
 ```
 
-# Updated documentation for your backend API
+# Updated documentation for backend API
 This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 
 ## Prerequisites
