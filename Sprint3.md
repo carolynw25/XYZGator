@@ -627,7 +627,19 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 }
 ```
-
+## UpdateUser()
+UpdateUser() is a handler function for updating a user's information. It accepts an HTTP request with a user ID parameter and the updated user information in the request body, updates the new information in the database, and returns the updated information as a JSON response.
+```go
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewDecoder(r.Body).Decode(&user)
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+```
 ## UpdateUsername()
 UpdateUsername() is a handler function for updating a user's username. It accepts an HTTP request with a user ID parameter and the updated username information in the request body, updates the username in the database, and returns the updated username as a JSON response.
 ```go
