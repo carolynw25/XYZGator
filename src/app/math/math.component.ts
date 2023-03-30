@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
   template: `
 <div class ="outer">
   <div class="top-bar">
-  <div class="correct-count">Correct: {{ numCorrect }}</div>
-    <div class="highScore"> HighScore: 0 </div>
+  <div class="correct-count">Current Score: {{ numCorrect }}</div>
+    <div class="highScore"> High Score: {{ highScore }} </div>
     <div class="reset">
       <button (click)="reset()">Reset</button>
     </div>
@@ -132,6 +132,7 @@ export class MathComponent implements OnInit {
   //numClicked = false;
   numClicked: number = null;
   numCorrect: number = 0;
+  highScore: number = 0;
 
 
   generateNumbers() {
@@ -147,7 +148,11 @@ export class MathComponent implements OnInit {
     }
   }
   checkSum(clickedNumber: number) {
-    if (clickedNumber === (this.number1 + this.number2)) {
+    if (this.minutes === 0 && this.seconds === 0){
+      
+    }
+    else{
+      if (clickedNumber === (this.number1 + this.number2)) {
       this.numCorrect++;
       // Swal.fire({
       //   title: 'Congratulations!',
@@ -155,25 +160,27 @@ export class MathComponent implements OnInit {
       //   icon: 'success'
       // });
 
-    // Change the number1 and number2 variables to generate a new problem
-    this.number1 = Math.floor(Math.random() * 15) + 1;
-    this.number2 = Math.floor(Math.random() * 15) + 1;
+      // Change the number1 and number2 variables to generate a new problem
+      this.number1 = Math.floor(Math.random() * 15) + 1;
+      this.number2 = Math.floor(Math.random() * 15) + 1;
 
-    // Reset the numClicked variable to null
-    this.numClicked = null;
+      // Reset the numClicked variable to null
+      this.numClicked = null;
 
-    // Remove the "incorrect" class from all number elements
-    const numberElements = document.querySelectorAll('.number');
-    numberElements.forEach((element) => {
-      element.classList.remove('incorrect');
-    });
-    } else {
-      const clickedElement = event.target as HTMLElement;
-      clickedElement.classList.remove('clickable');
-      clickedElement.classList.add('incorrect');
-      //clickedElement.classList.add('correct');
+      // Remove the "incorrect" class from all number elements
+      const numberElements = document.querySelectorAll('.number');
+      numberElements.forEach((element) => {
+        element.classList.remove('incorrect');
+      });
+      } else {
+        const clickedElement = event.target as HTMLElement;
+        clickedElement.classList.remove('clickable');
+        clickedElement.classList.add('incorrect');
+        //clickedElement.classList.add('correct');
 
+      }
     }
+    
   }
 
   constructor(public router: Router) {
@@ -185,6 +192,8 @@ export class MathComponent implements OnInit {
     //numbers
     this.number1 = Math.floor(Math.random() * 15) + 1;
     this.number2 = Math.floor(Math.random() * 15) + 1;
+    //new record
+    this.newRecord = false;
     
   }
   ngOnInit(): void {
@@ -197,6 +206,7 @@ export class MathComponent implements OnInit {
     this.stopTimer();
     this.startTimer();
     this.numCorrect = 0;
+    this.newRecord = false;
     //numbers
     this.number1 = Math.floor(Math.random() * 15) + 1;
     this.number2 = Math.floor(Math.random() * 15) + 1;
@@ -211,7 +221,7 @@ export class MathComponent implements OnInit {
 
   startTimer() {
     //count down from 1 minute
-    const startingTime = 6; // Start from 1 minute (60 seconds) (+ a second for loading time)
+    const startingTime = 60; // Start from 1 minute (60 seconds) (+ a second for loading time)
     this.minutes = Math.floor(startingTime / 60);
     this.seconds = startingTime % 60;
   
@@ -224,14 +234,20 @@ export class MathComponent implements OnInit {
       }
       if (this.minutes === 0 && this.seconds === 0) {
         clearInterval(this.timer);
+        //update high score
+        if (this.numCorrect > this.highScore) {
+          this.highScore = this.numCorrect;
+          this.newRecord = true;
+        }
+
         Swal.fire({
-          title: `Congratulations, you won in=!`,
-          text: `Lowest Time  ' (newwwww)' : ''}`,
-          icon: 'success',
+          title: `Time is up, You got ${this.numCorrect} questions right!`,
+          text: `HighScore ${this.highScore}${this.newRecord ? ' (newwwww)' : ''}`,
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'OK',
           padding: '3em',
           color: '#716add',
+          allowOutsideClick: false,
           //background: '#fab url("assets/img/cuteGator.png")',
           ...(this.newRecord? {
             backdrop: `
@@ -242,7 +258,6 @@ export class MathComponent implements OnInit {
           `
           } : {})
         });
-        //this.lowestTime = { minutes: 1, seconds: 0 };
         return;
       }
     }, 1000);
