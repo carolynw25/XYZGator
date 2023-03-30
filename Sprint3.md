@@ -323,7 +323,7 @@ This is an overview of the unit tests for the code implementation. The code pack
 ## TestLogin()
 This test function ensures that the login endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /login endpoint with a username and password in the request body. The login function is then called with the response recorder and request objects. The function returns a JSON response with a message stating whether the login was successful or not. The test asserts that the response status code is 200 OK and that the response body contains the expected message.
 ```go
-	func TestLogin(t *testing.T) {
+func TestLogin(t *testing.T) {
 	// Initialize a new router instance and register the Login function as a handler for the POST request
 	r := mux.NewRouter()
 	r.HandleFunc("/login", login).Methods("POST")
@@ -502,43 +502,39 @@ func TestUpdateUsername(t *testing.T) {
 ## TestSignUp()
 This test function ensures that the signUp endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /signUp endpoint with a JSON request body containing user data. The signUp function is then called with the response recorder and request objects. The function adds the new user data to the MySQL database. The test asserts that the response status code is 200 OK and that the new user data is correctly added to the database.
 ```go
-	func TestSignUp(t *testing.T) {
-	// Initialize a new router instance and register the signUp function as a handler for the POST request
-	r := mux.NewRouter()
-	r.HandleFunc("/signUp", signUp).Methods("POST")
+func TestSignUp(t *testing.T) {
+    // Initialize a new router instance and register the SignUp function as a handler for the POST request
+    r := mux.NewRouter()
+    r.HandleFunc("/signup", signUp).Methods("POST")
 
-	// Create a new instance of httptest.ResponseRecorder to record the response
-	w := httptest.NewRecorder()
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
 
-	// Create a new request to the /signUp endpoint with sign-up credentials in the request body
-	signUpData := []byte(`{
-		"username": "vishalj0525",
-		"password": "wack",
-		"firstname": "Vishal",
-		"lastname": "Janapati",
-		"email": "vjanapati05@gmail.com"
-	}`)
-	req, err := http.NewRequest("POST", "/signUp", bytes.NewBuffer(signUpData))
-	if err != nil {
-		t.Fatal(err)
-	}
+    // Create a new request to the /signup endpoint with user data in the request body
+    userData := []byte({"username": "johnsmith", "password": "password123", "email": "johnsmith@example.com"})
+    req, err := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(userData))
+    if err != nil {
+        t.Fatal(err)
+    }
 
-	// Call the signUp function with the response recorder and request objects
-	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-	signUp(w, req)
+    // Call the SignUp function with the response recorder and request objects
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+    signUp(w, req)
 
-	// Assert that the response status code is 200 OK
-	if status := w.Code; status != http.StatusOK {
-		t.Errorf("Handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
 
-	// Assert that the response body contains the expected message
-	expectedMessage := "Sign-up Successful"
-	if !strings.Contains(w.Body.String(), expectedMessage) {
-		t.Errorf("Handler returned unexpected body: got %v want %v",
-			w.Body.String(), expectedMessage)
-	}
+    // Assert that the response body contains the user's ID
+    var user User
+    if err := json.Unmarshal(w.Body.Bytes(), &user); err != nil {
+        t.Errorf("Unable to parse response body: %v", err)
+    }
+    if user.ID == 0 {
+        t.Errorf("User not created, ID is 0")
+    }
 }
 ```
 
@@ -697,7 +693,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 login() is a handler function for authenticating a user. It accepts an HTTP request with a user's login credentials in the request body, queries the database for the user with the given username and password, and returns a success message as a JSON response if the user exists in the database.
 ```go
 func login(w http.ResponseWriter, r *http.Request) {
-	//Parse the login credentials from the request body
+	// Parse the login credentials from the request body
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -705,15 +701,22 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Query the database for the user with the given username and password
+	// Query the database for the user with the given username
 	var dbUser User
-	result := DB.Where("user_name = ? AND password = ?", user.UserName, user.Password).First(&dbUser)
+	result := DB.Where("user_name = ?", user.UserName).First(&dbUser)
 	if result.Error != nil {
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
-	//If the query was successful, return the user ID to the frontend
+	// Compare the hashed password of the user in the database with the hashed password of the user in the request body
+	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
+	if err != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
+
+	// If the passwords match, return the user ID to the frontend
 	response := "Login Successful"
 	json.NewEncoder(w).Encode(response)
 }
@@ -722,34 +725,18 @@ func login(w http.ResponseWriter, r *http.Request) {
 signUp() is a handler function for registering a new user. It accepts an HTTP request with a user's registration credentials in the request body, queries the database for an existing user with the same username or email, creates a new user if no user is found, and returns a success message as a JSON response.
 ```go
 func signUp(w http.ResponseWriter, r *http.Request) {
-	// Parse the sign-up credentials from the request body
-	var user User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
+    w.Header().Set("Content-Type", "application/json")
+    var user User
+    json.NewDecoder(r.Body).Decode(&user)
 
-	// Query the database for an existing user with the same username or email
-	var dbUser User
-	result := DB.Where("user_name = ? OR email = ?", user.UserName, user.Email).First(&dbUser)
-	if result.RowsAffected > 0 {
-		http.Error(w, "User Name or email already taken", http.StatusConflict)
-		return
-	}
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+    if err != nil {
+        http.Error(w, "Error hashing password", http.StatusInternalServerError)
+        return
+    }
 
-	// If no user is found, create a new user with the passed-in credentials
-	newUser := User{
-		UserName:  user.UserName,
-		Password:  user.Password,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-	}
-	DB.Create(&newUser)
-
-	// Return the new user's ID to the frontend
-	response := "Sign-up Successful"
-	json.NewEncoder(w).Encode(response)
+    user.Password = string(hashedPassword)
+    DB.Create(&user)
+    json.NewEncoder(w).Encode(user)
 }
 ```
