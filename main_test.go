@@ -89,7 +89,83 @@ func TestGetUser(t *testing.T) {
 			w.Body.String(), string(expectedUserJSON))
 	}
 }
+func TestUpdateEmail(t *testing.T) {
+    // Initialize a new router instance and register the UpdateFirstName function as a handler for the PUT request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}/email", UpdateEmail).Methods("PUT")
 
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/firstname endpoint with an id of 1 and a request body containing updated user data
+    updateUser := User{
+        Email: "randomemail@something.com",
+    }
+    updateUserJSON,  := json.Marshal(updateUser)
+    req, err := http.NewRequest("PUT", "/users/1/email", bytes.NewReader(updateUserJSON))
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Call the UpdateFirstName function with the response recorder and request objects
+    DB,  = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+    UpdateEmail(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+
+    // Retrieve the updated user from the database
+    var updatedUser User
+    DB.First(&updatedUser, 1)
+
+    // Assert that the updated user data in the database matches the request body data
+    if updatedUser.Email != updateUser.Email {
+        t.Errorf("Handler did not update user data correctly: got %v want %v",
+            updatedUser.Email, updateUser.Email)
+    }
+}
+func TestUpdateUsername(t *testing.T) {
+    // Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}/name", UpdateUsername).Methods("PUT")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
+    updateUser := User{
+        UserName: "newusername",
+    }
+    updateUserJSON,  := json.Marshal(updateUser)
+    req, err := http.NewRequest("PUT", "/users/1/name", bytes.NewReader(updateUserJSON))
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Call the UpdateUsername function with the response recorder and request objects
+    DB,  = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+    UpdateUsername(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+
+    // Retrieve the updated user from the database
+    var updatedUser User
+    DB.First(&updatedUser, 1)
+
+    // Assert that the updated user data in the database matches the request body data
+    if updatedUser.UserName != updateUser.UserName {
+        t.Errorf("Handler did not update username data correctly: got %v want %v",
+            updatedUser.UserName, updateUser.UserName)
+    }
+}
+/*
 func TestUpdateUser(t *testing.T) {
 	// Initialize a new router instance and register the UpdateUser function as a handler for the PUT request
 	r := mux.NewRouter()
@@ -133,42 +209,38 @@ func TestUpdateUser(t *testing.T) {
 		t.Errorf("Handler did not update user data correctly: got %v want %v",
 			updatedUser, updateUser)
 	}
-}
+}*/
 func TestSignUp(t *testing.T) {
-	// Initialize a new router instance and register the signUp function as a handler for the POST request
-	r := mux.NewRouter()
-	r.HandleFunc("/signUp", signUp).Methods("POST")
+    // Initialize a new router instance and register the SignUp function as a handler for the POST request
+    r := mux.NewRouter()
+    r.HandleFunc("/signup", signUp).Methods("POST")
 
-	// Create a new instance of httptest.ResponseRecorder to record the response
-	w := httptest.NewRecorder()
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
 
-	// Create a new request to the /signUp endpoint with sign-up credentials in the request body
-	signUpData := []byte(`{
-		"username": "random",
-		"password": "random",
-		"firstname": "random",
-		"lastname": "random",
-		"email": "random@example.com"
-	}`)
-	req, err := http.NewRequest("POST", "/signUp", bytes.NewBuffer(signUpData))
-	if err != nil {
-		t.Fatal(err)
-	}
+    // Create a new request to the /signup endpoint with user data in the request body
+    userData := []byte({"username": "johnsmith", "password": "password123", "email": "johnsmith@example.com"})
+    req, err := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(userData))
+    if err != nil {
+        t.Fatal(err)
+    }
 
-	// Call the signUp function with the response recorder and request objects
-	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-	signUp(w, req)
+    // Call the SignUp function with the response recorder and request objects
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+    signUp(w, req)
 
-	// Assert that the response status code is 200 OK
-	if status := w.Code; status != http.StatusOK {
-		t.Errorf("Handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
 
-	// Assert that the response body contains the expected message
-	expectedMessage := "Sign-up Successful"
-	if !strings.Contains(w.Body.String(), expectedMessage) {
-		t.Errorf("Handler returned unexpected body: got %v want %v",
-			w.Body.String(), expectedMessage)
-	}
+    // Assert that the response body contains the user's ID
+    var user User
+    if err := json.Unmarshal(w.Body.Bytes(), &user); err != nil {
+        t.Errorf("Unable to parse response body: %v", err)
+    }
+    if user.ID == 0 {
+        t.Errorf("User not created, ID is 0")
+    }
 }
