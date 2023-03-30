@@ -133,7 +133,7 @@ describe('MathComponent', () => {
     expect(window.clearInterval).toHaveBeenCalled();
   });
 
-  // it('should navigate to "/notifications" when the return button is clicked', () => {
+  // it('should navigate to game page when the return button is clicked', () => {
   //   spyOn(component['router'], 'navigate');
   //   const button = fixture.debugElement.query(By.css('.return')).nativeElement;
   //   button.click();
