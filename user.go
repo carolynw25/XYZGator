@@ -169,19 +169,36 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func signUp(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
-    var user User
-    json.NewDecoder(r.Body).Decode(&user)
 
+    // Parse the signup details from the request body
+    var user User
+    err := json.NewDecoder(r.Body).Decode(&user)
+    if err != nil {
+        http.Error(w, "Error parsing request body", http.StatusBadRequest)
+        return
+    }
+
+    // Check if the username already exists in the database
+    var existingUser User
+    result := DB.Where("user_name = ?", user.UserName).First(&existingUser)
+    if result.Error == nil {
+        http.Error(w, "User already taken", http.StatusBadRequest)
+        return
+    }
+
+    // Hash the password before storing in the database
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
     if err != nil {
         http.Error(w, "Error hashing password", http.StatusInternalServerError)
         return
     }
-
     user.Password = string(hashedPassword)
+
+    // Create the user in the database
     DB.Create(&user)
     json.NewEncoder(w).Encode(user)
 }
+
 func UpdateUsername(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     params := mux.Vars(r)
