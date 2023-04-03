@@ -310,37 +310,15 @@ func GetMathScore(w http.ResponseWriter, r *http.Request) {
 }
 
 func setMathScore(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
+	id := params["id"]
 	var user User
-	result := DB.First(&user, params["id"])
-	if result.Error != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
-	}
-
-	// Parse the new math score from the request body
-	var score struct {
-		Score int `json:"mathScore"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&score)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
-
-	// Update the user's math score if the new score is higher
-	if score.Score > user.MathScore {
-		user.MathScore = score.Score
-		result = DB.Save(&user)
-		if result.Error != nil {
-			http.Error(w, "Error updating math score", http.StatusInternalServerError)
-			return
-		}
-	}
-
-	json.NewEncoder(w).Encode(user)
+	DB.First(&user, id)
+	json.NewDecoder(r.Body).Decode(&user)
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user.MathScore)
 }
+
 
 func setMatchScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
