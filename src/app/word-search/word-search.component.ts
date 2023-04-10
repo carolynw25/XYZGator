@@ -1,22 +1,43 @@
 import { Component, OnInit } from '@angular/core';
+import Swal from 'sweetalert2';
 
 interface coord {
-  columnIndex: number;
-  rowIndex: number;
+  cIndex: number;
+  rIndex: number;
 }
 
 @Component({
  selector: 'app-word-search',
  template: `
 <div class ="outer">
- <table>
-   <tr *ngFor="let row of grid; let i = index">
-    <td 
-    *ngFor="let letter of row; let j = index"
-    [class.selected]="isSelected(i, j)"
-    (click)="selectLetter(i, j)">{{ letter }}</td>
-   </tr>
- </table>
+  <div class="top-bar">
+    <div class="lowestTime">
+      <div *ngIf="lowestTime !== null" class="lowest-time"> lowestTime: {{ lowestTime.minutes }}:{{ lowestTime.seconds | number: '2.0' }}</div>
+      <div *ngIf="lowestTime == null" class="lowest-time"> lowestTime: </div>
+    </div>
+    <div class="reset">
+      <button (click)="reset()">Reset</button>
+    </div>
+    <div class="timer"> timer: {{ minutes }}:{{ seconds | number: '2.0' }}</div>
+    <div class="return">
+      <button routerLink="/notifications">Return</button>
+    </div>
+  </div>
+  <div class="w">Words to find: (fruit category)</div>
+  <ul>
+    <li *ngFor="let word of words">{{ word }} {{ highlightedWords.includes(word) ? ' (found)' : '' }}</li>
+  </ul>
+  <div class="w">Word just highlighted: {{ highlightedWords[highlightedWords.length-1] }} / {{ highlightedWords[highlightedWords.length-2] }} </div>
+  <table>
+    <tr *ngFor="let row of grid; let i = index">
+      <td 
+      *ngFor="let letter of row; let j = index"
+      [class.selected]="isSelected(i, j)"
+      (click)="selectLetter(i, j)">
+      {{ letter }}
+      </td>
+    </tr>
+  </table>
 </div>
 `,
  styles: [`
@@ -34,20 +55,102 @@ interface coord {
   cursor: pointer;
 }
 td.selected {
-  background-color: yellow;
+  background-color: rgba(30, 30, 255, 0.314);
 }
+.top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .lowestTime{
+      font-size: 1.5rem;
+      text-align: left;
+      justify-content: flex-start;
+    }
+    .timer {
+      font-size: 1.5rem;
+      text-align: left;
+      justify-content: flex-start;
+    }
+    .reset{
+      font-size: 1.5rem;
+      margin-right: 20px;
+      justify-content: center;
+    }
+    .return{
+      font-size: 1.5rem;
+      margin-right: 20px;
+      justify-content: flex-end;
+    }
 
  `]
 })
 export class WordSearchComponent implements OnInit {
-  words: string[] = ['HHHHH', 'ZZZZZZZ', 'PPPPPPP'];
+  //words should be limited to 10 letters
+  possibleWords: string[] = ['APPLE', 'APRICOT', 'AVOCADO', 'BANANA', 'BLACKBERRY','BLUEBERRY','CANTALOUPE','CHERRY','COCONUT','CRANBERRY','DATE','ELDERBERRY','FIG','GRAPE','GRAPEFRUIT','GUAVA','HONEYDEW','JACKFRUIT','KIWI','KUMQUAT','LEMON','LIME','LYCHEE','MANGO','MULBERRY','NECTARINE','ORANGE','PAPAYA','PEACH','PEAR','PINEAPPLE','PLUM','QUINCE','RASPBERRY','REDCURRANT','STARFRUIT','STRAWBERRY','TANGERINE','WATERMELON','ACEROLA','APPLEBERRY','CARAMBOLA','CHERIMOYA','CURRANT','DEWBERRY','DURIAN','JAMBUL','LYCHEE','LONGAN','LOQUAT','MANDARIN','MAMEY','MARULA','PAPAW','QUINCE','CHERRY','CUCUMBER']
+  words: string[] = [];
   grid: string[][] = [];
-  columnNum: number = 20;
+  columnNum: number = 25;
   rowNum: number = 10;
+  //other stuff
+  minutes = 0;
+  seconds = 0;
+  timer: any;
+  lowestTime = null;
+  newRecord = false;
+
+  startTimer() {
+    this.timer = setInterval(() => {
+      if (this.seconds < 59) {
+        this.seconds++;
+      } else {
+        this.minutes++;
+        this.seconds = 0;
+      }
+    }, 1000);
+  }
+
+  stopTimer() {
+    clearInterval(this.timer);
+    this.minutes = 0;
+    this.seconds = 0;
+  }
 
   ngOnInit(): void {
-    this.generateGrid();
+    this.reset()
   }
+
+  reset() {
+    //start timer
+    this.stopTimer();
+    this.startTimer();
+    this.newRecord = false;
+    //others
+    this.highlightedWords.splice(0,this.highlightedWords.length);
+    this.coords.splice(0,this.coords.length);
+    this.words.splice(0,this.words.length);
+    this.wordsFound = 0;
+    this.start = false;
+    //random words from possibleWords list
+    let added = 0;
+    while (added !==5){
+      let found = false;
+      let x = Math.floor(Math.random() * this.possibleWords.length);
+      for (let i = 0; i < this.words.length; i++){
+        if (this.words[i] === this.possibleWords[x]){
+          found = true;
+        }
+      }
+      if (found === false){
+        this.words.push(this.possibleWords[x]);
+        added++;
+      }
+    }
+    //generate grid
+    this.generateGrid();
+
+  }
+
 
   canPlaceWord(word: string, startX: number, startY: number, directionX: number, directionY: number): number[][] | null {
     // Check if the word can be placed in the grid
@@ -156,149 +259,194 @@ direction: number | null = null;
 length: number | null = null;
 
 coords: coord[] = [];
-selectedStartIndex: number | null = null;
-selectedEndIndex: number | null = null;
+start: boolean = false;
 
+highlightedWords: string[] = [];
 
-// selectLetter(rowIndex: number, colIndex: number): void {
-//   if (this.selectedStartIndex === null) {
-//     // Set the start index if it hasn't been set yet
-//     this.selectedStartIndex = colIndex + rowIndex * this.columnNum;
-//     this.startRow = rowIndex;
-//     this.startCol = colIndex;
-    
-//     // Set the end index to highlight the whole column
-//     this.selectedEndIndex = colIndex + (this.rowNum - 1) * this.columnNum;
-//     this.endRow = this.rowNum - 1;
-//     this.endCol = colIndex;
-//   } 
-//   else if (this.selectedEndIndex === null) {
-//     // Set the end index if it hasn't been set yet
-//     this.selectedEndIndex = colIndex + rowIndex * this.columnNum;
-//     this.endRow = rowIndex;
-//     this.endCol = colIndex;
-//   } 
-//   else {
-//     // Clear the start and end indices if both have been set
-//     this.selectedStartIndex = colIndex + rowIndex * this.columnNum;
-//     this.startRow = rowIndex;
-//     this.startCol = colIndex;
-//     this.selectedEndIndex = null;
-//     this.endRow = null;
-//     this.endCol = null;
-//   }
-// }
+wordsFound: number = 0;
+
 
 selectLetter(rowIndex: number, colIndex: number): void {
-  console.log('row:' + rowIndex);
-  console.log('column: ' + colIndex);
-
+  // console.log('row:' + rowIndex);
+  // console.log('column: ' + colIndex);
+  let newWord:string = '';
   this.length = 5;
-  // Set the start index if it hasn't been set yet
-  this.selectedStartIndex = colIndex + rowIndex * this.columnNum;
-  this.startRow = rowIndex;
-  this.startCol = colIndex;
-  
-  // Set the end index to highlight the whole column
-  this.selectedEndIndex = colIndex + (this.rowNum - 1) * this.columnNum;
-  this.endRow = this.rowNum - 1;
-  this.endCol = colIndex;
+  this.direction = 0;
 
+  if(this.start === false){ //start point
+    this.start = true;
+    this.startRow = rowIndex;
+    this.startCol = colIndex;
+  }
+  else{ //end point
+    this.start = false;
+    this.endRow = rowIndex;
+    this.endCol = colIndex;
+    //find direction and length
+    if(this.startRow !== this.endRow && this.startCol === this.endCol){//vertical
+      this.direction = 0;
+      this.length = this.endRow - this.startRow;
+    }
+    else if (this.startRow === this.endRow && this.startCol !== this.endCol){//horizontal
+      this.direction = 1;
+      this.length = this.endCol - this.startCol;
+    }
+    else if (this.endCol > this.startCol && this.endRow > this.startRow){ //bottom right so down diagonal
+      this.direction = 3;
+      this.length = this.endCol - this.startCol;
+    }
+    else if (this.endCol < this.startCol && this.endRow < this.startRow){ //top left so down diagonal
+      this.direction = 3;
+      this.length = this.endCol - this.startCol;
+    }
+    else if (this.endCol < this.startCol && this.endRow > this.startRow){ //bottom left so up diagonal
+      this.direction = 2;
+      this.length = this.endCol - this.startCol;
+    }
+    else { //top right so up diagonal
+      this.direction = 2;
+      this.length = this.endCol - this.startCol;
+    }
+
+    if (this.direction === 2 || this.direction === 3){
+      if (Math.abs(this.endCol - this.startCol) !== Math.abs(this.endRow - this.startRow)){
+        this.highlightedWords.push("Incorrect Input")
+        this.highlightedWords.push("Incorrect Input")
+        return;
+      }
+    }
+
+    //got direction and length
+    //now we assign coords
+    if(this.direction == 0){ //vertical
+      if (this.length < 0){ //up
+        for (let i = this.length; i <= 0; i++){
+          newWord = newWord+this.grid[this.startRow + i][this.startCol];
+          this.coords.push({rIndex: this.startRow + i, cIndex: this.startCol});
+        }
+      }
+      if (this.length > 0){ //down
+        for (let i = 0; i <= this.length; i++){
+          newWord = newWord+this.grid[this.startRow + i][this.startCol];
+          this.coords.push({rIndex: this.startRow + i, cIndex: this.startCol});
+        }
+      }
+      
+    }
+    else if(this.direction == 1){ //horizontal
+      if (this.length < 0){ //left
+        for (let i = this.length; i <= 0; i++){
+          newWord = newWord+this.grid[this.startRow][this.startCol + i];
+          this.coords.push({rIndex: this.startRow, cIndex: this.startCol + i});
+        }
+      }
+      if (this.length > 0){ //right
+        for (let i = 0; i <= this.length; i++){
+          newWord = newWord+this.grid[this.startRow][this.startCol + i];
+          this.coords.push({rIndex: this.startRow, cIndex: this.startCol + i});
+        }
+      }
+
+    }
+    else if(this.direction == 2){ //up diagonal
+      if (this.length < 0){ //left
+        for (let i = this.length; i <= 0; i++){
+          newWord = newWord+this.grid[this.startRow - i][this.startCol + i];
+          this.coords.push({rIndex: this.startRow - i, cIndex: this.startCol + i});
+        }
+      }
+      if (this.length > 0){ //right
+        for (let i = 0; i <= this.length; i++){
+          newWord = newWord+this.grid[this.startRow - i][this.startCol + i];
+          this.coords.push({rIndex: this.startRow - i, cIndex: this.startCol + i});
+        }
+      }
+    }
+    else{//down diagonal
+      if (this.length < 0){ //left
+        for (let i = this.length; i <= 0; i++){
+          newWord = newWord+this.grid[this.startRow + i][this.startCol + i];
+          this.coords.push({rIndex: this.startRow + i, cIndex: this.startCol + i});
+        }
+      }
+      if (this.length > 0){ //right
+        for (let i = 0; i <= this.length; i++){
+          newWord = newWord+this.grid[this.startRow + i][this.startCol + i];
+          this.coords.push({rIndex: this.startRow + i, cIndex: this.startCol + i});
+        }
+      }
+    }
+    this.highlightedWords.push(newWord);
+    this.highlightedWords.push(newWord.split("").reverse().join(""));
+
+    //boolean in for loop
+    let found:boolean = false;
+    for (let i = 0; i <= this.words.length; i++){
+      if (this.words[i] === newWord || this.words[i] === newWord.split("").reverse().join("")){
+        found = true;
+      }
+    }
+    if (found === false){
+      setTimeout(() => {
+          this.coords.splice(this.coords.length - newWord.length, newWord.length);
+        }, 1000);
+    }
+    else{
+      //the highlight will stay
+
+      //check for winning condition
+      this.wordsFound ++;
+      if (this.wordsFound == this.words.length){//winning conditions
+        // update lowestTime if current time is lower than previous time
+        if (this.lowestTime === null || this.minutes < this.lowestTime.minutes || (this.minutes === this.lowestTime.minutes && this.seconds < this.lowestTime.seconds)) {
+          this.lowestTime = { minutes: this.minutes, seconds: this.seconds };
+          this.newRecord = true;
+        }
+        // Show win popup with time here
+        clearInterval(this.timer);
+        setTimeout(() => {
+          Swal.fire({
+            title: `Congratulations, you won in ${this.minutes}:${this.seconds < 10 ? '0' : ''}${this.seconds}!`,
+            text: `Lowest Time ${this.lowestTime.minutes}:${this.lowestTime.seconds < 10 ? '0' : ''}${this.lowestTime.seconds}${this.newRecord ? ' (newwwww)' : ''}`,
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            padding: '3em',
+            color: '#716add',
+            //background: '#fab url("assets/img/cuteGator.png")',
+            ...(this.newRecord? {
+              backdrop: `
+              rgba(0,0,123,0.4)
+              url("assets/img/nyan-cat-gif.webp")
+              left top
+              no-repeat
+            `
+            } : {})
+          });
+        }, 1000);
+
+      }
+
+
+
+
+    }
+    
+  }
 }
 
 
 isSelected(rowIndex: number, colIndex: number): boolean {
-  
-  if (
-    this.startRow !== null &&
-    this.startCol !== null &&
-    this.endRow !== null &&
-    this.endCol !== null
-  ) {
-    const start = this.startCol + this.startRow * this.columnNum;
-    const end = this.endCol + this.endRow * this.columnNum;
-    const current = colIndex + rowIndex * this.columnNum;
-    const min = Math.min(start, end);
-    const max = Math.max(start, end);
-    return current >= min && current <= max && colIndex === this.startCol;
+  if (this.coords.length !== 0){
+    for (let i = 0; i < this.coords.length; i++){
+      if (rowIndex===this.coords[i].rIndex && colIndex===this.coords[i].cIndex){
+        return true;
+      }
+    }
   }
   return false;
 }
 
 
-
-
-// selectLetter(rowIndex: number, colIndex: number): void {
-//   if (this.selectedStartIndex === null) {
-//     // Set the start index if it hasn't been set yet
-//     this.selectedStartIndex = colIndex + rowIndex * this.columnNum;
-//     this.startRow = rowIndex;
-//     this.startCol = colIndex;
-    
-//     // Set the end index to be the same as the start index
-//     this.selectedEndIndex = this.selectedStartIndex;
-//     this.endRow = this.startRow;
-//     this.endCol = this.startCol;
-//   } else {
-//     // Set the end index
-//     this.selectedEndIndex = colIndex + rowIndex * this.columnNum;
-//     this.endRow = rowIndex;
-//     this.endCol = colIndex;
-//   }
-// }
-
-// isSelected(rowIndex: number, colIndex: number): boolean {
-//   if (this.selectedStartIndex === null || this.selectedEndIndex === null) {
-//     return false;
-//   }
-  
-//   const index = colIndex + rowIndex * this.columnNum;
-//   if (index < this.selectedStartIndex || index > this.selectedEndIndex) {
-//     return false;
-//   }
-  
-//   // Determine the row and column of the start and end positions
-//   const startRow = Math.floor(this.selectedStartIndex / this.columnNum);
-//   const startCol = this.selectedStartIndex % this.columnNum;
-//   const endRow = Math.floor(this.selectedEndIndex / this.columnNum);
-//   const endCol = this.selectedEndIndex % this.columnNum;
-  
-//   // Check if the cell is on the same row or column as the start or end position
-//   if (rowIndex === startRow && rowIndex === endRow) {
-//     return colIndex >= startCol && colIndex <= endCol;
-//   } else if (colIndex === startCol && colIndex === endCol) {
-//     return rowIndex >= startRow && rowIndex <= endRow;
-//   }
-  
-//   // Check if the cell is on the diagonal line between the start and end positions
-//   const rowDiff = Math.abs(rowIndex - startRow);
-//   const colDiff = Math.abs(colIndex - startCol);
-//   if (rowDiff === colDiff) {
-//     const rowStep = rowIndex < startRow ? -1 : 1;
-//     const colStep = colIndex < startCol ? -1 : 1;
-//     let row = startRow + rowStep;
-//     let col = startCol + colStep;
-//     while (row !== endRow && col !== endCol) {
-//       if (row === rowIndex && col === colIndex) {
-//         return true;
-//       }
-//       row += rowStep;
-//       col += colStep;
-//     }
-//   }
-  
-//   return false;
-// }
-
-
-
-
-
-
-
-
-
-
- 
 
 }
