@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
       this.userIdService.setUserId(userID);
     }, error => {
       console.error(error);
-    });
+    })
   }
   onSubmit(): void {
   

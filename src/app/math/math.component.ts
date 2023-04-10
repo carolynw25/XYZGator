@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UserIdService } from 'app/userIdService';
+import { HttpClient } from '@angular/common/http';
+import {Observable} from 'rxjs';
+import { of } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-math',
@@ -134,6 +139,8 @@ export class MathComponent implements OnInit {
   numCorrect: number = 0;
   highScore: number = 0;
 
+  userID: number;
+
 
   generateNumbers() {
     let currentRow: number[] = [];
@@ -183,9 +190,13 @@ export class MathComponent implements OnInit {
     
   }
 
-  constructor(public router: Router, private route: ActivatedRoute) {
+  constructor(public router: Router, 
+    private route: ActivatedRoute, 
+    private userIDService: UserIdService, 
+    private http: HttpClient) {
     //the numbers
     this.generateNumbers();
+    //this.highScore = this.getUserScore(this.userID);
     //start timer
     this.stopTimer();
     this.startTimer();
@@ -199,6 +210,23 @@ export class MathComponent implements OnInit {
   ngOnInit(): void {
     //removed to fix unit test, don't think it's needed maybe
     //throw new Error('Method not implemented.');
+    this.userID = this.userIDService.getUserId();
+    console.log('User ID ohmygoditworked: ', this.userID);
+
+    // Get the user's high score
+    this.getUserScore(this.userID).pipe(
+      take(1) // take only the first value emitted by the observable
+    ).subscribe(score => {
+      this.highScore = score;
+      if (this.highScore < 0) {
+        this.highScore = 0;
+      }
+    });
+   
+  }
+  getUserScore(ID: number): Observable<number> {
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/mathscore'
+    return this.http.get<number>(url);
   }
 
   reset() {
@@ -238,6 +266,7 @@ export class MathComponent implements OnInit {
         if (this.numCorrect > this.highScore) {
           this.highScore = this.numCorrect;
           this.newRecord = true;
+          this.setUserScore(this.userID, this.highScore);
         }
 
         Swal.fire({
@@ -261,10 +290,6 @@ export class MathComponent implements OnInit {
         return;
       }
     }, 1000);
-
-
-
-
     //counts up from 0
     // this.timer = setInterval(() => {
     //   if (this.seconds < 59) {
@@ -274,6 +299,14 @@ export class MathComponent implements OnInit {
     //     this.seconds = 0;
     //   }
     // }, 1000);
+  }
+  setUserScore(ID: number, score: number): Observable<number> {
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+    //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
+    //console.log('WAH: ', score);
+    const body = { score: score };
+    return this.http.put<number>(url, body);
+    //return this.http.put<number>(url, {score});
   }
 
   stopTimer() {
