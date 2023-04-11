@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { of } from 'rxjs';
 import { take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
 
 @Component({
   selector: 'app-math',
@@ -124,7 +125,7 @@ styles: [`
 }
 `]
 })
-
+@Injectable()
 export class MathComponent implements OnInit {
   minutes = 1;
   seconds = 0;
@@ -300,13 +301,25 @@ export class MathComponent implements OnInit {
     //   }
     // }, 1000);
   }
-  setUserScore(ID: number, score: number): Observable<number> {
+  // setUserScore(ID: number, score: number): Observable<number> {
+  //   const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+  //   //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
+  //   //console.log('WAH: ', score);
+  //   const body = { score: score };
+  //   return this.http.put<number>(url, body);
+  //   //return this.http.put<number>(url, {score});
+  // }
+
+  setUserScore(ID: number, score: number) {
     const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
-    //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
-    //console.log('WAH: ', score);
-    const body = { score: score };
-    return this.http.put<number>(url, body);
-    //return this.http.put<number>(url, {score});
+    this.http.post(url, { score }).subscribe(
+      response => {
+        console.log('Math score set successfully:', response);
+      },
+      error => {
+        console.error('Error setting math score:', error);
+      }
+    )
   }
 
   stopTimer() {
