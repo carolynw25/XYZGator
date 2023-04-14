@@ -38,15 +38,27 @@ func initializeRouter() {
 
 	//adds CORS middleware
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
+		AllowedOrigins:   []string{"http://localhost:4200"},
 		AllowCredentials: true,
 	})
 	handler := c.Handler(r)
+	// add the Access-Control-Allow-Origin header
+	handler = func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+			w.Header().Set("Access-Control-Allow-Methods", "PUT")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			h.ServeHTTP(w, r)
+		})
+	}(handler)
+
 	//launch server
 	//log.Fatal(http.ListenAndServe(":9000", r))
 	log.Fatal(http.ListenAndServe("localhost:8080", handler))
 	//log.Fatal(http.ListenAndServe("128.227.1.31:61478", r))
 }
+
+
 
 func main() {
 	InitialMigration()
