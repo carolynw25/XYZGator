@@ -4,6 +4,7 @@ import { HelloWorldService } from './hello-world.service';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
 import { MathComponent } from './math/math.component';
+import { PictureGuessComponent } from './picture-guess/picture-guess.component';
 import { SignupComponent } from './signup/signup.component';
 import { WordSearchComponent } from './word-search/word-search.component';
 
@@ -14,6 +15,7 @@ export const AppRoutes: Routes = [
   {path:'game1',component:CardComponent},
   {path:'game2',component:MathComponent},
   {path:'game3',component:WordSearchComponent},
+  {path:'game4',component:PictureGuessComponent},
 
 
   {

@@ -267,7 +267,11 @@ export class MathComponent implements OnInit {
         if (this.numCorrect > this.highScore) {
           this.highScore = this.numCorrect;
           this.newRecord = true;
-          this.setUserScore(this.userID, this.highScore);
+          this.setUserScore(this.userID, this.highScore).subscribe(
+            () => console.log('Math score updated successfully'),
+            (err) => console.error('Error updating math score', err)
+          );
+          console.log('After: ', this.highScore);
         }
 
         Swal.fire({
@@ -301,26 +305,27 @@ export class MathComponent implements OnInit {
     //   }
     // }, 1000);
   }
-  // setUserScore(ID: number, score: number): Observable<number> {
-  //   const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
-  //   //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
-  //   //console.log('WAH: ', score);
-  //   const body = { score: score };
-  //   return this.http.put<number>(url, body);
-  //   //return this.http.put<number>(url, {score});
-  // }
-
-  setUserScore(ID: number, score: number) {
+  setUserScore(ID: number, score: number): Observable<number> {
     const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
-    this.http.post(url, { score }).subscribe(
-      response => {
-        console.log('Math score set successfully:', response);
-      },
-      error => {
-        console.error('Error setting math score:', error);
-      }
-    )
+    //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
+    console.log('WAH: ', score);
+    const body = { mathScore: score };
+    //const body = JSON.stringify{score};
+    return this.http.put<number>(url, body);
+    //return this.http.put<number>(url, {score});
   }
+
+  // setUserScore(ID: number, score: number) {
+  //   const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+  //   this.http.post(url, { score }).subscribe(
+  //     response => {
+  //       console.log('Math score set successfully:', response);
+  //     },
+  //     error => {
+  //       console.error('Error setting math score:', error);
+  //     }
+  //   )
+  // }
 
   stopTimer() {
     clearInterval(this.timer);
