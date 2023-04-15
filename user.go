@@ -26,6 +26,8 @@ type User struct {
     DeletedAt  time.Time `gorm:"-"`
     MatchScore int       `json:"matchScore" gorm:"default:-1"`
     MathScore  int       `json:"mathScore" gorm:"default:-1"`
+	WordScore  int       `json:"wordScore" gorm:"default:-1"`
+	AnimalScore int      `json:"animalScore" gorm:"default:-1"`
 }
 
 var DB *gorm.DB
@@ -66,7 +68,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user)
 	DB.Create(&user)
 	json.NewEncoder(w).Encode(user)
-
 }*/
 
 func getID(w http.ResponseWriter, r *http.Request) {
@@ -309,6 +310,22 @@ func GetMathScore(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(user.MathScore)
 }
 
+func GetWordScore(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    var user User
+    DB.First(&user, params["id"])
+    json.NewEncoder(w).Encode(user.MathScore)
+}
+
+func GetAnimalScore(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    var user User
+    DB.First(&user, params["id"])
+    json.NewEncoder(w).Encode(user.MathScore)
+}
+
 func setMathScore(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     params := mux.Vars(r)
@@ -319,37 +336,32 @@ func setMathScore(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(user)
 }
 
-
-
 func setMatchScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	result := DB.First(&user, params["id"])
-	if result.Error != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
-	}
+    params := mux.Vars(r)
+    var user User
+    DB.First(&user, params["id"])
+    json.NewDecoder(r.Body).Decode(&user)
+    DB.Save(&user)
+    json.NewEncoder(w).Encode(user)
+}
 
-	// Parse the new math score from the request body
-	var score struct {
-		Score int `json:"matchScore"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&score)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
+func setWordScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    var user User
+    DB.First(&user, params["id"])
+    json.NewDecoder(r.Body).Decode(&user)
+    DB.Save(&user)
+    json.NewEncoder(w).Encode(user)
+}
 
-	// Update the user's math score if the new score is higher
-	if score.Score > user.MatchScore {
-		user.MatchScore = score.Score
-		result = DB.Save(&user)
-		if result.Error != nil {
-			http.Error(w, "Error updating match score", http.StatusInternalServerError)
-			return
-		}
-	}
-
-	json.NewEncoder(w).Encode(user)
+func setAnimalScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    var user User
+    DB.First(&user, params["id"])
+    json.NewDecoder(r.Body).Decode(&user)
+    DB.Save(&user)
+    json.NewEncoder(w).Encode(user)
 }

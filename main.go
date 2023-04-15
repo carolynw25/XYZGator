@@ -28,10 +28,16 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{id}/first", UpdateFirstName).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/last", UpdateLastName).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/email}", UpdateEmail).Methods("PUT")
+
 	r.HandleFunc("/api/users/{id}/matchscore", GetMatchScore).Methods("GET")
 	r.HandleFunc("/api/users/{id}/mathscore", GetMathScore).Methods("GET")
+	r.HandleFunc("/api/users/{id}/wordscore", GetWordScore).Methods("GET")
+	r.HandleFunc("/api/users/{id}/animalscore", GetAnimalScore).Methods("GET")
+
 	r.HandleFunc("/api/users/{id}/setMath", setMathScore).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/setMatch", setMatchScore).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/setWord", setWordScore).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/setAnimal", setAnimalScore).Methods("PUT")
 	
     
 	//r.HandleFunc("/api/test", login).Methods("POST")
