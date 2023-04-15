@@ -15,7 +15,7 @@ interface pictureObject {
       <div class="highScore"> High Score: {{ highScore }} </div>
     </div>
     <div class="reset">
-      <button (click)="reset()">Reset</button>
+      <button (click)="bigReset();reset();">Reset</button>
     </div>
     <div class="return">
       <button routerLink="/notifications">Return</button>
@@ -26,12 +26,12 @@ interface pictureObject {
     <button class = "next" (click)="nextQuestion()">Next Question</button>
 </div>
 <div class="AnswerChoices">
-  <button class = "answers" (click)="checkAnswer(pictures[indices[0]].answer)">{{ pictures[indices[0]].answer }}</button>
-  <button class = "answers" (click)="checkAnswer(pictures[indices[1]].answer)">{{ pictures[indices[1]].answer }}</button>
-  <button class = "answers" (click)="checkAnswer(pictures[indices[2]].answer)">{{ pictures[indices[2]].answer }}</button>
-  <button class = "answers" (click)="checkAnswer(pictures[indices[3]].answer)">{{ pictures[indices[3]].answer }}</button>
-  <button class = "answers" (click)="checkAnswer(pictures[indices[4]].answer)">{{ pictures[indices[4]].answer }}</button>
-  <button class = "answers" (click)="checkAnswer(pictures[indices[5]].answer)">{{ pictures[indices[5]].answer }}</button>
+  <button class = "answers" (click)="checkAnswer(answers[indices[0]])">{{ answers[indices[0]] }}</button>
+  <button class = "answers" (click)="checkAnswer(answers[indices[1]])">{{ answers[indices[1]] }}</button>
+  <button class = "answers" (click)="checkAnswer(answers[indices[2]])">{{ answers[indices[2]] }}</button>
+  <button class = "answers" (click)="checkAnswer(answers[indices[3]])">{{ answers[indices[3]] }}</button>
+  <button class = "answers" (click)="checkAnswer(answers[indices[4]])">{{ answers[indices[4]] }}</button>
+  <button class = "answers" (click)="checkAnswer(answers[indices[5]])">{{ answers[indices[5]] }}</button>
   </div>
   
  </div>
@@ -116,6 +116,7 @@ export class PictureGuessComponent implements OnInit {
   selection: number = 0;
   score: number = 0;
   highScore: number = 0;
+  answers = [];
   imageNames = [
   "assets/img/pictureGame/alligator.png",
   "assets/img/pictureGame/alpaca.png",
@@ -186,19 +187,11 @@ export class PictureGuessComponent implements OnInit {
   indices = [];
 
   constructor() { 
-    //let answerIndex = 0;
-    for (let i = 0; i < this.imageNames.length; i++){
-      console.log(this.imageNames[i]);
-      const start = this.imageNames[i].lastIndexOf("/") + 1;
-      const end = this.imageNames[i].lastIndexOf(".png");
-      this.pictures.push({url: this.imageNames[i], answer: this.imageNames[i].substring(start, end)});
-    }
-    const x = Math.floor(Math.random() * this.pictures.length);
-    
+    this.bigReset();
     this.reset();
 
   }
-  reset(){
+  reset(){    
     this.selection = Math.floor(Math.random() * this.pictures.length);
     //this.pictures.splice(this.selection,1);
     //this.pictures = this.pictures.filter(pictureObject => pictureObject.answer !== this.pictures[this.selection].answer);
@@ -206,9 +199,11 @@ export class PictureGuessComponent implements OnInit {
     this.clickedAnswer = false;
     this.gameOver = false;
     this.indices = [];
-    this.indices.push(this.selection);
+    this.indices.push(this.answers.indexOf(this.pictures[this.selection].answer));
+
+    //find answer in selection for answer index
     while (this.indices.length < 6) {
-      const index = Math.floor(Math.random() * this.pictures.length);
+      const index = Math.floor(Math.random() * this.answers.length);
       if (!this.indices.includes(index)) {
         this.indices.push(index);
       }
@@ -227,11 +222,14 @@ export class PictureGuessComponent implements OnInit {
         const targetElement = event.target as HTMLElement;
         targetElement.classList.add('correct');
         this.score++;
-        alert("Correct!");
+        if (this.pictures.length == 1){
+          this.gameOver = true;
+          this.highScore = this.score;
+          alert("You a genius kiddo! Rest your brain.")
+        }
       } else { //incorrect
         const targetElement = event.target as HTMLElement;
         targetElement.classList.add('incorrect');
-        alert("Incorrect!");
         if (this.highScore < this.score) {
           this.highScore = this.score;
         }
@@ -240,6 +238,16 @@ export class PictureGuessComponent implements OnInit {
       }
     }
     this.clickedAnswer = true;
+  }
+  bigReset(){
+    this.pictures=[];
+    for (let i = 0; i < this.imageNames.length; i++){
+      const start = this.imageNames[i].lastIndexOf("/") + 1;
+      const end = this.imageNames[i].lastIndexOf(".png");
+      this.pictures.push({url: this.imageNames[i], answer: this.imageNames[i].substring(start, end)});
+      this.answers.push(this.imageNames[i].substring(start, end));
+    }
+    this.score = 0;
   }
   shuffle(){
     // Fisher-Yates shuffle
