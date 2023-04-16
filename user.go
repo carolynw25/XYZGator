@@ -26,9 +26,9 @@ type User struct {
     CreatedAt  time.Time `gorm:"-"`
     UpdatedAt  time.Time `gorm:"-"`
     DeletedAt  time.Time `gorm:"-"`
-    MatchScore int       `json:"matchScore" gorm:"default:-1"`
+    MatchScore int       `json:"matchScore" gorm:"default:999999999999999"`
     MathScore  int       `json:"mathScore" gorm:"default:-1"`
-	WordScore  int       `json:"wordScore" gorm:"default:-1"`
+	WordScore  int       `json:"wordScore" gorm:"default:99999999999999999"`
 	AnimalScore int      `json:"animalScore" gorm:"default:-1"`
 }
 
@@ -382,7 +382,7 @@ func setMatchScore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update the user's match score if the new score is higher
-	if score.Score > user.MatchScore {
+	if score.Score < user.MatchScore {
 		user.MatchScore = score.Score
 		result = DB.Save(&user)
 		if result.Error != nil {
@@ -415,7 +415,7 @@ func setWordScore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Update the user's word score if the new score is higher
-	if score.Score > user.WordScore {
+	if score.Score < user.WordScore {
 		user.WordScore = score.Score
 		result = DB.Save(&user)
 		if result.Error != nil {
