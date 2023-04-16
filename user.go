@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+    //"net/smtp"
+    //"github.com/google/uuid"
 
 	//"database/sql"
 	"time"
@@ -328,40 +330,132 @@ func GetAnimalScore(w http.ResponseWriter, r *http.Request) {
 
 func setMathScore(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewDecoder(r.Body).Decode(&user)
-    DB.Save(&user)
-    json.NewEncoder(w).Encode(user)
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new math score from the request body
+	var score struct {
+		Score int `json:"mathScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's math score if the new score is higher
+	if score.Score > user.MathScore {
+		user.MathScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
 }
 
 func setMatchScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewDecoder(r.Body).Decode(&user)
-    DB.Save(&user)
-    json.NewEncoder(w).Encode(user)
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new match score from the request body
+	var score struct {
+		Score int `json:"matchScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's match score if the new score is higher
+	if score.Score > user.MatchScore {
+		user.MatchScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
 }
 
 func setWordScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewDecoder(r.Body).Decode(&user)
-    DB.Save(&user)
-    json.NewEncoder(w).Encode(user)
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new word score from the request body
+	var score struct {
+		Score int `json:"wordScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's word score if the new score is higher
+	if score.Score > user.WordScore {
+		user.WordScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
 }
 
 func setAnimalScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewDecoder(r.Body).Decode(&user)
-    DB.Save(&user)
-    json.NewEncoder(w).Encode(user)
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new animal score from the request body
+	var score struct {
+		Score int `json:"animalScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's animal score if the new score is higher
+	if score.Score > user.AnimalScore {
+		user.AnimalScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
 }
