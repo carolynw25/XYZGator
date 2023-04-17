@@ -14,6 +14,10 @@
             <div class="numbers">
               <!-- testing ID-->
                <p class="card-category">Your ID is: {{ userID }}</p>
+               <p class="card-category">Your memoryScore is: {{ scoreMemory }}</p>
+               <p class="card-category">Your mathScore is: {{ scoreMath }}</p>
+               <p class="card-category">Your wordScore is: {{ scoreWord }}</p>
+               <p class="card-category">Your pictureScore is: {{ scorePicture }}</p>
               <p class="card-category">You have a Streak of</p>
               <p class="card-title">4 days
                 <p>
@@ -44,10 +48,26 @@
             </div>
           </div>
           <div class="col-7 col-md-8">
+
             <div class="numbers">
               <p class="card-category">Today is ...</p>
-              <p class="card-title">January 1, 2023
-                <p>
+              <!-- <p class="card-title">January 1, 2023
+                <p> -->
+                <p class="card-title" id="currentDate"> </p>
+                <script>
+                  n =  new Date();
+                  y = n.getFullYear();
+                  m = n.getMonth() + 1;
+                  d = n.getDate();
+                  document.getElementById("currentDate").innerHTML = m + "/" + d + "/" + y;
+
+                  //document.getElementById("currentDate").innerHTML = new Date().toLocaleDateString();
+                  //const currentDate = new Date();
+                  // const dateString = currentDate.toLocaleDateString();
+                  // document.getElementById("current-date").textContent = dateString;
+                  //var formattedDate = currentDate.toDateString();
+                  //document.getElementById("currentDate").innerHTML = formattedDate;
+                </script>
                   <!--
               <p id="current-date"></p>
               <script>
