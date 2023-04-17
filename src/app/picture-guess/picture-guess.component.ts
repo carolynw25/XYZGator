@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { UserIdService } from 'app/userIdService';
+import { HttpClient } from '@angular/common/http';
+import {Observable, take} from 'rxjs';
 
 interface pictureObject {
   url: string;
@@ -172,6 +175,8 @@ export class PictureGuessComponent implements OnInit {
   gameOver: boolean = false;
   clickedAnswer: boolean = false;
 
+  userID: number;
+
   nextQuestion(){
     //have a vector with numbers pointing to pictures index and then remove each time it has been passed
     if (!this.gameOver && this.clickedAnswer) {
@@ -186,7 +191,10 @@ export class PictureGuessComponent implements OnInit {
 
   indices = [];
 
-  constructor() { 
+  constructor(
+    private userIDService: UserIdService, 
+    private http: HttpClient
+  ) { 
     this.bigReset();
     this.reset();
 
@@ -224,14 +232,24 @@ export class PictureGuessComponent implements OnInit {
         this.score++;
         if (this.pictures.length == 1){
           this.gameOver = true;
+          //update high score
           this.highScore = this.score;
+          this.setUserScore(this.userID, this.highScore).subscribe(
+            () => console.log('Math score updated successfully'),
+            (err) => console.error('Error updating math score', err)
+          );
           alert("You a genius kiddo! Rest your brain.")
         }
       } else { //incorrect
         const targetElement = event.target as HTMLElement;
         targetElement.classList.add('incorrect');
         if (this.highScore < this.score) {
+          //update high score
           this.highScore = this.score;
+          this.setUserScore(this.userID, this.highScore).subscribe(
+            () => console.log('Math score updated successfully'),
+            (err) => console.error('Error updating math score', err)
+          );
         }
         this.gameOver = true;
         this.score = 0;
@@ -258,6 +276,33 @@ export class PictureGuessComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  }
+    //removed to fix unit test, don't think it's needed maybe
+    //throw new Error('Method not implemented.');
+    this.userID = this.userIDService.getUserId();
+    console.log('User ID ohmygoditworked: ', this.userID);
 
+    // Get the user's high score
+    this.getUserScore(this.userID).pipe(
+      take(1) // take only the first value emitted by the observable
+    ).subscribe(score => {
+      this.highScore = score;
+      if (this.highScore < 0) {
+        this.highScore = 0;
+      }
+    });
+   
+  }
+  setUserScore(ID: number, score: number): Observable<number> {
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+    //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
+    console.log('WAH: ', score);
+    const body = { mathScore: score };
+    //const body = JSON.stringify{score};
+    return this.http.put<number>(url, body);
+    //return this.http.put<number>(url, {score});
+  }
+  getUserScore(ID: number): Observable<number> {
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/mathscore'
+    return this.http.get<number>(url);
+  }
 }
