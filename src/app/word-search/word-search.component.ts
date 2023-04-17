@@ -130,12 +130,6 @@ export class WordSearchComponent implements OnInit {
     this.seconds = 0;
   }
 
-  ngOnInit(): void {
-    this.reset()
-
-    
-  }
-
   reset() {
     //start timer
     this.stopTimer();
@@ -463,11 +457,53 @@ isSelected(rowIndex: number, colIndex: number): boolean {
   return false;
 }
 
+
+lowestTimeSec(): number{
+  let x = this.lowestTime.minutes;
+  let y = this.lowestTime.seconds;
+  return 60*x+y;
+}
+updateLowestTime(sec: number){
+  if (sec >= 60){
+    this.lowestTime = { minutes: Math.floor(sec/60), seconds: sec%60 };
+  }
+  else {
+    this.lowestTime = { minutes: 0, seconds: sec };
+  }
+}
+ngOnInit(): void {
+  this.reset();
+
+  //removed to fix unit test, don't think it's needed maybe
+  //throw new Error('Method not implemented.');
+  this.userID = this.userIDService.getUserId();
+  console.log('User ID ohmygoditworked: ', this.userID);
+
+  // Get the user's high score
+  this.getUserScore(this.userID).pipe(
+    take(1) // take only the first value emitted by the observable
+  ).subscribe(score => {
+    
+    if (score == 99999999999999999){
+      this.lowestTime = null;
+    }
+    else{
+      this.updateLowestTime(score);
+    }
+
+  });
+}
+
+getUserScore(ID: number): Observable<number> {
+  const url = 'http://127.0.0.1:8080/api/users/' + ID + '/wordscore'
+  return this.http.get<number>(url);
+}
+
 setUserScore(ID: number, score: number): Observable<number> {
-  const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+  const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setWord';
   //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
   console.log('WAH: ', score);
-  const body = { mathScore: score };
+  const body = { wordScore: score };
   //const body = JSON.stringify{score};
   return this.http.put<number>(url, body);
   //return this.http.put<number>(url, {score});
