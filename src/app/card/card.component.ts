@@ -242,7 +242,7 @@ constructor(
                 () => console.log('Math score updated successfully'),
                 (err) => console.error('Error updating math score', err)
               );
-              
+
             }
             // Show win popup with time here
             clearInterval(this.timer);
@@ -324,17 +324,18 @@ constructor(
     this.seconds = 0;
   }
 
+
   lowestTimeSec(): number{
     let x = this.lowestTime.minutes;
     let y = this.lowestTime.seconds;
     return 60*x+y;
   }
   updateLowestTime(sec: number){
-    if (sec > 60){
-      this.lowestTime = { minutes: sec/60, seconds: sec%60};
+    if (sec >= 60){
+      this.lowestTime = { minutes: Math.floor(sec/60), seconds: sec%60 };
     }
     else {
-      this.lowestTime = { minutes: 0, seconds: sec};
+      this.lowestTime = { minutes: 0, seconds: sec };
     }
   }
   ngOnInit(): void {
@@ -347,10 +348,14 @@ constructor(
     this.getUserScore(this.userID).pipe(
       take(1) // take only the first value emitted by the observable
     ).subscribe(score => {
-      this.updateLowestTime(score);
-      if (this.lowestTimeSec() === 999999999999999) {
-        this.updateLowestTime(0);
+      
+      if (score == 999999999999999){
+        this.lowestTime = null;
       }
+      else{
+        this.updateLowestTime(score);
+      }
+
     });
    
   }
