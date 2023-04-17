@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { UserIdService } from 'app/userIdService';
+import { HttpClient } from '@angular/common/http';
+import { take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
 import Swal from 'sweetalert2';
 
 interface coord {
@@ -99,6 +104,15 @@ export class WordSearchComponent implements OnInit {
   lowestTime = null;
   newRecord = false;
 
+  userID: number;
+
+
+  constructor(
+    private userIDService: UserIdService, 
+    private http: HttpClient
+  ) {
+  }
+
   startTimer() {
     this.timer = setInterval(() => {
       if (this.seconds < 59) {
@@ -118,6 +132,8 @@ export class WordSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.reset()
+
+    
   }
 
   reset() {
@@ -445,6 +461,16 @@ isSelected(rowIndex: number, colIndex: number): boolean {
     }
   }
   return false;
+}
+
+setUserScore(ID: number, score: number): Observable<number> {
+  const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+  //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
+  console.log('WAH: ', score);
+  const body = { mathScore: score };
+  //const body = JSON.stringify{score};
+  return this.http.put<number>(url, body);
+  //return this.http.put<number>(url, {score});
 }
 
 

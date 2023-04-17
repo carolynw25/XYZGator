@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { UserIdService } from 'app/userIdService';
+import { HttpClient } from '@angular/common/http';
+import { take } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
 import Swal from 'sweetalert2';
 
 
@@ -195,7 +200,12 @@ export class CardComponent {
   lowestTime = null;
   newRecord = false;
 
-constructor() {
+  userID: number;
+
+constructor(
+  private userIDService: UserIdService, 
+  private http: HttpClient
+) {
   this.newRecord = false;
   const cardColors = ['red', 'green', 'blue', 'yellow', 'orange', 'black', 'purple', 'violet', 'gray', 'lime', 'white', 'teal', 'pink', 'brown'];
     const uniqueCards: Card[] = [];
@@ -228,6 +238,11 @@ constructor() {
             if (this.lowestTime === null || this.minutes < this.lowestTime.minutes || (this.minutes === this.lowestTime.minutes && this.seconds < this.lowestTime.seconds)) {
               this.lowestTime = { minutes: this.minutes, seconds: this.seconds };
               this.newRecord = true;
+              this.setUserScore(this.userID, this.lowestTimeSec()).subscribe(
+                () => console.log('Math score updated successfully'),
+                (err) => console.error('Error updating math score', err)
+              );
+
             }
             // Show win popup with time here
             clearInterval(this.timer);
@@ -309,5 +324,46 @@ constructor() {
     this.seconds = 0;
   }
 
+  lowestTimeSec(): number{
+    let x = this.lowestTime.minutes;
+    let y = this.lowestTime.seconds;
+    return 60*x+y;
+  }
+  updateLowestTime(sec: number){
+    if (sec > 60){
+      this.lowestTime = { minutes: sec/60, seconds: sec%60};
+    }
+    else {
+      this.lowestTime = { minutes: 0, seconds: sec};
+    }
+  }
+  ngOnInit(): void {
+    //removed to fix unit test, don't think it's needed maybe
+    //throw new Error('Method not implemented.');
+    this.userID = this.userIDService.getUserId();
+    console.log('User ID ohmygoditworked: ', this.userID);
+
+    // Get the user's high score
+    this.getUserScore(this.userID).pipe(
+      take(1) // take only the first value emitted by the observable
+    ).subscribe(score => {
+      this.updateLowestTime(score);
+    });
+   
+  }
+  getUserScore(ID: number): Observable<number> {
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/mathscore'
+    return this.http.get<number>(url);
+  }
+
+  setUserScore(ID: number, score: number): Observable<number> {
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+    //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
+    console.log('WAH: ', score);
+    const body = { mathScore: score };
+    //const body = JSON.stringify{score};
+    return this.http.put<number>(url, body);
+    //return this.http.put<number>(url, {score});
+  }
 
 }
