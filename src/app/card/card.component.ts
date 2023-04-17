@@ -242,7 +242,7 @@ constructor(
                 () => console.log('Math score updated successfully'),
                 (err) => console.error('Error updating math score', err)
               );
-
+              
             }
             // Show win popup with time here
             clearInterval(this.timer);
@@ -348,19 +348,22 @@ constructor(
       take(1) // take only the first value emitted by the observable
     ).subscribe(score => {
       this.updateLowestTime(score);
+      if (this.lowestTimeSec() === 999999999999999) {
+        this.updateLowestTime(0);
+      }
     });
    
   }
   getUserScore(ID: number): Observable<number> {
-    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/mathscore'
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/matchscore'
     return this.http.get<number>(url);
   }
 
   setUserScore(ID: number, score: number): Observable<number> {
-    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMatch';
     //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
     console.log('WAH: ', score);
-    const body = { mathScore: score };
+    const body = { matchScore: score };
     //const body = JSON.stringify{score};
     return this.http.put<number>(url, body);
     //return this.http.put<number>(url, {score});
