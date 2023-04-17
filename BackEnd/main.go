@@ -39,7 +39,7 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{id}/setWord", setWordScore).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/setAnimal", setAnimalScore).Methods("PUT")
 
-	r.HandleFunc("/api/forgotPassword", ForgotPassword).Methods("POST")
+	// r.HandleFunc("/api/forgotPassword", ForgotPassword).Methods("POST")
 	
 	
     
