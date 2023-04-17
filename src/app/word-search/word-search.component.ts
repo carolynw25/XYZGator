@@ -411,6 +411,10 @@ selectLetter(rowIndex: number, colIndex: number): void {
         if (this.lowestTime === null || this.minutes < this.lowestTime.minutes || (this.minutes === this.lowestTime.minutes && this.seconds < this.lowestTime.seconds)) {
           this.lowestTime = { minutes: this.minutes, seconds: this.seconds };
           this.newRecord = true;
+          this.setUserScore(this.userID, this.lowestTimeSec()).subscribe(
+            () => console.log('Math score updated successfully'),
+            (err) => console.error('Error updating math score', err)
+          );
         }
         // Show win popup with time here
         clearInterval(this.timer);

@@ -293,16 +293,16 @@ export class PictureGuessComponent implements OnInit {
    
   }
   setUserScore(ID: number, score: number): Observable<number> {
-    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setMath';
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/setAnimal';
     //const url = `http:/e/127.0.0.1:8080/api/users/${ID}/setMath`;
     console.log('WAH: ', score);
-    const body = { mathScore: score };
+    const body = { animalScore: score };
     //const body = JSON.stringify{score};
     return this.http.put<number>(url, body);
     //return this.http.put<number>(url, {score});
   }
   getUserScore(ID: number): Observable<number> {
-    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/mathscore'
+    const url = 'http://127.0.0.1:8080/api/users/' + ID + '/animalscore'
     return this.http.get<number>(url);
   }
 }
