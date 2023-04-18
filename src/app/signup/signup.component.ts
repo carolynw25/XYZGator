@@ -19,6 +19,7 @@ interface IuserInfo{
 export class SignupComponent implements OnInit {
   public username = ''
   public password = ''
+  public sq1 = ''
   public firstname = ''
   public lastname = ''
   public email = ''
