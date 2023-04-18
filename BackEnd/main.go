@@ -24,7 +24,7 @@ func initializeRouter() {
 	r.HandleFunc("/api/signUp", signUp).Methods("POST")
 	r.HandleFunc("/api/getID", getID).Methods("POST")
 	r.HandleFunc("/api/users/{id}/name", UpdateUsername).Methods("PUT")
-    r.HandleFunc("/api/users/{id}/pass", UpdatePassword).Methods("PUT")
+	r.HandleFunc("/api/users/{id}/pass", UpdatePassword).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/first", UpdateFirstName).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/last", UpdateLastName).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/email}", UpdateEmail).Methods("PUT")
@@ -39,10 +39,8 @@ func initializeRouter() {
 	r.HandleFunc("/api/users/{id}/setWord", setWordScore).Methods("PUT")
 	r.HandleFunc("/api/users/{id}/setAnimal", setAnimalScore).Methods("PUT")
 
-	// r.HandleFunc("/api/forgotPassword", ForgotPassword).Methods("POST")
-	
-	
-    
+	r.HandleFunc("/api/forgotPassword", ForgotPassword).Methods("POST")
+
 	//r.HandleFunc("/api/test", login).Methods("POST")
 
 	//adds CORS middleware
@@ -66,8 +64,6 @@ func initializeRouter() {
 	log.Fatal(http.ListenAndServe("localhost:8080", handler))
 	//log.Fatal(http.ListenAndServe("128.227.1.31:61478", r))
 }
-
-
 
 func main() {
 	InitialMigration()

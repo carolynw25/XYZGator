@@ -4,45 +4,47 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-   	//"net/smtp"
-    	//"github.com/google/uuid"
-    	//"crypto/tls"
-    	//"strconv"
-    	//"log"
+
+	//"net/smtp"
+	//"github.com/google/uuid"
+	//"crypto/tls"
+	//"strconv"
+	//"log"
 
 	//"database/sql"
 	"time"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-    gorm.Model
-    UserName   string    `json:"username"`
-    Password   string    `json:"password"`
-    FirstName  string    `json:"firstname"`
-    LastName   string    `json:"lastname"`
-    Email      string    `json:"email"`
-    CreatedAt  time.Time `gorm:"-"`
-    UpdatedAt  time.Time `gorm:"-"`
-    DeletedAt  time.Time `gorm:"-"`
-    MatchScore int       `json:"matchScore" gorm:"default:999999999999999"`
-    MathScore  int       `json:"mathScore" gorm:"default:-1"`
-    WordScore  int       `json:"wordScore" gorm:"default:99999999999999999"`
-    AnimalScore int      `json:"animalScore" gorm:"default:-1"`
-	/*
-    SecurityQuestion       string    `json:"securityQuestion"`
-    SecurityAnswer         string    `json:"securityAnswer"`
-    FavoriteAnimal         string    `json:"favoriteAnimal"`*/
+	gorm.Model
+	UserName    string    `json:"username"`
+	Password    string    `json:"password"`
+	FirstName   string    `json:"firstname"`
+	LastName    string    `json:"lastname"`
+	Email       string    `json:"email"`
+	CreatedAt   time.Time `gorm:"-"`
+	UpdatedAt   time.Time `gorm:"-"`
+	DeletedAt   time.Time `gorm:"-"`
+	MatchScore  int       `json:"matchScore" gorm:"default:999999999999999"`
+	MathScore   int       `json:"mathScore" gorm:"default:-1"`
+	WordScore   int       `json:"wordScore" gorm:"default:99999999999999999"`
+	AnimalScore int       `json:"animalScore" gorm:"default:-1"`
+	//SecurityQuestion       string    `json:"securityQuestion"`
+	//SecurityAnswer         string    `json:"securityAnswer"`
+	FavoriteAnimal         string `json:"favoriteAnimal"`
+	PasswordResetToken     string `json:"passwordResetToken"`
+	PasswordResetExpiresAt int64  `json:"passwordResetExpiresAt"`
 }
 
 var DB *gorm.DB
 var err error
 
-//const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
+// const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
 const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
@@ -80,38 +82,38 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 }*/
 
 func getID(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
-    // Parse the login credentials from the request body
-    var creds Credentials
-    err := json.NewDecoder(r.Body).Decode(&creds)
-    if err != nil {
-        http.Error(w, "Error parsing request body", http.StatusBadRequest)
-        return
-    }
+	// Parse the login credentials from the request body
+	var creds Credentials
+	err := json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
 
-    // Query the database for the user with the given username
-    var user User
-    result := DB.Where("user_name = ?", creds.Username).First(&user)
-    if result.Error != nil {
-        http.Error(w, "Invalid username or password", http.StatusUnauthorized)
-        return
-    }
+	// Query the database for the user with the given username
+	var user User
+	result := DB.Where("user_name = ?", creds.Username).First(&user)
+	if result.Error != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
 
-    // Compare the received password with the stored hash
-    err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password))
-    if err != nil {
-        http.Error(w, "Invalid username or password", http.StatusUnauthorized)
-        return
-    }
+	// Compare the received password with the stored hash
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password))
+	if err != nil {
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		return
+	}
 
-    // If the query and password check were successful, return the user ID to the frontend
-    response := struct {
-        ID uint `json:"id"`
-    }{
-        ID: user.ID,
-    }
-    json.NewEncoder(w).Encode(response)
+	// If the query and password check were successful, return the user ID to the frontend
+	response := struct {
+		ID uint `json:"id"`
+	}{
+		ID: user.ID,
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -178,35 +180,35 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func signUp(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
-    // Parse the signup details from the request body
-    var user User
-    err := json.NewDecoder(r.Body).Decode(&user)
-    if err != nil {
-        http.Error(w, "Error parsing request body", http.StatusBadRequest)
-        return
-    }
+	// Parse the signup details from the request body
+	var user User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
 
-    // Check if the username already exists in the database
-    var existingUser User
-    result := DB.Where("user_name = ?", user.UserName).First(&existingUser)
-    if result.Error == nil {
-        http.Error(w, "User already taken", http.StatusBadRequest)
-        return
-    }
+	// Check if the username already exists in the database
+	var existingUser User
+	result := DB.Where("user_name = ?", user.UserName).First(&existingUser)
+	if result.Error == nil {
+		http.Error(w, "User already taken", http.StatusBadRequest)
+		return
+	}
 
-    // Hash the password before storing in the database
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-    if err != nil {
-        http.Error(w, "Error hashing password", http.StatusInternalServerError)
-        return
-    }
-    user.Password = string(hashedPassword)
+	// Hash the password before storing in the database
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		return
+	}
+	user.Password = string(hashedPassword)
 
-    // Create the user in the database
-    DB.Create(&user)
-    json.NewEncoder(w).Encode(user)
+	// Create the user in the database
+	DB.Create(&user)
+	json.NewEncoder(w).Encode(user)
 }
 
 /*
@@ -246,45 +248,45 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 }*/
 
 func UpdateUsername(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    var data map[string]string
-    json.NewDecoder(r.Body).Decode(&data)
-    username, ok := data["username"]
-    if !ok {
-        w.WriteHeader(http.StatusBadRequest)
-        json.NewEncoder(w).Encode(map[string]string{"error": "Missing username field"})
-        return
-    }
-    user.UserName = username
-    DB.Save(&user)
-    json.NewEncoder(w).Encode(user)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	username, ok := data["username"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing username field"})
+		return
+	}
+	user.UserName = username
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
 }
 
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    var data map[string]string
-    json.NewDecoder(r.Body).Decode(&data)
-    password, ok := data["password"]
-    if !ok {
-        w.WriteHeader(http.StatusBadRequest)
-        json.NewEncoder(w).Encode(map[string]string{"error": "Missing password field"})
-        return
-    }
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-    if err != nil {
-        w.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(w).Encode(map[string]string{"error": "Failed to hash password"})
-        return
-    }
-    user.Password = string(hashedPassword)
-    DB.Save(&user)
-    json.NewEncoder(w).Encode(user)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	password, ok := data["password"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing password field"})
+		return
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to hash password"})
+		return
+	}
+	user.Password = string(hashedPassword)
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
 }
 func UpdateFirstName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -340,39 +342,39 @@ func UpdateEmail(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 func GetMatchScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewEncoder(w).Encode(user.MatchScore)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.MatchScore)
 }
 
 func GetMathScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewEncoder(w).Encode(user.MathScore)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.MathScore)
 }
 
 func GetWordScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewEncoder(w).Encode(user.WordScore)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.WordScore)
 }
 
 func GetAnimalScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewEncoder(w).Encode(user.AnimalScore)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.AnimalScore)
 }
 
 func setMathScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
 	result := DB.First(&user, params["id"])
@@ -502,45 +504,69 @@ func setAnimalScore(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(user)
 }
-/*
+
 func ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	var data map[string]string
-	json.NewDecoder(r.Body).Decode(&data)
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
 	email, ok := data["email"]
 	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Missing email field"})
+		http.Error(w, "Missing email field", http.StatusBadRequest)
+		return
+	}
+
+	answer, ok := data["favoriteAnimal"]
+	if !ok {
+		http.Error(w, "Missing favoriteAnimal field", http.StatusBadRequest)
 		return
 	}
 
 	// Check if email exists in the database
 	var user User
-	err := DB.Where("email = ?", email).First(&user).Error
+	result := DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		http.Error(w, "Email not found", http.StatusBadRequest)
+		return
+	}
+
+	// Check if the favorite animal answer is correct
+	if answer != user.FavoriteAnimal {
+		http.Error(w, "Incorrect favorite animal answer", http.StatusUnauthorized)
+		return
+	}
+
+	// Prompt user to enter new password
+	//json.NewEncoder(w).Encode(map[string]string{"message": "Answered favorite animal correctly. Please enter a new password."})
+
+	//var newPassword map[string]string
+	// if err := json.NewDecoder(r.Body).Decode(&newPassword); err != nil {
+	//     http.Error(w, "Invalid request body", http.StatusBadRequest)
+	//     return
+	// }
+	password, ok := data["password"]
+	if !ok {
+		http.Error(w, "Missing password field", http.StatusBadRequest)
+		return
+	}
+
+	// Hash the new password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Email not found"})
+		http.Error(w, "Failed to hash password", http.StatusInternalServerError)
 		return
 	}
 
-	// Check if the security question answer is correct
-	if user.SecurityQuestion == "" || user.SecurityAnswer == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Security question not set"})
-		return
-	}
-	answer, ok := data["answer"]
-	if !ok || answer != user.SecurityAnswer {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Incorrect security question answer"})
+	// Update the user's password in the database
+	user.Password = string(hashedPassword)
+	if err := DB.Save(&user).Error; err != nil {
+		http.Error(w, "Failed to save user data", http.StatusInternalServerError)
 		return
 	}
 
-	// Generate and store a password reset token for the user
-	token := uuid.New().String()
-	user.PasswordResetToken = token
-	user.PasswordResetExpiresAt = time.Now().Add(time.Hour * 24).Unix() // Token expires in 24 hours
-	DB.Save(&user)
-
-	json.NewEncoder(w).Encode(map[string]string{"message": "Answered security question correctly. Password reset token generated."})
-}*/
+	json.NewEncoder(w).Encode(map[string]string{"message": "Password updated successfully."})
+}
