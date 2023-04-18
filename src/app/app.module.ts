@@ -26,6 +26,7 @@ import { CardControllerComponent } from './card-controller/card-controller.compo
 import { MathComponent } from './math/math.component';
 import { WordSearchComponent } from './word-search/word-search.component';
 import { PictureGuessComponent } from './picture-guess/picture-guess.component';
+import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,6 +39,7 @@ import { PictureGuessComponent } from './picture-guess/picture-guess.component';
     MathComponent,
     WordSearchComponent,
     PictureGuessComponent,
+    ForgetPasswordComponent,
     //UserListComponent,
   ],
   imports: [

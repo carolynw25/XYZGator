@@ -7,11 +7,13 @@ import { MathComponent } from './math/math.component';
 import { PictureGuessComponent } from './picture-guess/picture-guess.component';
 import { SignupComponent } from './signup/signup.component';
 import { WordSearchComponent } from './word-search/word-search.component';
+import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 
 export const AppRoutes: Routes = [
   {path:'', redirectTo:'login',pathMatch:'full'},
   {path:'login', component:LoginComponent},
   {path:'signup',component:SignupComponent},
+  {path:'forgetPassword',component:ForgetPasswordComponent},
   {path:'game1',component:CardComponent},
   {path:'game2',component:MathComponent},
   {path:'game3',component:WordSearchComponent},
