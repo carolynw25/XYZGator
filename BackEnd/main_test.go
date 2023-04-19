@@ -165,19 +165,19 @@ func CheckPasswordHash(password string, hash string) bool {
 func TestUpdatePassword(t *testing.T) {
 	// Initialize a new router instance and register the UpdatePassword function as a handler for the PUT request
 	r := mux.NewRouter()
-	r.HandleFunc("/users/{id}/update-password", UpdatePassword).Methods("PUT")
+	r.HandleFunc("/users/{id}/pass", UpdatePassword).Methods("PUT")
 
 	// Create a new instance of httptest.ResponseRecorder to record the response
 	w := httptest.NewRecorder()
 
-	// Create a new request to the /users/{id}/update-password endpoint with an id of 1 and a request body containing the new password
+	// Create a new request to the /users/{id}/pass endpoint with an id of 1 and a request body containing the new password
 	updatePassword := struct {
 		NewPassword string `json:"new_password"`
 	}{
 		NewPassword: "new_password",
 	}
 	updatePasswordJSON, _ := json.Marshal(updatePassword)
-	req, err := http.NewRequest("PUT", "/users/1/update-password", bytes.NewReader(updatePasswordJSON))
+	req, err := http.NewRequest("PUT", "/users/1/pass", bytes.NewReader(updatePasswordJSON))
 	if err != nil {
 		t.Fatal(err)
 	}
