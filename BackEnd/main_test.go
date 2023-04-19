@@ -3,19 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	//"fmt"
-	//"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
-	//"github.com/rs/cors"
-	//"golang.org/x/crypto/bcrypt"
 	"testing"
-	//"github.com/stretchr/testify/assert"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	//"gorm.io/driver/sqlite"
 )
 
 func TestSignUp(t *testing.T) {
