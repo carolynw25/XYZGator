@@ -7,7 +7,7 @@ XYZGator is a web application that provides children aged 5 and above with resou
 - Angular (Front End)
 - Golang (Back End)
 
-## Getting Started
+## Getting Started - Setup and Installation
 ### Prerequisites
 - Node.js and NPM
 - Angular CLI
