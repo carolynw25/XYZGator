@@ -51,7 +51,31 @@ export class SignupComponent implements OnInit {
       }
     );
   }
+  public userInfo: IuserInfo[] = [
+    {
+       username : 'np',
+       password : 'gg',
+       firstname : 'dsf',
+       lastname : 'df',
+       email : 'sdfgsd'
+    }
+  ]
+  //Before connecting with Backend
+  addUser(){
+    this.userInfo.push({
+      username: this.username,
+      password: this.password,
+      firstname: this.firstname,
+      lastname: this.lastname,
+      email: this.email
+    })
+    this.username = ''
+    this.password = ''
+    this.firstname = ''
+    this.lastname = ''
+    this.email = ''
 
+  }
   ngOnInit(): void {
     
     this.signupForm = this.formBuilder.group({

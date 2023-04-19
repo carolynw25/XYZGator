@@ -5,6 +5,12 @@ import Swal from 'sweetalert2';
 import { MathComponent } from './math.component';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NgModule } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
+
 
 
 describe('MathComponent', () => {
@@ -13,7 +19,7 @@ describe('MathComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, HttpClientModule],
       declarations: [ MathComponent ]
     })
     .compileComponents();

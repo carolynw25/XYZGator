@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PictureGuessComponent } from './picture-guess.component';
+import { UserIdService } from 'app/userIdService';
+import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
+import Swal from 'sweetalert2';
+
 
 describe('PictureGuessComponent', () => {
   let component: PictureGuessComponent;
@@ -8,7 +13,9 @@ describe('PictureGuessComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PictureGuessComponent ]
+      imports: [HttpClientTestingModule],
+      declarations: [ PictureGuessComponent ],
+      providers: [UserIdService]
     })
     .compileComponents();
 
@@ -20,4 +27,6 @@ describe('PictureGuessComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+
 });

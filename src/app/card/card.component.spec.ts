@@ -3,6 +3,10 @@ import { By } from '@angular/platform-browser';
 import { CardComponent } from './card.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
 
 
 describe('CardComponent', () => {
@@ -12,7 +16,7 @@ describe('CardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, HttpClientTestingModule],
       declarations: [ CardComponent ],
     }).compileComponents();
     fixture = TestBed.createComponent(CardComponent);
