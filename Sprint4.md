@@ -477,8 +477,12 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 + UpdateLastName()
 + GetMatchScore()
 + GetMathScore()
-+ SetMatchScore()
-+ SetMathScore()
++ GetWordScore()
++ GetAnimalScore()
++ setMatchScore()
++ setMathScore()
++ setWordScore
++ setAnimalScore
 
 ## initializeRouter()
 
@@ -817,25 +821,47 @@ func UpdateEmail(w http.ResponseWriter, r *http.Request) {
 }
 ```
 ## GetMatchScore()
-This function is used to retrieve the match score of a user. It takes a HTTP request and response as input and returns the user's match score as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and encodes the user's match score to JSON using json.NewEncoder and writes it to the response body using w.Write.
+This function is used to retrieve the memory game match score of a user. It takes a HTTP request and response as input and returns the user's match score as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and encodes the user's match score to JSON using json.NewEncoder and writes it to the response body using w.Write.
 ```go
 func GetMatchScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewEncoder(w).Encode(user.MatchScore)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.MatchScore)
 }
 ```
 ## GetMathScore()
 This function is used to retrieve the math score of a user. It takes a HTTP request and response as input and returns the user's math score as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and encodes the user's math score to JSON using json.NewEncoder and writes it to the response body using w.Write.
 ```go
 func GetMathScore(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    params := mux.Vars(r)
-    var user User
-    DB.First(&user, params["id"])
-    json.NewEncoder(w).Encode(user.MathScore)
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.MathScore)
+}
+```
+## GetWordScore()
+This function is used to retrieve the user's score for the word game. It takes a HTTP request and response as input and returns the user's word game score as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and encodes the user's word game score to JSON using json.NewEncoder and writes it to the response body using w.Write.
+```go
+func GetWordScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.WordScore)
+}
+```
+## GetAnimalScore()
+This function is used to retrieve the user's score for the animal game. It takes a HTTP request and response as input and returns the user's animal game score as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and encodes the user's animal game score to JSON using json.NewEncoder and writes it to the response body using w.Write.
+```go
+func GetAnimalScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	json.NewEncoder(w).Encode(user.AnimalScore)
 }
 ```
 ## setMathScore()
@@ -875,7 +901,7 @@ func setMathScore(w http.ResponseWriter, r *http.Request) {
 }
 ```
 ## setMatchScore()
-This function is used to update a user's match score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new match score from the request body. If the new match score is higher than the user's current match score, it updates the user's match score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
+This function is used to update a user's memory game match score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new match score from the request body. If the new match score is higher than the user's current match score, it updates the user's match score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
 ```go
 func setMatchScore(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -900,6 +926,78 @@ func setMatchScore(w http.ResponseWriter, r *http.Request) {
 	// Update the user's math score if the new score is higher
 	if score.Score > user.MatchScore {
 		user.MatchScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
+}
+```
+## setWordScore()
+This function is used to update a user's word game score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new word game score from the request body. If the new score is higher than the user's current match score, it updates the user's score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
+```go
+func setWordScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new word score from the request body
+	var score struct {
+		Score int `json:"wordScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's word score if the new score is higher
+	if score.Score < user.WordScore {
+		user.WordScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
+}
+```
+## setAnimalScore()
+This function is used to update a user's animal game score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new animal game score from the request body. If the new game score is higher than the user's current score, it updates the user's match score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
+```go
+func setAnimalScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new animal score from the request body
+	var score struct {
+		Score int `json:"animalScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's animal score if the new score is higher
+	if score.Score > user.AnimalScore {
+		user.AnimalScore = score.Score
 		result = DB.Save(&user)
 		if result.Error != nil {
 			http.Error(w, "Error updating match score", http.StatusInternalServerError)
