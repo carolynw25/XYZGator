@@ -22,7 +22,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/user',          title: 'User Profile',      icon:'nc-single-02',  class: '' },
     { path: '/dashboard',     title: 'Dashboard',         icon:'nc-bank',       class: '' },
     { path: '/notifications', title: 'Games',     icon:'nc-controller-modern',    class: '' },  
-    { path: '/icons',         title: 'Icons',             icon:'nc-diamond',    class: '' },
+//    { path: '/icons',         title: 'Icons',             icon:'nc-diamond',    class: '' },
     { path: '/typography',    title: 'About',        icon:'nc-caps-small', class: '' },
 ];
 
