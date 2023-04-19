@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"golang.org/x/crypto/bcrypt"
 	"testing"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
@@ -150,49 +151,49 @@ func TestUpdateUsername(t *testing.T) {
 }
 
 func TestUpdatePassword(t *testing.T) {
-    // Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
-    r := mux.NewRouter()
-    r.HandleFunc("/users/{id}/pass", UpdatePassword).Methods("PUT")
+	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
+	r := mux.NewRouter()
+	r.HandleFunc("/users/{id}/pass", UpdatePassword).Methods("PUT")
 
-    // Create a new instance of httptest.ResponseRecorder to record the response
-    w := httptest.NewRecorder()
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
-    updateUser := User{
-        Password: "wack3",
-    }
-    updateUserJSON, _ := json.Marshal(updateUser)
-    req, err := http.NewRequest("PUT", "/users/1/pass", bytes.NewReader(updateUserJSON))
-    if err != nil {
-        t.Fatal(err)
-    }
+	// Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
+	updateUser := User{
+		Password: "wack3",
+	}
+	updateUserJSON, _ := json.Marshal(updateUser)
+	req, err := http.NewRequest("PUT", "/users/1/pass", bytes.NewReader(updateUserJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
 
-    // Call the UpdateUsername function with the response recorder and request objects
-    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-    UpdatePassword(w, req)
+	// Call the UpdateUsername function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	UpdatePassword(w, req)
 
-    // Assert that the response status code is 200 OK
-    if status := w.Code; status != http.StatusOK {
-        t.Errorf("Handler returned wrong status code: got %v want %v",
-            status, http.StatusOK)
-    }
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
 
-    // Retrieve the updated user from the database
-    var updatedUser User
-    DB.First(&updatedUser, 1)
+	// Retrieve the updated user from the database
+	var updatedUser User
+	DB.First(&updatedUser, 1)
 
-    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updateUser.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updateUser.Password), bcrypt.DefaultCost)
     if err != nil {
         w.WriteHeader(http.StatusInternalServerError)
         json.NewEncoder(w).Encode(map[string]string{"error": "Failed to hash password"})
         return
     }
 
-    // Assert that the updated user data in the database matches the request body data
-    if bytes.Equal([]byte(updatedUser.Password), hashedPassword) {
-        t.Errorf("Handler did not update username data correctly: got %v want %v",
-            updatedUser.Password, hashedPassword)
-    }
+	// Assert that the updated user data in the database matches the request body data
+	if bytes.Equal([]byte(updatedUser.Password), hashedPassword) {
+		t.Errorf("Handler did not update username data correctly: got %v want %v",
+			updatedUser.Password, hashedPassword)
+	}
 }
 
 func TestUpdateFirstname(t *testing.T) {
@@ -539,6 +540,7 @@ func TestSetAnimalScore(t *testing.T) {
             status, http.StatusOK)
     }
 }
+
 func TestForgotPassword(t *testing.T) {
     // Initialize a new router instance and register the ForgotPassword function as a handler for the POST request
     r := mux.NewRouter()

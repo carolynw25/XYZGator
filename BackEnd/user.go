@@ -5,15 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-   	//"net/smtp"
-    //"github.com/google/uuid"
-    	//"crypto/tls"
-    	//"strconv"
-    	//"log"
-
-	//"database/sql"
 	"time"
-
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -34,8 +26,6 @@ type User struct {
     MathScore  int       `json:"mathScore" gorm:"default:-1"`
     WordScore  int       `json:"wordScore" gorm:"default:99999999999999999"`
     AnimalScore int      `json:"animalScore" gorm:"default:-1"`
-    //SecurityQuestion       string    `json:"securityQuestion"`
-    //SecurityAnswer         string    `json:"securityAnswer"`
     FavoriteAnimal         string    `json:"favoriteAnimal"`
 	PasswordResetToken     string    `json:"passwordResetToken"`
 	PasswordResetExpiresAt int64     `json:"passwordResetExpiresAt"`
@@ -44,7 +34,6 @@ type User struct {
 var DB *gorm.DB
 var err error
 
-//const DNS = "root:Jr5rxs!!@tcp(127.0.0.1:3306)/credentials?charset"
 const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
@@ -77,15 +66,6 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(user)
 }
-
-/*
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user User
-	json.NewDecoder(r.Body).Decode(&user)
-	DB.Create(&user)
-	json.NewEncoder(w).Encode(user)
-}*/
 
 func getID(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
@@ -145,17 +125,6 @@ type Credentials struct {
 	Password string `json:"password"`
 }
 
-/*
-	func generateToken(user User) (string, error) {
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"id":       user.ID,
-			"username": user.UserName,
-			"email":    user.Email,
-			"exp":      time.Now().Add(time.Hour * 24).Unix(),
-		})
-		return token.SignedString([]byte("secret"))
-	}
-*/
 func login(w http.ResponseWriter, r *http.Request) {
 	// Parse the login credentials from the request body
 	var user User
@@ -223,8 +192,6 @@ func signUp(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(user)
 }
 
-
-
 func UpdateUsername(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     params := mux.Vars(r)
@@ -266,6 +233,7 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
     DB.Save(&user)
     json.NewEncoder(w).Encode(user)
 }
+
 func UpdateFirstName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
@@ -319,6 +287,7 @@ func UpdateEmail(w http.ResponseWriter, r *http.Request) {
 	DB.Save(&user)
 	json.NewEncoder(w).Encode(user)
 }
+
 func GetMatchScore(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     params := mux.Vars(r)
@@ -517,15 +486,6 @@ func ForgotPassword(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Incorrect favorite animal answer", http.StatusUnauthorized)
         return
     }
-
-    // Prompt user to enter new password
-    //json.NewEncoder(w).Encode(map[string]string{"message": "Answered favorite animal correctly. Please enter a new password."})
-
-    //var newPassword map[string]string
-    // if err := json.NewDecoder(r.Body).Decode(&newPassword); err != nil {
-    //     http.Error(w, "Invalid request body", http.StatusBadRequest)
-    //     return
-    // }
 	password, ok := data["password"]
     if !ok {
         http.Error(w, "Missing password field", http.StatusBadRequest)
