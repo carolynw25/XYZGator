@@ -17,22 +17,24 @@ interface coord {
 <div class ="outer">
   <div class="top-bar">
     <div class="lowestTime">
-      <div *ngIf="lowestTime !== null" class="lowest-time"> lowestTime: {{ lowestTime.minutes }}:{{ lowestTime.seconds | number: '2.0' }}</div>
-      <div *ngIf="lowestTime == null" class="lowest-time"> lowestTime: </div>
+      <div *ngIf="lowestTime !== null" class="lowest-time"> Lowest Time: {{ lowestTime.minutes }}:{{ lowestTime.seconds | number: '2.0' }}</div>
+      <div *ngIf="lowestTime == null" class="lowest-time"> Lowest Time: </div>
     </div>
     <div class="reset">
       <button (click)="reset()">Reset</button>
     </div>
-    <div class="timer"> timer: {{ minutes }}:{{ seconds | number: '2.0' }}</div>
+    <div class="timer"> Timer: {{ minutes }}:{{ seconds | number: '2.0' }}</div>
     <div class="return">
       <button routerLink="/notifications">Return</button>
     </div>
   </div>
-  <div class="w">Words to find: (fruit category)</div>
-  <ul>
-    <li *ngFor="let word of words">{{ word }} {{ highlightedWords.includes(word) ? ' (found)' : '' }}</li>
-  </ul>
-  <div class="w">Word just highlighted: {{ highlightedWords[highlightedWords.length-1] }} / {{ highlightedWords[highlightedWords.length-2] }} </div>
+  <div class= "topOfGrid">
+    <div class="w">Words to find: (fruit category)</div>
+    <ul>
+      <li *ngFor="let word of words">{{ word }} {{ highlightedWords.includes(word) ? ' (found)' : '' }}</li>
+    </ul>
+    <div class="w">Word just highlighted: {{ highlightedWords[highlightedWords.length-1] }} / {{ highlightedWords[highlightedWords.length-2] }} </div>
+  </div>
   <table>
     <tr *ngFor="let row of grid; let i = index">
       <td 
@@ -52,15 +54,20 @@ interface coord {
    background-color: lavender;
  }
  td {
-  border: 3px solid rgba(239, 239, 244, 0.314);
+  border: 3px solid rgba(162, 162, 197, 0.314);
+  font-size: 16px;
   padding: 7px;
-  font-size: 17px;
   font-family: 'Arial', sans-serif;
   background-color: #fff;
   cursor: pointer;
+  text-align: center;
+
 }
 td.selected {
-  background-color: rgba(30, 30, 255, 0.314);
+  background-color: rgba(30, 30, 255, 0.4);
+}
+.topOfGrid{
+  
 }
 .top-bar {
       display: flex;
