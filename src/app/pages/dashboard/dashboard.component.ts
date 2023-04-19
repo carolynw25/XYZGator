@@ -21,8 +21,13 @@ export class DashboardComponent implements OnInit{
   public chartHours;
 
   scoreMemory : number = 0;
+  lowestTimeMemory = null;
+
   scoreMath : number = 0;
+
   scoreWord : number = 0;
+  lowestTimeWord = null;
+
   scorePicture : number = 0;
 
 
@@ -32,6 +37,23 @@ export class DashboardComponent implements OnInit{
     private userIDService: UserIdService,
     private http: HttpClient
     ) { }
+
+  updateLowestTimeMemory(sec: number){
+    if (sec >= 60){
+      this.lowestTimeMemory = { minutes: Math.floor(sec/60), seconds: sec%60 };
+    }
+    else {
+      this.lowestTimeMemory = { minutes: 0, seconds: sec };
+    }
+  }
+  updateLowestTimeWord(sec: number){
+    if (sec >= 60){
+      this.lowestTimeWord = { minutes: Math.floor(sec/60), seconds: sec%60 };
+    }
+    else {
+      this.lowestTimeWord = { minutes: 0, seconds: sec };
+    }
+  }
 
   getUserScoreMemory(ID: number): Observable<number> {//memory
     const url = 'http://127.0.0.1:8080/api/users/' + ID + '/matchscore'
@@ -67,6 +89,7 @@ export class DashboardComponent implements OnInit{
       }
       else{
         this.scoreMemory = score;
+        this.updateLowestTimeMemory(score);
       }
 
     });
@@ -90,6 +113,7 @@ export class DashboardComponent implements OnInit{
       }
       else{
         this.scoreWord = score;
+        this.updateLowestTimeWord(score);
       }
     });
 

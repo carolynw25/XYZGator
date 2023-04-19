@@ -46,6 +46,8 @@
                 <p class="card-title">Your Scores:</p>
                 <p class="card-category">Memory Score:</p>
                 <p class="card-title">{{ scoreMemory }} <p>
+                <p *ngIf="lowestTimeMemory !== null" class="lowest-time"> {{ lowestTimeMemory.minutes }}:{{ lowestTimeMemory.seconds | number: '2.0' }}</p>
+                <p *ngIf="lowestTimeMemory == null" class="lowest-time"> - </p>
 
                 <p class="card-category">Math Score <p>
                 <p class="card-title">{{ scoreMath }}</p>
@@ -53,6 +55,8 @@
 
                 <p class="card-category">Wordsearch Score</p>
                 <p class="card-title">{{ scoreWord }}</p>
+                <p *ngIf="lowestTimeWord !== null" class="lowest-time"> {{ lowestTimeWord.minutes }}:{{ lowestTimeWord.seconds | number: '2.0' }}</p>
+                <p *ngIf="lowestTimeWord == null" class="lowest-time"> - </p>
 
                 <p class="card-category">Animal scorePicture</p>
                 <p class="card-title">{{ scorePicture }}</p>
