@@ -28,9 +28,14 @@
 + TestUpdateUsername()
 + TestUpdateEmail()
 + TestGetMatchScore()
-+ TestSetMatchScore()
 + TestGetMathScore()
++ TestGetWordScore()
++ TestGetAnimalScore()
++ TestSetMatchScore()
 + TestSetMathScore()
++ TestSetWordScore()
++ TestSetAnimalScore()
++ TestForgotPassword()
 
 ## TestLogin()
 This test function ensures that the login endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /login endpoint with a username and password in the request body. The login function is then called with the response recorder and request objects. The function returns a JSON response with a message stating whether the login was successful or not. The test asserts that the response status code is 200 OK and that the response body contains the expected message.
@@ -352,20 +357,19 @@ func TestGetMathScore(t *testing.T) {
     }
 }
 ```
-## TestSetMathScore
-The TestSetMathScore function is a test function that is used to test the setMathScore handler function. This function tests if the handler returns the expected status code 200 OK when called with a PUT request to the /users/{id}/match/{target}/score endpoint with a score value in the request body.
+## TestGetWordScore()
+TestGetMathScore is a test function written in Go to test the functionality of the GetMathScore function. It initializes a new router instance using the mux package and registers GetMathScore function as a handler for the GET request with the endpoint /users/{id}/math/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/math/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
-func TestSetMathScore(t *testing.T) {
-    // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
+func TestGetWordScore(t *testing.T) {
+    // Initialize a new router instance and register the GetMatchScore function as a handler for the GET request
     r := mux.NewRouter()
-    r.HandleFunc("/users/{id}/match/{target}/score", setMathScore).Methods("PUT")
+    r.HandleFunc("/users/{id}/word/{target}", GetMathScore).Methods("GET")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
-    body := bytes.NewBuffer([]byte(`{"score":75}`))
-    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    // Create a new request to the /users/{id}/match/{target} endpoint with an id of 1 and a target of 2
+    req, err := http.NewRequest("GET", "/users/1/math/2", nil)
     if err != nil {
         t.Fatal(err)
     }
@@ -373,8 +377,38 @@ func TestSetMathScore(t *testing.T) {
     // Initialize the database connection
     DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
 
-    // Call the SetMathScore function with the response recorder and request objects
-    setMathScore(w, req)
+    // Call the GetMatchScore function with the response recorder and request objects
+    GetWordScore(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
+```
+## TestGetAnimalScore()
+TestGetMathScore is a test function written in Go to test the functionality of the GetMathScore function. It initializes a new router instance using the mux package and registers GetMathScore function as a handler for the GET request with the endpoint /users/{id}/math/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/math/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+```go
+func TestGetAnimalScore(t *testing.T) {
+    // Initialize a new router instance and register the GetMatchScore function as a handler for the GET request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}/animal/{target}", GetMathScore).Methods("GET")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/match/{target} endpoint with an id of 1 and a target of 2
+    req, err := http.NewRequest("GET", "/users/1/math/2", nil)
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Initialize the database connection
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+
+    // Call the GetMatchScore function with the response recorder and request objects
+    GetAnimalScore(w, req)
 
     // Assert that the response status code is 200 OK
     if status := w.Code; status != http.StatusOK {
@@ -408,6 +442,103 @@ func TestSetMatchScore(t *testing.T) {
 
     // Call the SetMathScore function with the response recorder and request objects
     setMatchScore(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
+```
+## TestSetMathScore
+The TestSetMathScore function is a test function that is used to test the setMathScore handler function. This function tests if the handler returns the expected status code 200 OK when called with a PUT request to the /users/{id}/match/{target}/score endpoint with a score value in the request body.
+```go
+func TestSetMathScore(t *testing.T) {
+    // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}/match/{target}/score", setMathScore).Methods("PUT")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
+    body := bytes.NewBuffer([]byte(`{"score":75}`))
+    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Initialize the database connection
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+
+    // Call the SetMathScore function with the response recorder and request objects
+    setMathScore(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
+```
+## TestSetWordScore
+This function tests the setMatchScore function by creating a new router instance and registering setMatchScore as the handler for the PUT request to the /users/{id}/match/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/match/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
+
+The function initializes the database connection and calls setMatchScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+```go
+func TestSetWordScore(t *testing.T) {
+    // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}/word/{target}/score", setMathScore).Methods("PUT")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
+    body := bytes.NewBuffer([]byte(`{"score":75}`))
+    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Initialize the database connection
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+
+    // Call the SetMathScore function with the response recorder and request objects
+    setWordScore(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
+```
+## TestSetAnimalScore
+This function tests the setMatchScore function by creating a new router instance and registering setMatchScore as the handler for the PUT request to the /users/{id}/match/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/match/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
+
+The function initializes the database connection and calls setMatchScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+```go
+func TestSetAnimalScore(t *testing.T) {
+    // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}/match/{target}/score", setMathScore).Methods("PUT")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
+    body := bytes.NewBuffer([]byte(`{"score":75}`))
+    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Initialize the database connection
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+
+    // Call the SetMathScore function with the response recorder and request objects
+    setAnimalScore(w, req)
 
     // Assert that the response status code is 200 OK
     if status := w.Code; status != http.StatusOK {
@@ -483,6 +614,7 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 + setMathScore()
 + setWordScore
 + setAnimalScore
++ ForgotPassword()
 
 ## initializeRouter()
 
@@ -864,42 +996,6 @@ func GetAnimalScore(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user.AnimalScore)
 }
 ```
-## setMathScore()
-This function is used to update a user's math score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new math score from the request body. If the new math score is higher than the user's current math score, it updates the user's math score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
-```go
-func setMathScore(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	result := DB.First(&user, params["id"])
-	if result.Error != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
-	}
-
-	// Parse the new math score from the request body
-	var score struct {
-		Score int `json:"mathScore"`
-	}
-	err := json.NewDecoder(r.Body).Decode(&score)
-	if err != nil {
-		http.Error(w, "Error parsing request body", http.StatusBadRequest)
-		return
-	}
-
-	// Update the user's math score if the new score is higher
-	if score.Score > user.MathScore {
-		user.MathScore = score.Score
-		result = DB.Save(&user)
-		if result.Error != nil {
-			http.Error(w, "Error updating math score", http.StatusInternalServerError)
-			return
-		}
-	}
-
-	json.NewEncoder(w).Encode(user)
-}
-```
 ## setMatchScore()
 This function is used to update a user's memory game match score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new match score from the request body. If the new match score is higher than the user's current match score, it updates the user's match score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
 ```go
@@ -929,6 +1025,42 @@ func setMatchScore(w http.ResponseWriter, r *http.Request) {
 		result = DB.Save(&user)
 		if result.Error != nil {
 			http.Error(w, "Error updating match score", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	json.NewEncoder(w).Encode(user)
+}
+```
+## setMathScore()
+This function is used to update a user's math score. It takes a HTTP request and response as input and returns the updated user object as a JSON object in the response body. It first sets the content type of the response to JSON, then uses mux.Vars to extract the user ID from the request parameters. It queries the database to retrieve the user with the given ID, and parses the new math score from the request body. If the new math score is higher than the user's current math score, it updates the user's math score and saves the changes to the database. Finally, it encodes the updated user object to JSON using json.NewEncoder and writes it to the response body using w.Write.
+```go
+func setMathScore(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	result := DB.First(&user, params["id"])
+	if result.Error != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	// Parse the new math score from the request body
+	var score struct {
+		Score int `json:"mathScore"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&score)
+	if err != nil {
+		http.Error(w, "Error parsing request body", http.StatusBadRequest)
+		return
+	}
+
+	// Update the user's math score if the new score is higher
+	if score.Score > user.MathScore {
+		user.MathScore = score.Score
+		result = DB.Save(&user)
+		if result.Error != nil {
+			http.Error(w, "Error updating math score", http.StatusInternalServerError)
 			return
 		}
 	}
