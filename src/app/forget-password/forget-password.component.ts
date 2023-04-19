@@ -20,11 +20,13 @@ export class ForgetPasswordComponent implements OnInit {
     private userIdService: UserIdService) { }
 
     public email = ''
+    public securityQuestion = ''
+    public newPass = ''
 
   ngOnInit(): void {
   }
   onSubmit(): void {
-    const body = {email: this.email} ;
+    const body = {email: this.email, securityQeustion: this.securityQuestion, newPass: this.newPass} ;
     //const options = {headers: new HttpHeaders({'Content-Type':'application/json'}) };
     const headers = {
       'Content-Type': 'application/json'

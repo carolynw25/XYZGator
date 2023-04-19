@@ -42,7 +42,7 @@ export class SignupComponent implements OnInit {
     ) { }
 
   addUserData() {
-    const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email} ;
+    const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email, sq1: this.sq1} ;
     const headers = {
       'Content-Type': 'application/json'
     };
