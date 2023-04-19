@@ -41,11 +41,28 @@ export class UserComponent implements OnInit{
     private userIDService: UserIdService, 
     ) { }
 
-    addUserData() {
+    updateUserData() {
+      if (this.username != ''){
+
+      }
+      if (this.password != ''){
+
+      }
+      if (this.firstname != ''){
+
+      }
+      if (this.lastname != ''){
+
+      }
+      if (this.email != ''){
+
+      }
         const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email, favoriteAnimal: this.favoriteAnimal} ;
         const headers = {
           'Content-Type': 'application/json'
         };
+
+
     
         this.http.post('http://127.0.0.1:8080/api/signUp', body, {headers}).subscribe
           (response => {
