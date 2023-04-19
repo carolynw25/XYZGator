@@ -92,7 +92,7 @@ styles: [`
   margin-bottom: 15px;
 }
 .number {
-  background-color: rgb(219, 237, 252);
+  background-color:rgb(252, 245, 245);
   width: 70px;
   height: 70px;
   border: 2px solid rgb(166, 176, 183);

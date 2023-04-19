@@ -52,9 +52,9 @@ interface coord {
    background-color: lavender;
  }
  td {
-  border: 1px solid #ccc;
-  padding: 5px;
-  font-size: 20px;
+  border: 3px solid rgba(239, 239, 244, 0.314);
+  padding: 7px;
+  font-size: 17px;
   font-family: 'Arial', sans-serif;
   background-color: #fff;
   cursor: pointer;
