@@ -1,14 +1,15 @@
 package main
 
 import (
+	"errors"
 	"encoding/json"
 	"fmt"
 	"net/http"
-   // "net/smtp"
+   	//"net/smtp"
     //"github.com/google/uuid"
-    //"crypto/tls"
-    //"strconv"
-    //"log"
+    	//"crypto/tls"
+    	//"strconv"
+    	//"log"
 
 	//"database/sql"
 	"time"
@@ -31,10 +32,13 @@ type User struct {
     DeletedAt  time.Time `gorm:"-"`
     MatchScore int       `json:"matchScore" gorm:"default:999999999999999"`
     MathScore  int       `json:"mathScore" gorm:"default:-1"`
-	WordScore  int       `json:"wordScore" gorm:"default:99999999999999999"`
-	AnimalScore int      `json:"animalScore" gorm:"default:-1"`
-    // PasswordResetToken     string    `json:"passwordResetToken"`
-    // PasswordResetExpiresAt int64     `json:"passwordResetExpiresAt"`
+    WordScore  int       `json:"wordScore" gorm:"default:99999999999999999"`
+    AnimalScore int      `json:"animalScore" gorm:"default:-1"`
+    //SecurityQuestion       string    `json:"securityQuestion"`
+    //SecurityAnswer         string    `json:"securityAnswer"`
+    FavoriteAnimal         string    `json:"favoriteAnimal"`
+	PasswordResetToken     string    `json:"passwordResetToken"`
+	PasswordResetExpiresAt int64     `json:"passwordResetExpiresAt"`
 }
 
 var DB *gorm.DB
@@ -64,7 +68,13 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	var user User
-	DB.First(&user, params["id"])
+	result := DB.First(&user, params["id"])
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		// User not found
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "DNE")
+		return
+	}
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -188,11 +198,17 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 
     // Check if the username already exists in the database
     var existingUser User
-    result := DB.Where("user_name = ?", user.UserName).First(&existingUser)
+    result := DB.Where("email = ?", user.Email).First(&existingUser)
     if result.Error == nil {
-        http.Error(w, "User already taken", http.StatusBadRequest)
+        http.Error(w, "Email already taken", http.StatusBadRequest)
         return
     }
+	result1 := DB.Where("user_name = ?", user.UserName).First(&existingUser)
+    if result1.Error == nil {
+        http.Error(w, "Username already taken", http.StatusBadRequest)
+        return
+    }
+
 
     // Hash the password before storing in the database
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -206,6 +222,8 @@ func signUp(w http.ResponseWriter, r *http.Request) {
     DB.Create(&user)
     json.NewEncoder(w).Encode(user)
 }
+
+
 
 func UpdateUsername(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
@@ -465,130 +483,68 @@ func setAnimalScore(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-// func ForgotPassword(w http.ResponseWriter, r *http.Request) {
-// 	// Set Content-Type header to JSON
-// 	w.Header().Set("Content-Type", "application/json")
+func ForgotPassword(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
 
-// 	// Parse request body into a map
-// 	var data map[string]string
-// 	err := json.NewDecoder(r.Body).Decode(&data)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
-// 		return
-// 	}
+    var data map[string]string
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+        http.Error(w, "Invalid request body", http.StatusBadRequest)
+        return
+    }
 
-// 	// Get the email from the request payload
-// 	email, ok := data["email"]
-// 	if !ok {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		json.NewEncoder(w).Encode(map[string]string{"error": "Missing email field"})
-// 		return
-// 	}
+    email, ok := data["email"]
+    if !ok {
+        http.Error(w, "Missing email field", http.StatusBadRequest)
+        return
+    }
 
-// 	// Check if email exists in the database
-// 	var user User
-// 	err = DB.Where("email = ?", email).First(&user).Error
-// 	if err != nil {
-// 		if err == gorm.ErrRecordNotFound {
-// 			w.WriteHeader(http.StatusNotFound)
-// 			json.NewEncoder(w).Encode(map[string]string{"error": "Email not found"})
-// 			return
-// 		}
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
-// 		return
-// 	}
+    answer, ok := data["favoriteAnimal"]
+    if !ok {
+        http.Error(w, "Missing favoriteAnimal field", http.StatusBadRequest)
+        return
+    }
 
-// 	// Generate and store a password reset token for the user
-// 	token := uuid.New().String()
-// 	user.PasswordResetToken = token
-// 	user.PasswordResetExpiresAt = time.Now().Add(time.Hour * 24).Unix() // Token expires in 24 hours
-// 	err = DB.Save(&user).Error
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		json.NewEncoder(w).Encode(map[string]string{"error": "Database error"})
-// 		return
-// 	}
+    // Check if email exists in the database
+    var user User
+    result := DB.Where("email = ?", email).First(&user)
+    if result.Error != nil {
+        http.Error(w, "Email not found", http.StatusBadRequest)
+        return
+    }
 
-// 	// Send a password reset email to the user
-// 	resetLink := fmt.Sprintf("https://example.com/reset-password/%s", token)
-// 	subject := "Password Reset Request"
-// 	body := fmt.Sprintf("Hello %s,\n\nWe have received a request to reset your password. Please click the following link to reset your password: %s\n\nIf you did not request a password reset, please ignore this email.\n\nBest,\nThe Example Team", user.FirstName, resetLink)
-// 	err = sendEmail(email, subject, body)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
-// 		return
-// 	}
+    // Check if the favorite animal answer is correct
+    if answer != user.FavoriteAnimal {
+        http.Error(w, "Incorrect favorite animal answer", http.StatusUnauthorized)
+        return
+    }
 
-// 	// Return a success response
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(map[string]string{"message": "Password reset email sent"})
-// }
+    // Prompt user to enter new password
+    //json.NewEncoder(w).Encode(map[string]string{"message": "Answered favorite animal correctly. Please enter a new password."})
 
-// func sendEmail(to, subject, body string) error {
-//     // Replace with your own email address and password
-//     from := "testuser7381@outlook.com"
-//     password := "example@123"
+    //var newPassword map[string]string
+    // if err := json.NewDecoder(r.Body).Decode(&newPassword); err != nil {
+    //     http.Error(w, "Invalid request body", http.StatusBadRequest)
+    //     return
+    // }
+	password, ok := data["password"]
+    if !ok {
+        http.Error(w, "Missing password field", http.StatusBadRequest)
+        return
+    }
 
-//     // Replace with your email provider's SMTP host and port
-//     smtpHost := "smtp.office365.com"
-//     smtpPort := 587
+    // Hash the new password
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        http.Error(w, "Failed to hash password", http.StatusInternalServerError)
+        return
+    }
 
-//     // Set up authentication information.
-//     auth := smtp.PlainAuth("", from, password, smtpHost)
+    // Update the user's password in the database
+    user.Password = string(hashedPassword)
+    if err := DB.Save(&user).Error; err != nil {
+        http.Error(w, "Failed to save user data", http.StatusInternalServerError)
+        return
+    }
 
-//     // Compose the email message.
-//     msg := []byte("To: " + to + "\r\n" +
-//         "Subject: " + subject + "\r\n" +
-//         "\r\n" +
-//         body + "\r\n")
-
-//     // Set up a connection to the SMTP server.
-//     smtpAddr := fmt.Sprintf("%s:%d", smtpHost, smtpPort)
-//     tlsConfig := &tls.Config{
-//         InsecureSkipVerify: true,
-//         ServerName:         smtpHost,
-//     }
-//     conn, err := tls.Dial("tcp", smtpAddr, tlsConfig)
-//     if err != nil {
-//         return fmt.Errorf("failed to connect to SMTP server: %v", err)
-//     }
-//     defer conn.Close()
-
-//     client, err := smtp.NewClient(conn, smtpHost)
-//     if err != nil {
-//         return fmt.Errorf("failed to create SMTP client: %v", err)
-//     }
-//     defer client.Quit()
-
-//     // Authenticate with the SMTP server.
-//     if err := client.Auth(auth); err != nil {
-//         return fmt.Errorf("SMTP authentication failed: %v", err)
-//     }
-
-//     // Set the sender and recipient.
-//     if err := client.Mail(from); err != nil {
-//         return fmt.Errorf("failed to set sender: %v", err)
-//     }
-//     if err := client.Rcpt(to); err != nil {
-//         return fmt.Errorf("failed to set recipient: %v", err)
-//     }
-
-//     // Send the email message.
-//     w, err := client.Data()
-//     if err != nil {
-//         return fmt.Errorf("failed to start email data: %v", err)
-//     }
-//     defer w.Close()
-
-//     if _, err := w.Write(msg); err != nil {
-//         return fmt.Errorf("failed to write email message: %v", err)
-//     }
-
-//     // Log a success message.
-//     log.Printf("Email sent successfully to %s with subject: %s", to, subject)
-
-//     return nil
-// }
+    json.NewEncoder(w).Encode(map[string]string{"message": "Password updated successfully."})
+}
