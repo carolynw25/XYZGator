@@ -30,12 +30,12 @@ export class ForgetPasswordComponent implements OnInit {
       'Content-Type': 'application/json'
     };
 
-    this.http.post('http://127.0.0.1:8080/api/login', body, {headers}).subscribe
+    this.http.post('http://127.0.0.1:8080/api/forgotPassword', body, {headers}).subscribe
       (response => {
         //this.saveUserID(this.username, this.password)
         // If the login is successful, redirect the user to the dashboard page
-        this.router.navigate(['/main']);
-        document.write("Welcome to the Web Page!");
+        this.router.navigate(['/login']);
+        //document.write("Welcome to the Web Page!");
       },
       error => {
         // If the login is unsuccessful, display an error message
