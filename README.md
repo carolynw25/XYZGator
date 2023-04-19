@@ -1,4 +1,4 @@
-# XYZGator (Group 84)
+# Welcome to XYZgator!
 
 ## Project Members
 - Bradley Dantas
