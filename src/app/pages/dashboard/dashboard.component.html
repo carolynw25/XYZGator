@@ -1,4 +1,6 @@
 <div class="row">
+  <h1>Hello, {{userID}} </h1>
+  <br> <!-- Add a line break here -->
   <div> 
   </div>
   <div class="col-lg-3 col-md-6 col-sm-6">
@@ -13,11 +15,11 @@
           <div class="col-7 col-md-8">
             <div class="numbers">
               <!-- testing ID-->
-               <p class="card-category">Your ID is: {{ userID }}</p>
+               <!-- <p class="card-category">Your ID is: {{ userID }}</p>
                <p class="card-category">Your memoryScore is: {{ scoreMemory }}</p>
                <p class="card-category">Your mathScore is: {{ scoreMath }}</p>
                <p class="card-category">Your wordScore is: {{ scoreWord }}</p>
-               <p class="card-category">Your pictureScore is: {{ scorePicture }}</p>
+               <p class="card-category">Your pictureScore is: {{ scorePicture }}</p> -->
               <p class="card-category">You have a Streak of</p>
               <p class="card-title">4 days
                 <p>
@@ -36,9 +38,47 @@
       </div>
     </div>
   </div>
-  <!-- temporary spacer-->
-  <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
   <div class="col-lg-3 col-md-6 col-sm-6">
+    <div class="card card-stats">
+      <div class="card-body ">
+        <div class="row">
+          <div class="col-5 col-md-4">
+            <div class="icon-big text-center icon-warning">
+              <i class="nc-icon nc-vector text-danger"></i>
+            </div>
+          </div>
+          <div class="col-7 col-md-8">
+            <div class="numbers">
+              <p class="card-title">Your Scores:</p>
+              <p class="card-category">Memory Score:</p>
+              <p class="card-title">{{ scoreMemory }} <p>
+
+              <p class="card-category">Math Score <p>
+              <p class="card-title">{{ scoreMath }}</p>
+
+
+              <p class="card-category">Wordsearch Score</p>
+              <p class="card-title">{{ scoreWord }}</p>
+
+               <p class="card-category">Animal scorePicture</p>
+               <p class="card-title">{{ scorePicture }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer ">
+        <hr>
+        <div class="stats">
+          <i class="fa fa-clock-o"></i> In the last hour
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- temporary spacer-->
+  <!-- <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> -->
+  <!-- <div class="col-lg-3 col-md-6 col-sm-6">
     <div class="card card-stats">
       <div class="card-body ">
         <div class="row">
@@ -49,10 +89,10 @@
           </div>
           <div class="col-7 col-md-8">
 
-            <div class="numbers">
+             <div class="numbers">
               <p class="card-category">Today is ...</p>
-              <!-- <p class="card-title">January 1, 2023
-                <p> -->
+               <p class="card-title">January 1, 2023
+                <p>
                 <p class="card-title" id="currentDate"> </p>
                 <script>
                   n =  new Date();
@@ -68,14 +108,14 @@
                   //var formattedDate = currentDate.toDateString();
                   //document.getElementById("currentDate").innerHTML = formattedDate;
                 </script>
-                  <!--
+                
               <p id="current-date"></p>
               <script>
                 const currentDate = new Date();
                 const dateString = currentDate.toLocaleDateString();
                 document.getElementById("current-date").textContent = dateString;
               </script>
-                  -->
+                  
             </div>
           </div>
         </div>
@@ -88,8 +128,8 @@
       </div>
     </div>
   </div>
-  <!--
-  <div class="col-lg-3 col-md-6 col-sm-6">
+-->
+  <!-- <div class="col-lg-3 col-md-6 col-sm-6">
     <div class="card card-stats">
       <div class="card-body ">
         <div class="row">
@@ -107,6 +147,7 @@
           </div>
         </div>
       </div>
+
       <div class="card-footer ">
         <hr>
         <div class="stats">
@@ -114,11 +155,11 @@
         </div>
       </div>
     </div>
-  </div>
-  -->
+  </div> -->
+
 
   <!-- temporary spacer -->
-  <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
+  <!-- <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p> -->
 
   <div class="col-lg-3 col-md-6 col-sm-6">
     <div class="card card-stats">
