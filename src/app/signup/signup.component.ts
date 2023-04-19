@@ -19,19 +19,10 @@ interface IuserInfo{
 export class SignupComponent implements OnInit {
   public username = ''
   public password = ''
-  public sq1 = ''
+  public favoriteAnimal = ''
   public firstname = ''
   public lastname = ''
   public email = ''
-  public userInfo: IuserInfo[] = [
-    {
-       username : 'np',
-       password : 'gg',
-       firstname : 'dsf',
-       lastname : 'df',
-       email : 'sdfgsd'
-    }
-  ]
 
   public signupForm !: FormGroup;
   constructor(
@@ -42,7 +33,7 @@ export class SignupComponent implements OnInit {
     ) { }
 
   addUserData() {
-    const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email, sq1: this.sq1} ;
+    const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email, favoriteAnimal: this.favoriteAnimal} ;
     const headers = {
       'Content-Type': 'application/json'
     };
@@ -61,27 +52,6 @@ export class SignupComponent implements OnInit {
     );
   }
 
-
-//Before connecting with Backend
-  addUser(){
-    this.userInfo.push({
-      username: this.username,
-      password: this.password,
-      firstname: this.firstname,
-      lastname: this.lastname,
-      email: this.email
-    })
-    this.username = ''
-    this.password = ''
-    this.firstname = ''
-    this.lastname = ''
-    this.email = ''
-  
-  }
-
-
-
-
   ngOnInit(): void {
     
     this.signupForm = this.formBuilder.group({
@@ -89,20 +59,11 @@ export class SignupComponent implements OnInit {
       password:[''],
       firstname:[''],
       lastname:[''],
-      email:['']
+      email:[''],
+      favoriteAnimal:['']
 
     })
 
   }
-  // signUp(){
-  //   this.http.post<any>("http://localhost:3000/signupUsers",this.signupForm.value)
-  //   .subscribe(res=>{
-  //     alert("Signup Successful");
-  //     this.signupForm.reset();
-  //     this.router.navigate(['login']);
-  //   },err=>{
-  //     alert("Something went wrong")
-  //   })
-  // }
 
 }

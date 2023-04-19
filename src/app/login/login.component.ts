@@ -95,19 +95,12 @@ export class LoginComponent implements OnInit {
   }
 
 
-  public userLogin: IuserLogin[] = [
-    {
-       username : 'fg',
-       password : 'gg',
-    }
-  ]
-
-
-
-  checkData() {
-
-
-  }
+  // public userLogin: IuserLogin[] = [
+  //   {
+  //      username : 'fg',
+  //      password : 'gg',
+  //   }
+  // ]
 
 
 }
