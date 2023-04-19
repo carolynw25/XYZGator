@@ -47,9 +47,10 @@ export class UserComponent implements OnInit{
       };
       if (this.username != ''){
         const body = {username: this.username}
-        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'name', body, {headers}).subscribe
+        const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/name';
+        this.http.put(url, body).subscribe
         (response=> {
-          console.log("Updated username to: " + this.username);
+          console.log("Updated password to: " + this.password);
         },
         error=> {
           console.log(error);
@@ -58,7 +59,8 @@ export class UserComponent implements OnInit{
       }
       if (this.password != ''){
         const body = {pass: this.password}
-        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'pass', body, {headers}).subscribe
+        const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/pass';
+        this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated password to: " + this.password);
         },
@@ -69,7 +71,8 @@ export class UserComponent implements OnInit{
       }
       if (this.firstname != ''){
         const body = {firstname: this.firstname}
-        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'first', body, {headers}).subscribe
+        const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/first'
+        this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated firstname to: " + this.firstname);
         },
@@ -80,7 +83,8 @@ export class UserComponent implements OnInit{
       }
       if (this.lastname != ''){
         const body = {lastname: this.lastname}
-        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'last', body, {headers}).subscribe
+        const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/last'
+        this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated lastname to: " + this.lastname);
         },
@@ -91,7 +95,8 @@ export class UserComponent implements OnInit{
       }
       if (this.email != ''){
         const body = {email: this.email}
-        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'email', body, {headers}).subscribe
+        const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/email'
+        this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated email to: " + this.email);
         },
