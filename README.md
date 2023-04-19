@@ -12,6 +12,8 @@ XYZGator is a web application that provides children aged 5 and above with resou
 - Node.js and NPM
 - Angular CLI
 - Golang
+- GORM [Click here for a GORM setup guide](https://gorm.io/).
+- Gorilla Mux [Click here for a Gorilla Mux setup guide](https://blog.logrocket.com/routing-go-gorilla-mux/).
 
 ### Installation
 1. Clone the repository
@@ -20,7 +22,7 @@ XYZGator is a web application that provides children aged 5 and above with resou
 
 ### Running the Application
 1. Navigate to the frontend directory and run `ng serve`
-2. Navigate to the backend directory and run `go run main.go`
+2. Navigate to the backend directory and run `go run main.go user.go`
 
 ### Build
 1. Navigate to the frontend directory and run `ng build --prod`
