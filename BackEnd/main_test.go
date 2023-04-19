@@ -155,8 +155,6 @@ func TestUpdateUsername(t *testing.T) {
 	}
 }
 
-//TEST UPDATE PASSWORD STILL NEEDED
-/*
 func CheckPasswordHash(password string, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
@@ -202,8 +200,6 @@ func TestUpdatePassword(t *testing.T) {
 			updatedUser.Password, updatePassword.NewPassword)
 	}
 }
-
-*/
 
 func TestUpdateFirstname(t *testing.T) {
 	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
@@ -549,73 +545,32 @@ func TestSetAnimalScore(t *testing.T) {
             status, http.StatusOK)
     }
 }
-/*
 func TestForgotPassword(t *testing.T) {
-	// Set up test database
-	db, err := gorm.Open(mysql.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("Failed to set up test database: %v", err)
-	}
-	defer os.Remove("test.db")
-	db.AutoMigrate(&User{})
+    // Initialize a new router instance and register the ForgotPassword function as a handler for the POST request
+    r := mux.NewRouter()
+    r.HandleFunc("/forgotPassword", ForgotPassword).Methods("POST")
 
-	// Create a test user
-	user := User{
-		Email:          "testuser@example.com",
-		Password:       "password",
-		FavoriteAnimal: "dog",
-	}
-	db.Create(&user)
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
 
-	// Test case 1: Missing email field
-	reqBody := map[string]string{
-		"favoriteAnimal": "dog",
-		"password":       "newpassword",
-	}
-	reqBytes, _ := json.Marshal(reqBody)
-	req, _ := http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
-	w := httptest.NewRecorder()
-	ForgotPassword(w, req)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+    // Create a new request to the /forgotPassword endpoint with a request body containing user data
+    requestBody := []byte(`{
+        "email": "viJap@gmail.com",
+        "favoriteAnimal": "DOLPHIN",
+        "password": "wack3"
+    }`)
+    req, err := http.NewRequest("POST", "/forgotPassword", bytes.NewReader(requestBody))
+    if err != nil {
+        t.Fatal(err)
+    }
 
-	// Test case 2: Missing favoriteAnimal field
-	reqBody = map[string]string{
-		"email":    "testuser@example.com",
-		"password": "newpassword",
-	}
-	reqBytes, _ = json.Marshal(reqBody)
-	req, _ = http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
-	w = httptest.NewRecorder()
-	ForgotPassword(w, req)
-	assert.Equal(t, http.StatusBadRequest, w.Code)
+    // Call the ForgotPassword function with the response recorder and request objects
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+    ForgotPassword(w, req)
 
-	// Test case 3: Incorrect favorite animal answer
-	reqBody = map[string]string{
-		"email":          "testuser@example.com",
-		"favoriteAnimal": "cat",
-		"password":       "newpassword",
-	}
-	reqBytes, _ = json.Marshal(reqBody)
-	req, _ = http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
-	w = httptest.NewRecorder()
-	ForgotPassword(w, req)
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-
-	// Test case 4: Successful password update
-	reqBody = map[string]string{
-		"email":          "testuser@example.com",
-		"favoriteAnimal": "dog",
-		"password":       "newpassword",
-	}
-	reqBytes, _ = json.Marshal(reqBody)
-	req, _ = http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
-	w = httptest.NewRecorder()
-	ForgotPassword(w, req)
-	assert.Equal(t, http.StatusOK, w.Code)
-
-	// Verify that the password has been updated in the database
-	var updatedUser User
-	db.Where("email = ?", "testuser@example.com").First(&updatedUser)
-	err = bcrypt.CompareHashAndPassword([]byte(updatedUser.Password), []byte("newpassword"))
-	assert.Nil(t, err)
-}*/
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
