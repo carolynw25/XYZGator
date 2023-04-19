@@ -50,7 +50,8 @@ export class UserComponent implements OnInit{
         const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/name';
         this.http.put(url, body).subscribe
         (response=> {
-          console.log("Updated password to: " + this.password);
+          console.log("Updated username to: " + this.username);
+          alert("Updated Username")
         },
         error=> {
           console.log(error);
@@ -58,11 +59,12 @@ export class UserComponent implements OnInit{
         );
       }
       if (this.password != ''){
-        const body = {pass: this.password}
+        const body = {password: this.password}
         const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/pass';
         this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated password to: " + this.password);
+          alert("Updated Password")
         },
         error=> {
           console.log(error);
@@ -70,11 +72,13 @@ export class UserComponent implements OnInit{
         );
       }
       if (this.firstname != ''){
-        const body = {firstname: this.firstname}
+        //"firstName" matches backend variable name exactly to work
+        const body = {firstName: this.firstname}
         const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/first'
         this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated firstname to: " + this.firstname);
+          alert("Updated Firstname")
         },
         error=> {
           console.log(error);
@@ -82,11 +86,12 @@ export class UserComponent implements OnInit{
         );
       }
       if (this.lastname != ''){
-        const body = {lastname: this.lastname}
+        const body = {lastName: this.lastname}
         const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/last'
         this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated lastname to: " + this.lastname);
+          alert("Updated Lastname")
         },
         error=> {
           console.log(error);
@@ -99,6 +104,7 @@ export class UserComponent implements OnInit{
         this.http.put(url, body).subscribe
         (response=> {
           console.log("Updated email to: " + this.email);
+          alert("Updated Email")
         },
         error=> {
           console.log(error);
