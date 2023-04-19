@@ -156,6 +156,54 @@ func TestUpdateUsername(t *testing.T) {
 }
 
 //TEST UPDATE PASSWORD STILL NEEDED
+/*
+func CheckPasswordHash(password string, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func TestUpdatePassword(t *testing.T) {
+	// Initialize a new router instance and register the UpdatePassword function as a handler for the PUT request
+	r := mux.NewRouter()
+	r.HandleFunc("/users/{id}/update-password", UpdatePassword).Methods("PUT")
+
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
+
+	// Create a new request to the /users/{id}/update-password endpoint with an id of 1 and a request body containing the new password
+	updatePassword := struct {
+		NewPassword string `json:"new_password"`
+	}{
+		NewPassword: "new_password",
+	}
+	updatePasswordJSON, _ := json.Marshal(updatePassword)
+	req, err := http.NewRequest("PUT", "/users/1/update-password", bytes.NewReader(updatePasswordJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the UpdatePassword function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	UpdatePassword(w, req)
+
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Retrieve the updated user from the database
+	var updatedUser User
+	DB.First(&updatedUser, 1)
+
+	// Assert that the updated user's password matches the new password
+	if !CheckPasswordHash(updatePassword.NewPassword, updatedUser.Password) {
+		t.Errorf("Handler did not update password correctly: got %v want %v",
+			updatedUser.Password, updatePassword.NewPassword)
+	}
+}
+
+*/
 
 func TestUpdateFirstname(t *testing.T) {
 	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
@@ -501,3 +549,73 @@ func TestSetAnimalScore(t *testing.T) {
             status, http.StatusOK)
     }
 }
+/*
+func TestForgotPassword(t *testing.T) {
+	// Set up test database
+	db, err := gorm.Open(mysql.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Failed to set up test database: %v", err)
+	}
+	defer os.Remove("test.db")
+	db.AutoMigrate(&User{})
+
+	// Create a test user
+	user := User{
+		Email:          "testuser@example.com",
+		Password:       "password",
+		FavoriteAnimal: "dog",
+	}
+	db.Create(&user)
+
+	// Test case 1: Missing email field
+	reqBody := map[string]string{
+		"favoriteAnimal": "dog",
+		"password":       "newpassword",
+	}
+	reqBytes, _ := json.Marshal(reqBody)
+	req, _ := http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
+	w := httptest.NewRecorder()
+	ForgotPassword(w, req)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	// Test case 2: Missing favoriteAnimal field
+	reqBody = map[string]string{
+		"email":    "testuser@example.com",
+		"password": "newpassword",
+	}
+	reqBytes, _ = json.Marshal(reqBody)
+	req, _ = http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
+	w = httptest.NewRecorder()
+	ForgotPassword(w, req)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	// Test case 3: Incorrect favorite animal answer
+	reqBody = map[string]string{
+		"email":          "testuser@example.com",
+		"favoriteAnimal": "cat",
+		"password":       "newpassword",
+	}
+	reqBytes, _ = json.Marshal(reqBody)
+	req, _ = http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
+	w = httptest.NewRecorder()
+	ForgotPassword(w, req)
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+
+	// Test case 4: Successful password update
+	reqBody = map[string]string{
+		"email":          "testuser@example.com",
+		"favoriteAnimal": "dog",
+		"password":       "newpassword",
+	}
+	reqBytes, _ = json.Marshal(reqBody)
+	req, _ = http.NewRequest(http.MethodPost, "/forgotPassword", bytes.NewReader(reqBytes))
+	w = httptest.NewRecorder()
+	ForgotPassword(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Verify that the password has been updated in the database
+	var updatedUser User
+	db.Where("email = ?", "testuser@example.com").First(&updatedUser)
+	err = bcrypt.CompareHashAndPassword([]byte(updatedUser.Password), []byte("newpassword"))
+	assert.Nil(t, err)
+}*/
