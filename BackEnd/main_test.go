@@ -13,6 +13,34 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestGetUser(t *testing.T) {
+    // Initialize a new router instance and register the GetMatchScore function as a handler for the GET request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}", GetUser).Methods("GET")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /users/{id}/match/{target} endpoint with an id of 1 and a target of 2
+    req, err := http.NewRequest("GET", "/users/1", nil)
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Initialize the database connection
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+
+    // Call the GetMatchScore function with the response recorder and request objects
+   GetUser(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
+
+
 func TestSignUp(t *testing.T) {
 	// Initialize a new router instance and register the SignUp function as a handler for the POST request
 	r := mux.NewRouter()
@@ -84,14 +112,14 @@ func TestLogin(t *testing.T) {
 func TestGetID(t *testing.T) {
 	// Initialize a new router instance and register the GetID function as a handler for the GET request
 	r := mux.NewRouter()
-	r.HandleFunc("/getid", getID).Methods("GET")
+	r.HandleFunc("/getID", getID).Methods("GET")
 
 	// Create a new instance of httptest.ResponseRecorder to record the response
 	w := httptest.NewRecorder()
 
 	// Create a new request to the /login endpoint with a username and password in the request body
 	loginData := []byte(`{"username": "vishalj05", "password": "wack"}`)
-	req, err := http.NewRequest("GET", "/getid", bytes.NewBuffer(loginData))
+	req, err := http.NewRequest("GET", "/getID", bytes.NewBuffer(loginData))
 	if err != nil {
 		t.Fatal(err)
 	}
