@@ -42,50 +42,94 @@ export class UserComponent implements OnInit{
     ) { }
 
     updateUserData() {
+      const headers = {
+        'Content-Type': 'application/json'
+      };
       if (this.username != ''){
-
+        const body = {username: this.username}
+        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'name', body, {headers}).subscribe
+        (response=> {
+          console.log("Updated username to: " + this.username);
+        },
+        error=> {
+          console.log(error);
+        }
+        );
       }
       if (this.password != ''){
-
+        const body = {pass: this.password}
+        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'pass', body, {headers}).subscribe
+        (response=> {
+          console.log("Updated password to: " + this.password);
+        },
+        error=> {
+          console.log(error);
+        }
+        );
       }
       if (this.firstname != ''){
-
+        const body = {firstname: this.firstname}
+        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'first', body, {headers}).subscribe
+        (response=> {
+          console.log("Updated firstname to: " + this.firstname);
+        },
+        error=> {
+          console.log(error);
+        }
+        );
       }
       if (this.lastname != ''){
-
+        const body = {lastname: this.lastname}
+        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'last', body, {headers}).subscribe
+        (response=> {
+          console.log("Updated lastname to: " + this.lastname);
+        },
+        error=> {
+          console.log(error);
+        }
+        );
       }
       if (this.email != ''){
-
-      }
-        const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email, favoriteAnimal: this.favoriteAnimal} ;
-        const headers = {
-          'Content-Type': 'application/json'
-        };
-
-
-    
-        this.http.post('http://127.0.0.1:8080/api/signUp', body, {headers}).subscribe
-          (response => {
-            // If the login is successful, redirect the user to the dashboard page
-            this.router.navigate(['/main']);
-            //document.write("Welcome to the Web Page!");
-          },
-          error => {
-            // If the login is unsuccessful, display an error message
-            console.log(error);
-    
-          }
+        const body = {email: this.email}
+        this.http.put('http://127.0.0.1:8080/api/users/' + this.userID + 'email', body, {headers}).subscribe
+        (response=> {
+          console.log("Updated email to: " + this.email);
+        },
+        error=> {
+          console.log(error);
+        }
         );
+      }
 
-        this.getUserInfo(this.userID).subscribe(user => {
-          console.log(user.userName);
-          console.log(user.passWord);
-          console.log(user.favAnimal);
-          console.log(user.firstName);
-          console.log(user.lastName);
-          console.log(user.email);
+      //   const body = {username: this.username, password: this.password, firstname: this.firstname, lastname: this.lastname, email: this.email, favoriteAnimal: this.favoriteAnimal} ;
+      //   const headers = {
+      //     'Content-Type': 'application/json'
+      //   };
 
-        });
+
+    
+      //   this.http.post('http://127.0.0.1:8080/api/signUp', body, {headers}).subscribe
+      //     (response => {
+      //       // If the login is successful, redirect the user to the dashboard page
+      //       this.router.navigate(['/main']);
+      //       //document.write("Welcome to the Web Page!");
+      //     },
+      //     error => {
+      //       // If the login is unsuccessful, display an error message
+      //       console.log(error);
+    
+      //     }
+      //   );
+
+      //   this.getUserInfo(this.userID).subscribe(user => {
+      //     console.log(user.userName);
+      //     console.log(user.passWord);
+      //     console.log(user.favAnimal);
+      //     console.log(user.firstName);
+      //     console.log(user.lastName);
+      //     console.log(user.email);
+
+      //   });
 
       }
 
