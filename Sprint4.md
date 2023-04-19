@@ -8,12 +8,12 @@
 - Modified LogIn and SignUp page to look neater and more centered
 - Modified the Game page so it has instructions under the memory game and math game
 ## Backend
-- Created function to get the user's ID when needed
-- Updated signup function so that the password is hashed - this provides more security for the user's information
-- Created functionality to receive and store the time taken to complete the memory game, and then store the record/best time (lowest time)
-- Created functionality to receive and store the the score for the math game, and then store the highest score
-- Modified function for updating users - now includes separate functionality for updating pieces of the user's information (usage will become more apparent when frontend adds a profile/settings page showing current user information)
-	- IN PROGRESS: Updating functionality for first name, last name, and password is still in progress. First name and last name updating features are low priority since it is unlikely that the user will have change these. However, password is an issue that should be fixed as soon as possible, and this requires more hashing functionality.
-- IN PROGRESS: Creating functionality for the 'forgot password' feature - involves sending a password reset link via email so that users can reset the password themselves
+- 'Forgot password' feature finished and completed, switched to using a security question to allow the user to reset their password
+- Fixed functionality to receive and store the time taken to complete the memory game, and then store the record/best time (lowest time)
+- Fixed functionality to receive and store the score for the math game, and then store the highest score
+- Added functionality to receive and store the score for the word game, and then store the highest score
+- Added functionality to receive and store the score for the animal game, and then store the highest score
+- Finished implementing functionality to update user information separately (email, username, first name, last name, and password)
 ## Together
-- Connected FrontEnd and Backend for User Signup (Now have a working login and signup)
+- Connected Frontend and Backend for User Signup (Now have a working login and signup)
+- Fixed and connected Frontend and Backend for all games and for updating user information
