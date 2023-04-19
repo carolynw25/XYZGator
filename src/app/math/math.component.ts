@@ -208,6 +208,7 @@ export class MathComponent implements OnInit {
     this.newRecord = false;
     
   }
+  
   ngOnInit(): void {
     //removed to fix unit test, don't think it's needed maybe
     //throw new Error('Method not implemented.');

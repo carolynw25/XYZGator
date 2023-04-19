@@ -2,12 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit , ChangeDetectionStrategy} from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from "@angular/forms"
 import { Router } from '@angular/router';
+import { UserIdService } from 'app/userIdService';
+import { Observable, take } from 'rxjs';
+
+interface User {
+  userName: string;
+  passWord: string;
+  favAnimal: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 
 @Component({
     selector: 'user-cmp',
     moduleId: module.id,
     templateUrl: 'user.component.html'
 })
+
 
 export class UserComponent implements OnInit{
     public username = ''
@@ -17,6 +29,7 @@ export class UserComponent implements OnInit{
     public lastname = ''
     public email = ''
 
+    userID: number;
 
 
     public signupForm !: FormGroup;
@@ -24,7 +37,8 @@ export class UserComponent implements OnInit{
     private formBuilder : FormBuilder,
     //new code
     private http : HttpClient, 
-    private router:Router
+    private router:Router,
+    private userIDService: UserIdService, 
     ) { }
 
     addUserData() {
@@ -45,19 +59,63 @@ export class UserComponent implements OnInit{
     
           }
         );
+
+        this.getUserInfo(this.userID).subscribe(user => {
+          console.log(user.userName);
+          console.log(user.passWord);
+          console.log(user.favAnimal);
+          console.log(user.firstName);
+          console.log(user.lastName);
+          console.log(user.email);
+
+        });
+
       }
 
-    ngOnInit(): void {
-    
-    this.signupForm = this.formBuilder.group({
-      username:[''],
-      password:[''],
-      firstname:[''],
-      lastname:[''],
-      email:[''],
-      favoriteAnimal:['']
+  //   ngOnInit(): void {
+  //   this.signupForm = this.formBuilder.group({
+  //     username:[''],
+  //     password:[''],
+  //     firstname:[''],
+  //     lastname:[''],
+  //     email:[''],
+  //     favoriteAnimal:['']
 
-    })
+  //   })
+  // }
+
+
+  ngOnInit(): void {
+    this.userID = this.userIDService.getUserId();
+    console.log('User ID ohmygoditworked: ', this.userID);
+
+
+    this.getUserInfo(this.userID).pipe(
+      take(1) // take only the first value emitted by the observable
+    ).subscribe(user => {
+      this.username = '';
+      this.password = '';
+      this.favoriteAnimal = '';
+      this.firstname = '';
+      this.lastname = '';
+      this.email = '';
+
+      
+    });
+
 
   }
+
+  // getUserInfo(ID: number): Observable<number> {
+  //   const url = 'http://127.0.0.1:8080/api/users/' + ID
+  //   return this.http.get<number>(url);
+  // }
+
+    getUserInfo(ID: number): Observable<User> {
+      const url = 'http://127.0.0.1:8080/api/users/' + ID
+      return this.http.get<User>(url, {responseType: 'json'});
+
+    }
+
+
 }

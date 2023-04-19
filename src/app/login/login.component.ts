@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit {
         
         
         // If the login is successful, redirect the user to the dashboard page
-        this.router.navigate(['/main']);
+        this.router.navigate(['/login']);
         //document.write("Welcome to the Web Page!");
       },
       error => {
