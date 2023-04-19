@@ -41,7 +41,7 @@ export class SignupComponent implements OnInit {
     this.http.post('http://127.0.0.1:8080/api/signUp', body, {headers}).subscribe
       (response => {
         // If the login is successful, redirect the user to the dashboard page
-        this.router.navigate(['/main']);
+        this.router.navigate(['/login']);
         //document.write("Welcome to the Web Page!");
       },
       error => {
