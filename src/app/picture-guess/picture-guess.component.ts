@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UserIdService } from 'app/userIdService';
 import { HttpClient } from '@angular/common/http';
 import {Observable, take} from 'rxjs';
+import Swal from 'sweetalert2';
+
 
 interface pictureObject {
   url: string;
@@ -119,6 +121,7 @@ export class PictureGuessComponent implements OnInit {
   selection: number = 0;
   score: number = 0;
   highScore: number = 0;
+  newRecord: boolean = false;
   answers = [];
   imageNames = [
   "assets/img/pictureGame/alligator.png",
@@ -238,7 +241,25 @@ export class PictureGuessComponent implements OnInit {
             () => console.log('Math score updated successfully'),
             (err) => console.error('Error updating math score', err)
           );
-          alert("You a genius kiddo! Rest your brain.")
+          this.newRecord = true;
+          Swal.fire({
+            title: `Congrats you got all ${this.score} questions right!`,
+            text: `High Score: ${this.highScore}${this.newRecord ? ' (newwwww)' : ''}`,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            padding: '3em',
+            color: '#716add',
+            allowOutsideClick: false,
+            //background: '#fab url("assets/img/cuteGator.png")',
+            ...(this.newRecord? {
+              backdrop: `
+              rgba(0,0,123,0.4)
+              url("assets/img/nyan-cat-gif.webp")
+              left top
+              no-repeat
+            `
+            } : {})
+          });
         }
       } else { //incorrect
         const targetElement = event.target as HTMLElement;
@@ -250,8 +271,28 @@ export class PictureGuessComponent implements OnInit {
             () => console.log('Math score updated successfully'),
             (err) => console.error('Error updating math score', err)
           );
+          this.newRecord = true;
         }
         this.gameOver = true;
+        Swal.fire({
+            title: `You got ${this.score} questions right!`,
+            text: `High Score: ${this.highScore}${this.newRecord ? ' (newwwww)' : ''}`,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK',
+            padding: '3em',
+            color: '#716add',
+            allowOutsideClick: false,
+            //background: '#fab url("assets/img/cuteGator.png")',
+            ...(this.newRecord? {
+              backdrop: `
+              rgba(0,0,123,0.4)
+              url("assets/img/nyan-cat-gif.webp")
+              left top
+              no-repeat
+            `
+            } : {})
+          });
+        this.newRecord = false;
         this.score = 0;
       }
     }
