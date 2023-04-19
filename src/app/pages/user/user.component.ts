@@ -4,6 +4,8 @@ import { FormGroup, FormBuilder, ReactiveFormsModule } from "@angular/forms"
 import { Router } from '@angular/router';
 import { UserIdService } from 'app/userIdService';
 import { Observable, take } from 'rxjs';
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 interface User {
   userName: string;
@@ -32,13 +34,13 @@ export class UserComponent implements OnInit{
     userID: number;
 
 
-    public signupForm !: FormGroup;
-  constructor(
-    private formBuilder : FormBuilder,
-    //new code
-    private http : HttpClient, 
-    private router:Router,
-    private userIDService: UserIdService, 
+    public signupForm! : FormGroup;
+    constructor(
+      private formBuilder : FormBuilder,
+      //new code
+      private http : HttpClient, 
+      private router:Router,
+      private userIDService: UserIdService, 
     ) { }
 
     updateUserData() {
@@ -86,7 +88,7 @@ export class UserComponent implements OnInit{
         );
       }
       if (this.lastname != ''){
-        const body = {lastName: this.lastname}
+        const body = {lastame: this.lastname}
         const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/last'
         this.http.put(url, body).subscribe
         (response=> {
