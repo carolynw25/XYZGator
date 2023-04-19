@@ -1,11 +1,5 @@
 # Welcome to XYZgator!
 
-## Project Members
-- Bradley Dantas
-- Vishal Janapati
-- Akhilesh Makam
-- Carolyn Wang
-
 ## Description
 XYZGator is a web application that provides children aged 5 and above with resources to develop analytical, problem-solving, and intellectual skills. The application features several learning applications such as memory-matching, grammar exercises, basic math exercises, and others, providing a fun and rich learning experience. The aim of XYZGator is to help children get ahead of the learning curve and build a strong foundational basis for future education and life skills.
 
@@ -31,6 +25,13 @@ XYZGator is a web application that provides children aged 5 and above with resou
 ### Build
 1. Navigate to the frontend directory and run `ng build --prod`
 2. Navigate to the backend directory and run `go build`
+
+
+## Project Members/Creators
+- Bradley Dantas
+- Vishal Janapati
+- Akhilesh Makam
+- Carolyn Wang
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
