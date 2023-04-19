@@ -13,12 +13,17 @@ import { Router } from '@angular/router';
 })
 export class ForgetPasswordComponent implements OnInit {
 
+  public forgetPasswordForm: FormGroup = this.formBuilder.group({
+    email: [''],
+    securityQuestion: [''],
+    newPass: ['']
+  });
+
   constructor(
     private formBuilder : FormBuilder, 
     private http : HttpClient, 
     private router:Router,
     private userIdService: UserIdService) { }
-
     public email = ''
     public securityQuestion = ''
     public newPass = ''
