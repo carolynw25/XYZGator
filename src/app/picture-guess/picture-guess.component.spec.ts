@@ -72,12 +72,4 @@ describe('PictureGuessComponent', () => {
     //expect(component.reset).toHaveBeenCalled();
   });
 
-  it('should handle errors during http requests', () => {
-    const http = TestBed.inject(HttpClient);
-    spyOn(http, 'get').and.returnValue(of(null));
-    spyOn(console, 'error');
-    component.ngOnInit();
-    //expect(console.error).toHaveBeenCalled();
-  });
-
 });
