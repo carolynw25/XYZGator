@@ -1,0 +1,31 @@
+.outer{
+    height: 100vh;
+    background: rgba(87, 10, 125, 0.42);
+}
+
+.container{
+    display: flex;
+    margin: 0 auto;
+    max-width: 500px;
+}
+.card{    
+    display: flex;
+    margin: 0 auto;
+    max-width: 500px;
+    border: none;
+    width: 500px;
+    padding: 40px;
+    top: 75%;
+    left: 100%;
+    transform: translate(-50%, -50%);
+    background: hsla(205, 46%, 30%, 1);
+    background: linear-gradient(90deg, hsla(205, 46%, 30%, 1) 0%, hsla(260, 29%, 36%, 1) 100%);
+}
+
+.card h1,
+h6 {
+    color: white;
+}
+label{
+    color: white;
+}

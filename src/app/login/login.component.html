@@ -1,0 +1,33 @@
+<div class ="outer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="text-center">
+                        <h1>Login</h1>
+                        <h6>Please enter email & password !!</h6>
+                    </div>
+                    <form>
+                        <form>
+                            <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Username</label>
+                            <!-- <input [(ngModel)]="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"> -->
+                            <input [(ngModel)]="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="username">
+                            </div>
+                            <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label">Password</label>
+                            <!-- <input [(ngModel)]="password" class="form-control" id="exampleInputPassword1"> -->
+                            <input [(ngModel)]="password" type="password" class="form-control" id="exampleInputPassword1" name="password">
+
+                            </div>
+                            <!-- <a routerLink="/main"><button type="submit" class="btn btn-primary" routerLink="/main">Login</button></a> -->
+                            <button (click)="onSubmit()" class="btn btn-primary">Login</button>
+                        </form>
+                    </form>
+                    <a style="color: white; margin-top:10px;" routerLink="/signup">New user? Click to signup!!</a>
+                    <a style="color: white; margin-top:10px;" routerLink="/forgetPassword">Forgot Password? Click to recover it!!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

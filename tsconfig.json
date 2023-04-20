@@ -1,0 +1,35 @@
+{
+  "compileOnSave": false,
+  //include this for Cypress
+  // "exclude": [
+  //   "**/*.spec.ts"
+  // ],
+  //end of it
+  //attempt two at exluding Cypress to let .toBeTruthy work, but also let spec files run
+  "include": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/**/*.cy.ts"
+  ],
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "outDir": "./dist/out-tsc",
+    "baseUrl": "src",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "target": "es2020",
+    "module": "es2020",
+    "lib": [
+      "es2020",
+      "dom"
+    ]
+
+  }
+}

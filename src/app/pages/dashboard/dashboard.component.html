@@ -1,0 +1,70 @@
+<div class="hi">
+  <h2>Hello, Welcome to GatorXYZ </h2>
+  <br> <!-- Add a line break here -->
+  <div> 
+</div>
+
+  <div class="cards">
+
+
+    <div class="card1">
+      <div class="card card-stats">
+        <div class="card-body ">
+          <div class="row">
+            <div class="col-5 col-md-4">
+              <div class="icon-big text-center icon-warning">
+                <i class="nc-icon nc-favourite-28 text-primary"></i>
+              </div>
+            </div>
+            <div class="col-7 col-md-8">
+              <div class="numbers">
+                <p class="card-category">Today's Fun Fact</p>
+                <p class="card-title"> A baby alligator is called a hatchling
+                  <p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer ">
+        </div>
+      </div>
+    </div>
+  
+
+
+    <div class="card2">
+      <div class="card card-stats">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-5 col-md-4">
+              <div class="icon-big text-center icon-warning">
+                <i class="nc-icon nc-vector text-danger"></i>
+              </div>
+            </div>
+            <div class="col-7 col-md-8">
+              <div class="numbers">
+                <p class="card-title">Your Scores:</p>
+                <p class="card-category">Memory Lowest Time:</p>
+                <p *ngIf="lowestTimeMemory !== null" class="lowest-time"> {{ lowestTimeMemory.minutes }}:{{ lowestTimeMemory.seconds | number: '2.0' }}</p>
+                <p *ngIf="lowestTimeMemory == null" class="lowest-time"> - </p>
+
+                <p class="card-category">Math Score:<p>
+                <p class="card-title">{{ scoreMath }}</p>
+
+
+                <p class="card-category">Wordsearch Lowest Time:</p>
+                <p *ngIf="lowestTimeWord !== null" class="lowest-time"> {{ lowestTimeWord.minutes }}:{{ lowestTimeWord.seconds | number: '2.0' }}</p>
+                <p *ngIf="lowestTimeWord == null" class="lowest-time"> - </p>
+
+                <p class="card-category">Picture score:</p>
+                <p class="card-title">{{ scorePicture }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

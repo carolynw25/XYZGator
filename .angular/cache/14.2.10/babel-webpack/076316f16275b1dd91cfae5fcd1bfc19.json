@@ -1,0 +1,1 @@
+{"ast":null,"code":"export class MathComponent {\n  constructor() {}\n\n  ngOnInit() {}\n\n}","map":null,"metadata":{},"sourceType":"module"}
