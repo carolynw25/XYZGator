@@ -34,16 +34,23 @@ describe('ForgetPasswordComponent', () => {
     userIdService = TestBed.inject(UserIdService);
   });
 
+  //This test verifies that the component is created successfully, which ensures 
+  //that its constructor and initialization code are error-free.
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
+  //This test checks that the component's forgetPasswordForm property is 
+  //initialized correctly. Specifically, it ensures that the form has fields for email, security question, and new password.
   it('should initialize the form', () => {
     expect(component.forgetPasswordForm.get('email')).toBeTruthy();
     expect(component.forgetPasswordForm.get('securityQuestion')).toBeTruthy();
     expect(component.forgetPasswordForm.get('newPass')).toBeTruthy();
   });
 
+  //This test checks that the form is reset after it is submitted. 
+  //It simulates a form submission event by dispatching a submit event on the form element, 
+  //then verifies that the form values are cleared out.
   it('should reset form after submission', () => {
     const form = fixture.nativeElement.querySelector('form');
     form.dispatchEvent(new Event('submit'));
