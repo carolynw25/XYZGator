@@ -20,12 +20,12 @@ describe('WordSearchComponent', () => {
     //component = new WordSearchComponent(null, null); // pass null as arguments for userIDService and http
   });
 
-
-
   it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
+  /* Checks that lowest time to complete game is displayed when available */
+  //lowest time is object with minute and seconds properties
   it('should display the lowest time when available', () => {
     component.lowestTime = { minutes: 1, seconds: 30 };
     fixture.detectChanges();
@@ -33,11 +33,13 @@ describe('WordSearchComponent', () => {
     expect(lowestTime.textContent).toContain('1:30');
   });
 
-
+  /* Checks that all possible words generated have length of 10 or less */
   it('should limit possible words to 10 letters', () => {
     expect(component.possibleWords.every(word => word.length <= 10)).toBe(true);
   });
 
+  /* Checks that grid generated has correct dimentions (10x25) and only has capital letters.
+  Also checks that each word given to component is present in grid */
   it('should generate a grid with correct dimensions and letters', () => {
     component.words = ['APPLE', 'BANANA', 'CHERRY', 'PEAR', 'WATERMELON'];
     component.generateGrid();
@@ -53,12 +55,15 @@ describe('WordSearchComponent', () => {
     }
   });
 
+  /* Checks that canPlaceWord function returns null, as supposed to, when word cannot
+  be placed on grid */
   it('should return null when word cannot be placed', () => {
     component.grid = [['A', 'P', 'P', 'L', 'E'], ['B', '', '', '', ''], ['C', '', '', '', ''], ['D', '', '', '', ''], ['E', '', '', '', '']];
     const positions = component.canPlaceWord('BANANA', 0, 0, 1, 1);
     expect(positions).toBe(null); // BANANA overlaps with APPLE
   });
 
+  /* Check that timer starts when function startTimer called */
   it('should start the timer', () => {
     component.startTimer();
     expect(component.minutes).toBe(0);
@@ -66,7 +71,7 @@ describe('WordSearchComponent', () => {
     expect(component.timer).toBeTruthy();
   });
 
-
+  /* Check that timer stops when function stopTimer called */
   it('should stop the timer', () => {
     component.startTimer();
     component.stopTimer();
@@ -74,7 +79,8 @@ describe('WordSearchComponent', () => {
     expect(component.seconds).toBe(0);
   });
 
-
+  /* Checks that reset function sets component state back to initial values.
+    Reset includes number of words found, highlighted words, and grid */
   it('should reset the game', () => {
     component.reset();
     expect(component.highlightedWords.length).toBe(0);

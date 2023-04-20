@@ -24,21 +24,27 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  /* checks if title of dashboard correctly set to GatorXYZ*/
+  //querySelector methods finds h2 element in template to check content
   it('should have a title with GatorXYZ', () => {
     const title = fixture.nativeElement.querySelector('h2');
     expect(title.textContent).toContain('GatorXYZ');
   });
 
+  /* Checks if there is a line break after title*/
   it('should have a line break after the title', () => {
     const br = fixture.nativeElement.querySelector('br');
     expect(br).toBeTruthy();
   });
 
+  /* Checks if there are two cards in HTML template */
   it('should have two cards', () => {
     const cards = fixture.nativeElement.querySelectorAll('.card');
     expect(cards.length).toEqual(2);
   });
 
+  /* This sets lowestTimeMemory to a minute 30 and then checks if memory score is 
+  displayed correctly  */
   it('should display the correct memory score', () => {
     component.lowestTimeMemory = { minutes: 1, seconds: 30 };
     fixture.detectChanges();
@@ -46,6 +52,7 @@ describe('DashboardComponent', () => {
     expect(memoryScore.textContent).toContain('1:30');
   });
 
+  /* This sets lowestTimeMemory property of component to 'null' and checks if memory score is displayed as '-' */
   it('should display "-" if there is no memory score', () => {
     component.lowestTimeMemory = null;
     fixture.detectChanges();
