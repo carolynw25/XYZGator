@@ -17,16 +17,14 @@ XYZGator is a web application that provides children aged 5 and above with resou
 
 ### Installation
 1. Clone the repository
-2. Navigate to the frontend directory and run `npm install`
-3. Navigate to the backend directory and run `go get` to install the required packages
+2. Navigate to the frontend directory and run `npm install -g @angular/cli`
+  (For further information reference: https://angular.io/guide/setup-local)
+  (For Macbooks with the M1 chip reference: https://www.youtube.com/watch?v=D9sZrODjmWU&t=1s)
+4. Navigate to the backend directory and run `go get` to install the required packages
 
 ### Running the Application
-1. Navigate to the frontend directory and run `ng serve`
+1. Navigate to the frontend directory and run `ng serve` or `npm start`
 2. Navigate to the backend directory and run `go run main.go user.go`
-
-### Build
-1. Navigate to the frontend directory and run `ng build --prod`
-2. Navigate to the backend directory and run `go build`
 
 
 ## Project Members/Creators
