@@ -20,6 +20,207 @@
 - Fixed and connected Frontend and Backend for all games and for updating user information
 
 # Frontend unit tests
+Picture Game Unit Tests
+```
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule,HttpTestingController } from '@angular/common/http/testing';
+import { PictureGuessComponent } from './picture-guess.component';
+import { UserIdService } from 'app/userIdService';
+import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
+import Swal from 'sweetalert2';
+
+
+describe('PictureGuessComponent', () => {
+  let component: PictureGuessComponent;
+  let fixture: ComponentFixture<PictureGuessComponent>;
+  
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      declarations: [ PictureGuessComponent ],
+      providers: [UserIdService]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PictureGuessComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+  });
+
+  /*checks to see if component created successfully*/
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  /* Checks whether component initialized with correct values verifies that pictures array has at 
+  least 1 element, answers array as 47 elements, imageNames array has at least one element, 
+  and that score and high score are both initially equal to 0 and that newRecord is set to false to start. */
+  it('should initialize correctly', () => {
+    expect(component.pictures.length).toBeGreaterThan(0);
+    expect(component.answers.length).toEqual(47);
+    expect(component.imageNames.length).toBeGreaterThan(0);
+    expect(component.score).toEqual(0);
+    expect(component.highScore).toEqual(0);
+    expect(component.newRecord).toBeFalsy();
+  });
+
+  /* Checks whether the pictures are loaded correctly in the component. 
+  Verifies that the first element of the pictures array has a URL that contains the string 'assets/img/pictureGame/'*/
+  it('should load pictures correctly', () => {
+    expect(component.pictures[0].url).toContain('assets/img/pictureGame/');
+  });
+
+  /*Checks whether the answer choices are generated correctly in the component. 
+  It verifies that the answers array has 47 elements.*/
+  it('should generate answer choices correctly', () => {
+    expect(component.answers.length).toEqual(47);
+  });
+
+  /*Checks whether the next question is selected correctly in the component. 
+  It verifies that the selection variable is not changed after calling the nextQuestion() method*/
+  it('should select next question correctly', () => {
+    const initialSelection = component.selection;
+    component.nextQuestion();
+    //equal?
+    expect(component.selection).toEqual(initialSelection);
+  });
+
+  /*Checks whether the game is reset correctly in the component. 
+  It verifies that the highScore, score, and newRecord variables are set to their initial 
+  values after calling the bigReset() method */
+  it('should reset game correctly', () => {
+    spyOn(component, 'bigReset');
+    spyOn(component, 'reset');
+    component.bigReset();
+    expect(component.highScore).toEqual(0);
+    expect(component.score).toEqual(0);
+    expect(component.newRecord).toBeFalsy();
+    //expect(component.reset).toHaveBeenCalled();
+  });
+
+});
+```
+User/Profile Page Unit Tests
+```
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
+import { UserComponent } from './user.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+
+describe('UserComponent', () => {
+  let component: UserComponent;
+  let fixture: ComponentFixture<UserComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ UserComponent ],
+      imports: [ FormsModule, ReactiveFormsModule, HttpClientModule ]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(UserComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  // Test case for checking whether the form fields exist or not.
+  it('should have all the form fields', () => {
+    const form = fixture.debugElement.query(By.css('form')).nativeElement;
+    const inputFields = form.querySelectorAll('input');
+    expect(inputFields.length).toBe(5);
+  });
+
+  // Test case for checking the functionality of the "Update Profile" button.
+  it('should call updateUserData() function when Update Profile button is clicked', () => {
+    spyOn(component, 'updateUserData');
+    const button = fixture.debugElement.query(By.css('.btn-primary')).nativeElement;
+    button.click();
+    fixture.detectChanges();
+    expect(component.updateUserData).toHaveBeenCalled();
+  });
+
+  // Test case for checking whether the form fields are being updated or not.
+  it('should update the corresponding variable when the input field is updated', () => {
+    const usernameInput = fixture.debugElement.query(By.css('input[type="text"]')).nativeElement;
+    usernameInput.value = 'testuser';
+    usernameInput.dispatchEvent(new Event('input'));
+    expect(component.username).toBe('testuser');
+  });
+
+
+});
+```
+Dashboard Unit Tests
+```
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DashboardComponent } from './dashboard.component';
+import { HttpClientModule } from '@angular/common/http';
+
+describe('DashboardComponent', () => {
+  let component: DashboardComponent;
+  let fixture: ComponentFixture<DashboardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ DashboardComponent ],
+      imports: [HttpClientModule]
+    })
+    .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(DashboardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create the dashboard component', () => {
+    expect(component).toBeTruthy();
+  });
+
+  /* checks if title of dashboard correctly set to GatorXYZ*/
+  //querySelector methods finds h2 element in template to check content
+  it('should have a title with GatorXYZ', () => {
+    const title = fixture.nativeElement.querySelector('h2');
+    expect(title.textContent).toContain('GatorXYZ');
+  });
+
+  /* Checks if there is a line break after title*/
+  it('should have a line break after the title', () => {
+    const br = fixture.nativeElement.querySelector('br');
+    expect(br).toBeTruthy();
+  });
+
+  /* Checks if there are two cards in HTML template */
+  it('should have two cards', () => {
+    const cards = fixture.nativeElement.querySelectorAll('.card');
+    expect(cards.length).toEqual(2);
+  });
+
+  /* This sets lowestTimeMemory to a minute 30 and then checks if memory score is 
+  displayed correctly  */
+  it('should display the correct memory score', () => {
+    component.lowestTimeMemory = { minutes: 1, seconds: 30 };
+    fixture.detectChanges();
+    const memoryScore = fixture.nativeElement.querySelector('.card-body p.card-category:nth-child(2) + p');
+    expect(memoryScore.textContent).toContain('1:30');
+  });
+
+  /* This sets lowestTimeMemory property of component to 'null' and checks if memory score is displayed as '-' */
+  it('should display "-" if there is no memory score', () => {
+    component.lowestTimeMemory = null;
+    fixture.detectChanges();
+    const memoryScore = fixture.nativeElement.querySelector('.card-body p.card-category:nth-child(2) + p');
+    expect(memoryScore.textContent).toContain('-');
+  });
+});
+```
 
 # Backend unit tests
 ## Table of Contents
