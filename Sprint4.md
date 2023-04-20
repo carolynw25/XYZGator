@@ -658,6 +658,39 @@ func TestGetID(t *testing.T) {
 	
 }
 ```
+## TestForgotPassword()
+The TestForgotPassword function tests the ForgotPassword function. First, the function initializes a new router instance and registers the ForgotPassword function as a handler for the POST request. Then, it creates a new instance of httptest.ResponseRecorder to record the response. After that, a new request to the /forgotPassword endpoint with a request body containing user data is created. The function then calls ForgotPassword with the response recorder and request objects. The test asserts that the response status code is 200 OK. If it is not, an error message is logged.
+```go
+func TestForgotPassword(t *testing.T) {
+    // Initialize a new router instance and register the ForgotPassword function as a handler for the POST request
+    r := mux.NewRouter()
+    r.HandleFunc("/forgotPassword", ForgotPassword).Methods("POST")
+
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
+
+    // Create a new request to the /forgotPassword endpoint with a request body containing user data
+    requestBody := []byte(`{
+        "email": "viJap@gmail.com",
+        "favoriteAnimal": "DOLPHIN",
+        "password": "wack3"
+    }`)
+    req, err := http.NewRequest("POST", "/forgotPassword", bytes.NewReader(requestBody))
+    if err != nil {
+        t.Fatal(err)
+    }
+
+    // Call the ForgotPassword function with the response recorder and request objects
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+    ForgotPassword(w, req)
+
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
+}
+```
 
 # Updated documentation for backend API
 This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
@@ -1218,5 +1251,65 @@ func setAnimalScore(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(user)
+}
+```
+## ForgotPassword()
+This function is an HTTP request handler for the backend API that handles a request to reset a user's forgotten password. The function expects a POST request with a JSON payload that contains the user's email, favorite animal answer, and new password. The function first checks if the request payload is valid and contains all the required fields. If the request payload is not valid, it returns an HTTP error response. The function then checks if the provided email exists in the database. If the email is not found, it returns an HTTP error response. Next, the function checks if the provided favorite animal answer is correct. If the answer is incorrect, it returns an HTTP error response. If the email and favorite animal answer are correct, the function hashes the new password using the `bcrypt` package and updates the user's password in the database. If there is an error during the password hashing or database update, the function returns an HTTP error response. Finally, the function returns a JSON response with a success message indicating that the password has been updated successfully. In summary, the `ForgotPassword` function is responsible for handling password reset requests, verifying the user's identity, and updating the user's password in the database.
+```go
+func ForgotPassword(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+
+    var data map[string]string
+    if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+        http.Error(w, "Invalid request body", http.StatusBadRequest)
+        return
+    }
+
+    email, ok := data["email"]
+    if !ok {
+        http.Error(w, "Missing email field", http.StatusBadRequest)
+        return
+    }
+
+    answer, ok := data["favoriteAnimal"]
+    if !ok {
+        http.Error(w, "Missing favoriteAnimal field", http.StatusBadRequest)
+        return
+    }
+
+    // Check if email exists in the database
+    var user User
+    result := DB.Where("email = ?", email).First(&user)
+    if result.Error != nil {
+        http.Error(w, "Email not found", http.StatusBadRequest)
+        return
+    }
+
+    // Check if the favorite animal answer is correct
+    if answer != user.FavoriteAnimal {
+        http.Error(w, "Incorrect favorite animal answer", http.StatusUnauthorized)
+        return
+    }
+	password, ok := data["password"]
+    if !ok {
+        http.Error(w, "Missing password field", http.StatusBadRequest)
+        return
+    }
+
+    // Hash the new password
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        http.Error(w, "Failed to hash password", http.StatusInternalServerError)
+        return
+    }
+
+    // Update the user's password in the database
+    user.Password = string(hashedPassword)
+    if err := DB.Save(&user).Error; err != nil {
+        http.Error(w, "Failed to save user data", http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(map[string]string{"message": "Password updated successfully."})
 }
 ```
