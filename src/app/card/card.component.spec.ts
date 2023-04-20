@@ -92,7 +92,7 @@ describe('CardComponent', () => {
   of the component is false. */
   it('should reset game', () => {
     spyOn(component, 'reset');
-    const resetButton = fixture.nativeElement.querySelector('.reset button');
+    const resetButton = fixture.nativeElement.querySelector('.reset bnputton');
     resetButton.click();
     expect(component.reset).toHaveBeenCalled();
     expect(component.disableCards).toBeFalsy();
