@@ -1,7 +1,7 @@
 # Work completed in Sprint 4
 ## Frontend
 - Created two games: a wordsearch and a animal identification game
-	- Wordsearch game: Has a timer, a random generation of 5 words, random generation of worsearch board, saves quickest time to find words, 			highlights letters selected
+	- Wordsearch game: Has a timer, a random generation of 5 words, random generation of wordsearch board, saves quickest time to find words, 			highlights letters selected
 	- Animal Guess game: Counts number correct, randomly generates a picture and selection of animal names to choose from to identify it, button 			turns green if correct, button turns red if wrong, keeps high score of animals correctly identified in a round.
 - Linked frontEnd to backEnd for forget password, getting user scores, and updating user profile data
 - Modified About Us page to have more information
