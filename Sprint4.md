@@ -436,7 +436,7 @@ func TestGetMathScore(t *testing.T) {
     }
 }
 ```
-## TestGetWordScore() FIX*
+## TestGetWordScore()
 TestGetWordScore is a test function written in Go to test the functionality of the GetWordScore function. It initializes a new router instance using the mux package and registers GetWordScore function as a handler for the GET request with the endpoint /users/{id}/word/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/word/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestGetWordScore(t *testing.T) {
@@ -466,7 +466,7 @@ func TestGetWordScore(t *testing.T) {
     }
 }
 ```
-## TestGetAnimalScore() FIX*
+## TestGetAnimalScore()
 TestGetAnimalScore is a test function written in Go to test the functionality of the GetAnimalScore function. It initializes a new router instance using the mux package and registers GetAnimalScore function as a handler for the GET request with the endpoint /users/{id}/animal/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/animal/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetAnimalScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestGetAnimalScore(t *testing.T) {
@@ -560,7 +560,7 @@ func TestSetMathScore(t *testing.T) {
     }
 }
 ```
-## TestSetWordScore FIX*
+## TestSetWordScore
 This function tests the setWordScore function by creating a new router instance and registering setWordScore as the handler for the PUT request to the /users/{id}/word/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/word/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
 
 The function initializes the database connection and calls setWordScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
@@ -593,7 +593,7 @@ func TestSetWordScore(t *testing.T) {
     }
 }
 ```
-## TestSetAnimalScore FIX*
+## TestSetAnimalScore
 This function tests the setMatchScore function by creating a new router instance and registering setAnimalScore as the handler for the PUT request to the /users/{id}/animal/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/animal/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
 
 The function initializes the database connection and calls setAnimalScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
