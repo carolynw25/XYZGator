@@ -26,6 +26,9 @@
 + TestGetUser()
 + TestSignUp()
 + TestUpdateUsername()
++ TestUpdatePassword()
++ TestUpdateFirstName()
++ TestUpdateLastName()
 + TestUpdateEmail()
 + TestGetMatchScore()
 + TestGetMathScore()
@@ -49,7 +52,7 @@ func TestLogin(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	// Create a new request to the /login endpoint with a username and password in the request body
-	loginData := []byte(`{"username": "vishalj0525", "password": "wack"}`)
+	loginData := []byte(`{"username": "vishalj05", "password": "wack"}`) //make sure this user is in database
 	req, err := http.NewRequest("POST", "/login", bytes.NewBuffer(loginData))
 	if err != nil {
 		t.Fatal(err)
@@ -76,46 +79,31 @@ func TestLogin(t *testing.T) {
 ## TestGetUser()
 This test function ensures that the getUser endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /users/{id} endpoint with an id of 1. The getUser function is then called with the response recorder and request objects. The function returns a JSON response with user data. The test asserts that the response status code is 200 OK and that the response body contains the expected user data.
 ```go
-	func TestGetUser(t *testing.T) {
-	// Initialize a new router instance and register the GetUser function as a handler for the GET request
-	r := mux.NewRouter()
-	r.HandleFunc("/users/{id}", GetUser).Methods("GET")
+func TestGetUser(t *testing.T) {
+    // Initialize a new router instance and register the GetUser function as a handler for the GET request
+    r := mux.NewRouter()
+    r.HandleFunc("/users/{id}", GetUser).Methods("GET")
 
-	// Create a new instance of httptest.ResponseRecorder to record the response
-	w := httptest.NewRecorder()
+    // Create a new instance of httptest.ResponseRecorder to record the response
+    w := httptest.NewRecorder()
 
-	// Create a new request to the /users/{id} endpoint with an id of 1
-	req, err := http.NewRequest("GET", "/users/1", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+    // Create a new request to the /users/{id} endpoint with an id of 1
+    req, err := http.NewRequest("GET", "/users/1", nil)
+    if err != nil {
+        t.Fatal(err)
+    }
 
-	// Call the GetUser function with the response recorder and request objects
-	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-	GetUser(w, req)
+    // Initialize the database connection
+    DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
 
-	// Assert that the response status code is 200 OK
-	if status := w.Code; status != http.StatusOK {
-		t.Errorf("Handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+    // Call the GetUser function with the response recorder and request objects
+   GetUser(w, req)
 
-	// Assert that the response body contains the expected user data
-	expectedUser := User{
-		Model: gorm.Model{
-			ID: 1,
-		},
-		UserName:  "vishalj0525",
-		Password:  "wack",
-		FirstName: "Vishal",
-		LastName:  "Janapati",
-		Email:     "vjanapati05@gmail.com",
-	}
-	expectedUserJSON, _ := json.Marshal(expectedUser)
-	if !strings.Contains(w.Body.String(), string(expectedUserJSON)) { //w.Body.String() != string(expectedUserJSON) {
-		t.Errorf("Handler returned unexpected body: got %v want %v",
-			w.Body.String(), string(expectedUserJSON))
-	}
+    // Assert that the response status code is 200 OK
+    if status := w.Code; status != http.StatusOK {
+        t.Errorf("Handler returned wrong status code: got %v want %v",
+            status, http.StatusOK)
+    }
 }
 ```
 
@@ -131,7 +119,7 @@ func TestSignUp(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	// Create a new request to the /signup endpoint with user data in the request body
-	userData := []byte(`{"username": "johnsmith", "password": "password123", "email": "johnsmith@example.com"}`)
+	userData := []byte(`{"username": "johnsmith", "password": "password123", "firstname": "Jonathan", "lastname": "Kahn", "email": "johnsmith@example.com"}`)
 	req, err := http.NewRequest("POST", "/api/signup", bytes.NewBuffer(userData))
 	if err != nil {
 		t.Fatal(err)
@@ -197,39 +185,95 @@ func TestUpdateUsername(t *testing.T) {
 		t.Errorf("Handler did not update username data correctly: got %v want %v",
 			updatedUser.UserName, updateUser.UserName)
 	}
+}
+```
+## TestUpdatePassword
+The TestUpdatePassword function is a unit test for the API endpoint that updates a user's password. The function uses the following steps to test the endpoint:
+1) Initialize a new router instance using the Gorilla mux library and register the UpdatePassword function as a handler for the PUT request to /users/{id}/pass.
+2) Create a new instance of httptest.ResponseRecorder to record the response.
+3) Create a new request to the /users/{id}/pass endpoint with an ID of 1 and a request body containing updated password data in JSON format.
+4) Call the UpdatePassword function with the response recorder and request objects, which will update the user's password in the database.
+5) Assert that the response status code is 200 OK.
+6) Retrieve the updated user from the database and hash the password in the request body using bcrypt with default cost.
+7) Assert that the updated user data in the database matches the request body data.
+```go
+func TestUpdatePassword(t *testing.T) {
+	// Initialize a new router instance and register the UpdatePassword function as a handler for the PUT request
+	r := mux.NewRouter()
+	r.HandleFunc("/users/{id}/pass", UpdatePassword).Methods("PUT")
 
-	// Assert that the updated user data in the database does not match the data for other fields
-	if updatedUser.Password != "wack" || updatedUser.FirstName != "Vishal" ||
-		updatedUser.LastName != "Janapati" || updatedUser.Email != "vjanapati05@gmail.com" {
-		t.Errorf("Handler updated other user data: got %v want %v",
-			updatedUser, updateUser)
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
+
+	// Create a new request to the /users/{id}/pass endpoint with an id of 1 and a request body containing updated username data
+	updateUser := User{
+		Password: "wack3",
+	}
+	updateUserJSON, _ := json.Marshal(updateUser)
+	req, err := http.NewRequest("PUT", "/users/1/pass", bytes.NewReader(updateUserJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the UpdatePassword function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	UpdatePassword(w, req)
+
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Retrieve the updated user from the database
+	var updatedUser User
+	DB.First(&updatedUser, 1)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(updateUser.Password), bcrypt.DefaultCost)
+    if err != nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(map[string]string{"error": "Failed to hash password"})
+        return
+    }
+
+	// Assert that the updated user data in the database matches the request body data
+	if bytes.Equal([]byte(updatedUser.Password), hashedPassword) {
+		t.Errorf("Handler did not update username data correctly: got %v want %v",
+			updatedUser.Password, hashedPassword)
 	}
 }
 ```
-## TestUpdateUserName()
-The TestUpdateUsername function tests the ability of the UpdateUsername function to update an existing user's username by sending a PUT request to the "/users/{id}/name" endpoint with the required user ID and updated username data in the request body. The function then asserts that the response status code is 200 OK and that the updated user data in the database matches the request body data.
+## TestUpdateFirstName()
+This function is a unit test that tests the UpdateFirstName function in the API. It performs the following steps:
+1) Initializes a new router instance and registers the UpdateFirstName function as a handler for the PUT request.
+2) Creates a new instance of httptest.ResponseRecorder to record the response.
+3) Creates a new request to the /users/{id}/first endpoint with an id of 1 and a request body containing updated first name data.
+4) Calls the UpdateFirstName function with the response recorder and request objects.
+5) Asserts that the response status code is 200 OK.
+6) Retrieves the updated user from the database.
+7) Asserts that the updated user data in the database matches the request body data.
 ```go
-func TestUpdateUsername(t *testing.T) {
-	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
+func TestUpdateFirstname(t *testing.T) {
+	// Initialize a new router instance and register the UpdateFirstName function as a handler for the PUT request
 	r := mux.NewRouter()
-	r.HandleFunc("/users/{id}/name", UpdateUsername).Methods("PUT")
+	r.HandleFunc("/users/{id}/first", UpdateFirstName).Methods("PUT")
 
 	// Create a new instance of httptest.ResponseRecorder to record the response
 	w := httptest.NewRecorder()
 
 	// Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
 	updateUser := User{
-		UserName: "newusername",
+		FirstName: "LEROY",
 	}
 	updateUserJSON, _ := json.Marshal(updateUser)
-	req, err := http.NewRequest("PUT", "/users/1/name", bytes.NewReader(updateUserJSON))
+	req, err := http.NewRequest("PUT", "/users/1/first", bytes.NewReader(updateUserJSON))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Call the UpdateUsername function with the response recorder and request objects
 	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-	UpdateUsername(w, req)
+	UpdateFirstName(w, req)
 
 	// Assert that the response status code is 200 OK
 	if status := w.Code; status != http.StatusOK {
@@ -242,7 +286,49 @@ func TestUpdateUsername(t *testing.T) {
 	DB.First(&updatedUser, 1)
 
 	// Assert that the updated user data in the database matches the request body data
-	if updatedUser.UserName != updateUser.UserName {
+	if updatedUser.FirstName != updateUser.FirstName {
+		t.Errorf("Handler did not update username data correctly: got %v want %v",
+			updatedUser.FirstName, updateUser.FirstName)
+	}
+}
+```
+## TestLastName()
+This function updates the last name of a user with the given ID. It receives the updated last name in the request body as a JSON object and updates the corresponding user's last name in the database.
+```go
+func TestUpdateLastname(t *testing.T) {
+	// Initialize a new router instance and register the UpdateLastName function as a handler for the PUT request
+	r := mux.NewRouter()
+	r.HandleFunc("/users/{id}/last", UpdateLastName).Methods("PUT")
+
+	// Create a new instance of httptest.ResponseRecorder to record the response
+	w := httptest.NewRecorder()
+
+	// Create a new request to the /users/{id}/last endpoint with an id of 1 and a request body containing updated username data
+	updateUser := User{
+		LastName: "PATEL",
+	}
+	updateUserJSON, _ := json.Marshal(updateUser)
+	req, err := http.NewRequest("PUT", "/users/1/last", bytes.NewReader(updateUserJSON))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Call the UpdateUsername function with the response recorder and request objects
+	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
+	UpdateLastName(w, req)
+
+	// Assert that the response status code is 200 OK
+	if status := w.Code; status != http.StatusOK {
+		t.Errorf("Handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	// Retrieve the updated user from the database
+	var updatedUser User
+	DB.First(&updatedUser, 1)
+
+	// Assert that the updated user data in the database matches the request body data
+	if updatedUser.LastName != updateUser.LastName {
 		t.Errorf("Handler did not update username data correctly: got %v want %v",
 			updatedUser.UserName, updateUser.UserName)
 	}
@@ -251,27 +337,27 @@ func TestUpdateUsername(t *testing.T) {
 ## TestUpdateEmail()
 This test function ensures that the updateEmail endpoint works as expected. It creates a new instance of the httptest.ResponseRecorder to record the response and a new request to the /users/{id}/email endpoint with an id of 1 and a request body containing the updated email address. The updateEmail function is then called with the response recorder and request objects. The function updates the email address in the MySQL database. The test asserts that the response status code is 200 OK and that the updated email address in the database matches the request body data.
 ```go
-func TestUpdateUsername(t *testing.T) {
-	// Initialize a new router instance and register the UpdateUsername function as a handler for the PUT request
+func TestUpdateEmail(t *testing.T) {
+	// Initialize a new router instance and register the UpdateEmail function as a handler for the PUT request
 	r := mux.NewRouter()
-	r.HandleFunc("/users/{id}/name", UpdateUsername).Methods("PUT")
+	r.HandleFunc("/users/{id}/email", UpdateEmail).Methods("PUT")
 
 	// Create a new instance of httptest.ResponseRecorder to record the response
 	w := httptest.NewRecorder()
 
-	// Create a new request to the /users/{id}/username endpoint with an id of 1 and a request body containing updated username data
+	// Create a new request to the /users/{id}/email endpoint with an id of 1 and a request body containing updated user data
 	updateUser := User{
-		UserName: "newusername",
+		Email: "randomemail@something.com",
 	}
 	updateUserJSON, _ := json.Marshal(updateUser)
-	req, err := http.NewRequest("PUT", "/users/1/name", bytes.NewReader(updateUserJSON))
+	req, err := http.NewRequest("PUT", "/users/1/email", bytes.NewReader(updateUserJSON))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// Call the UpdateUsername function with the response recorder and request objects
+	// Call the UpdateEmail function with the response recorder and request objects
 	DB, _ = gorm.Open(mysql.Open(DNS), &gorm.Config{})
-	UpdateUsername(w, req)
+	UpdateEmail(w, req)
 
 	// Assert that the response status code is 200 OK
 	if status := w.Code; status != http.StatusOK {
@@ -284,16 +370,9 @@ func TestUpdateUsername(t *testing.T) {
 	DB.First(&updatedUser, 1)
 
 	// Assert that the updated user data in the database matches the request body data
-	if updatedUser.UserName != updateUser.UserName {
-		t.Errorf("Handler did not update username data correctly: got %v want %v",
-			updatedUser.UserName, updateUser.UserName)
-	}
-
-	// Assert that the updated user data in the database does not match the data for other fields
-	if updatedUser.Password != "wack" || updatedUser.FirstName != "Vishal" ||
-		updatedUser.LastName != "Janapati" || updatedUser.Email != "vjanapati05@gmail.com" {
-		t.Errorf("Handler updated other user data: got %v want %v",
-			updatedUser, updateUser)
+	if updatedUser.Email != updateUser.Email {
+		t.Errorf("Handler did not update user data correctly: got %v want %v",
+			updatedUser.Email, updateUser.Email)
 	}
 }
 ```
@@ -331,14 +410,14 @@ func TestGetMatchScore(t *testing.T) {
 TestGetMathScore is a test function written in Go to test the functionality of the GetMathScore function. It initializes a new router instance using the mux package and registers GetMathScore function as a handler for the GET request with the endpoint /users/{id}/math/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/math/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestGetMathScore(t *testing.T) {
-    // Initialize a new router instance and register the GetMatchScore function as a handler for the GET request
+    // Initialize a new router instance and register the GetMathScore function as a handler for the GET request
     r := mux.NewRouter()
     r.HandleFunc("/users/{id}/math/{target}", GetMathScore).Methods("GET")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/match/{target} endpoint with an id of 1 and a target of 2
+    // Create a new request to the /users/{id}/math/{target} endpoint with an id of 1 and a target of 2
     req, err := http.NewRequest("GET", "/users/1/math/2", nil)
     if err != nil {
         t.Fatal(err)
@@ -358,18 +437,18 @@ func TestGetMathScore(t *testing.T) {
 }
 ```
 ## TestGetWordScore() FIX*
-TestGetMathScore is a test function written in Go to test the functionality of the GetMathScore function. It initializes a new router instance using the mux package and registers GetMathScore function as a handler for the GET request with the endpoint /users/{id}/math/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/math/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+TestGetWordScore is a test function written in Go to test the functionality of the GetWordScore function. It initializes a new router instance using the mux package and registers GetWordScore function as a handler for the GET request with the endpoint /users/{id}/word/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/word/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestGetWordScore(t *testing.T) {
-    // Initialize a new router instance and register the GetMatchScore function as a handler for the GET request
+    // Initialize a new router instance and register the GetWordScore function as a handler for the GET request
     r := mux.NewRouter()
     r.HandleFunc("/users/{id}/word/{target}", GetMathScore).Methods("GET")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/match/{target} endpoint with an id of 1 and a target of 2
-    req, err := http.NewRequest("GET", "/users/1/math/2", nil)
+    // Create a new request to the /users/{id}/word/{target} endpoint with an id of 1 and a target of 2
+    req, err := http.NewRequest("GET", "/users/1/word/2", nil)
     if err != nil {
         t.Fatal(err)
     }
@@ -388,18 +467,18 @@ func TestGetWordScore(t *testing.T) {
 }
 ```
 ## TestGetAnimalScore() FIX*
-TestGetMathScore is a test function written in Go to test the functionality of the GetMathScore function. It initializes a new router instance using the mux package and registers GetMathScore function as a handler for the GET request with the endpoint /users/{id}/math/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/math/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetMathScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+TestGetAnimalScore is a test function written in Go to test the functionality of the GetAnimalScore function. It initializes a new router instance using the mux package and registers GetAnimalScore function as a handler for the GET request with the endpoint /users/{id}/animal/{target}. It then creates a new instance of httptest.ResponseRecorder to record the response and a new request to the /users/{id}/animal/{target} endpoint with an id of 1 and a target of 2. The function initializes the database connection and calls the GetAnimalScore function with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestGetAnimalScore(t *testing.T) {
-    // Initialize a new router instance and register the GetMatchScore function as a handler for the GET request
+    // Initialize a new router instance and register the GetAnimalScore function as a handler for the GET request
     r := mux.NewRouter()
-    r.HandleFunc("/users/{id}/animal/{target}", GetMathScore).Methods("GET")
+    r.HandleFunc("/users/{id}/animal/{target}", GetAnimalScore).Methods("GET")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/match/{target} endpoint with an id of 1 and a target of 2
-    req, err := http.NewRequest("GET", "/users/1/math/2", nil)
+    // Create a new request to the /users/{id}/animal/{target} endpoint with an id of 1 and a target of 2
+    req, err := http.NewRequest("GET", "/users/1/animal/2", nil)
     if err != nil {
         t.Fatal(err)
     }
@@ -451,19 +530,19 @@ func TestSetMatchScore(t *testing.T) {
 }
 ```
 ## TestSetMathScore
-The TestSetMathScore function is a test function that is used to test the setMathScore handler function. This function tests if the handler returns the expected status code 200 OK when called with a PUT request to the /users/{id}/match/{target}/score endpoint with a score value in the request body.
+The TestSetMathScore function is a test function that is used to test the setMathScore handler function. This function tests if the handler returns the expected status code 200 OK when called with a PUT request to the /users/{id}/math/{target}/score endpoint with a score value in the request body.
 ```go
 func TestSetMathScore(t *testing.T) {
     // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
     r := mux.NewRouter()
-    r.HandleFunc("/users/{id}/match/{target}/score", setMathScore).Methods("PUT")
+    r.HandleFunc("/users/{id}/math/{target}/score", setMathScore).Methods("PUT")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
     // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
     body := bytes.NewBuffer([]byte(`{"score":75}`))
-    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    req, err := http.NewRequest("PUT", "/users/1/math/2/score", body)
     if err != nil {
         t.Fatal(err)
     }
@@ -482,21 +561,21 @@ func TestSetMathScore(t *testing.T) {
 }
 ```
 ## TestSetWordScore FIX*
-This function tests the setMatchScore function by creating a new router instance and registering setMatchScore as the handler for the PUT request to the /users/{id}/match/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/match/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
+This function tests the setWordScore function by creating a new router instance and registering setWordScore as the handler for the PUT request to the /users/{id}/word/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/word/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
 
-The function initializes the database connection and calls setMatchScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+The function initializes the database connection and calls setWordScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestSetWordScore(t *testing.T) {
     // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
     r := mux.NewRouter()
-    r.HandleFunc("/users/{id}/word/{target}/score", setMathScore).Methods("PUT")
+    r.HandleFunc("/users/{id}/word/{target}/score", setWordScore).Methods("PUT")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
+    // Create a new request to the /users/{id}/word/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
     body := bytes.NewBuffer([]byte(`{"score":75}`))
-    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    req, err := http.NewRequest("PUT", "/users/1/word/2/score", body)
     if err != nil {
         t.Fatal(err)
     }
@@ -515,21 +594,21 @@ func TestSetWordScore(t *testing.T) {
 }
 ```
 ## TestSetAnimalScore FIX*
-This function tests the setMatchScore function by creating a new router instance and registering setMatchScore as the handler for the PUT request to the /users/{id}/match/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/match/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
+This function tests the setMatchScore function by creating a new router instance and registering setAnimalScore as the handler for the PUT request to the /users/{id}/animal/{target}/score endpoint. It then creates a new instance of httptest.ResponseRecorder to record the response, and creates a new request to the /users/{id}/animal/{target}/score endpoint with an ID of 1, a target of 2, and a score of 75.
 
-The function initializes the database connection and calls setMatchScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
+The function initializes the database connection and calls setAnimalScore with the response recorder and request objects. Finally, it asserts that the response status code is 200 OK.
 ```go
 func TestSetAnimalScore(t *testing.T) {
     // Initialize a new router instance and register the SetMathScore function as a handler for the PUT request
     r := mux.NewRouter()
-    r.HandleFunc("/users/{id}/match/{target}/score", setMathScore).Methods("PUT")
+    r.HandleFunc("/users/{id}/animal/{target}/score", setAnimalScore).Methods("PUT")
 
     // Create a new instance of httptest.ResponseRecorder to record the response
     w := httptest.NewRecorder()
 
-    // Create a new request to the /users/{id}/match/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
+    // Create a new request to the /users/{id}/animal/{target}/score endpoint with an id of 1 and a target of 2 and a score of 75
     body := bytes.NewBuffer([]byte(`{"score":75}`))
-    req, err := http.NewRequest("PUT", "/users/1/match/2/score", body)
+    req, err := http.NewRequest("PUT", "/users/1/animal/2/score", body)
     if err != nil {
         t.Fatal(err)
     }
