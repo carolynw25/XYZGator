@@ -88,7 +88,7 @@ export class UserComponent implements OnInit{
         );
       }
       if (this.lastname != ''){
-        const body = {lastame: this.lastname}
+        const body = {lastName: this.lastname}
         const url = 'http://127.0.0.1:8080/api/users/' + this.userID + '/last'
         this.http.put(url, body).subscribe
         (response=> {
