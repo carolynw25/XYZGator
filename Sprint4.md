@@ -1,12 +1,13 @@
 # Work completed in Sprint 4
 ## Frontend
-- Created two games: a matching game and a math game
-	- Matching game: Has a timer, has matching cards, has a winning condition, saves lowest time and current time, can replay the game
-	- Math Game: Has a countdown, keeps a score, and shows wrong answers and changes questions when the right answers
-- Linked frontEnd to backEnd for signUp page to create new users
-- Made a file to help retrieve the ID from the backend (to help get user data in the future)
-- Modified LogIn and SignUp page to look neater and more centered
-- Modified the Game page so it has instructions under the memory game and math game
+- Created two games: a wordsearch and a animal identification game
+	- Wordsearch game: Has a timer, a random generation of 5 words, random generation of worsearch board, saves quickest time to find words, 			highlights letters selected
+	- Animal Guess game: Counts number correct, randomly generates a picture and selection of animal names to choose from to identify it, button 			turns green if correct, button turns red if wrong, keeps high score of animals correctly identified in a round.
+- Linked frontEnd to backEnd for forget password, getting user scores, and updating user profile data
+- Modified About Us page to have more information
+- Finalized game page design and game summaries/how-to-play
+- Simplified dashboard to look less cluttered and correctly display user scores
+- Completely redid the user profile page to accurately display what our site needs. 
 ## Backend
 - 'Forgot password' feature finished and completed, switched to using a security question to allow the user to reset their password
 - Fixed functionality to receive and store the time taken to complete the memory game, and then store the record/best time (lowest time)
@@ -15,7 +16,7 @@
 - Added functionality to receive and store the score for the animal game, and then store the highest score
 - Finished implementing functionality to update user information separately (email, username, first name, last name, and password)
 ## Together
-- Connected Frontend and Backend for User Signup (Now have a working login and signup)
+- Connected Frontend and Backend for forget password fuctionality, sending user game scores back and forth and updating personal user data
 - Fixed and connected Frontend and Backend for all games and for updating user information
 
 # Frontend unit tests
@@ -675,6 +676,9 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 + main()
 + InitialMigration()
 + GetUser()
++ UpdateUsername()
++ UpdateEmail()
++ DeleteUser()
 + login()
 + signUp()
 + getID()
@@ -682,7 +686,6 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 + UpdatePassword()
 + UpdateFirstName()
 + UpdateLastName()
-+ UpdateEmail()
 + GetMatchScore()
 + GetMathScore()
 + GetWordScore()
@@ -766,6 +769,59 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user)
 	DB.Save(&user)
 	json.NewEncoder(w).Encode(user)
+}
+```
+## UpdateUsername()
+UpdateUsername() is a handler function for updating a user's username. It accepts an HTTP request with a user ID parameter and the updated username information in the request body, updates the username in the database, and returns the updated username as a JSON response.
+```go
+func UpdateUsername(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	username, ok := data["username"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing username field"})
+		return
+	}
+	user.UserName = username
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+```
+## UpdateEmail()
+UpdateEmail() is a handler function for updating a user's email address. It accepts an HTTP request with a user ID parameter and the updated user email address information in the request body, updates the email address in the database, and returns the updated email address information as a JSON response.
+```go
+func UpdateEmail(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.First(&user, params["id"])
+	var data map[string]string
+	json.NewDecoder(r.Body).Decode(&data)
+	email, ok := data["email"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing email field"})
+		return
+	}
+	user.Email = email
+	DB.Save(&user)
+	json.NewEncoder(w).Encode(user)
+}
+```
+## DeleteUser()
+DeleteUser() is a handler function for deleting a user's information. It accepts an HTTP request with a user ID parameter, deletes the user from the database, and returns a success message as a JSON response.
+```go 
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	var user User
+	DB.Delete(&user, params["id"])
+	json.NewEncoder(w).Encode("The user has been deleted successfully")
 }
 ```
 ## login()
