@@ -675,9 +675,6 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 + main()
 + InitialMigration()
 + GetUser()
-+ UpdateUsername()
-+ UpdateEmail()
-+ DeleteUser()
 + login()
 + signUp()
 + getID()
@@ -685,6 +682,7 @@ This REST API uses the Gorilla Mux Router and GORM as a backend database driver.
 + UpdatePassword()
 + UpdateFirstName()
 + UpdateLastName()
++ UpdateEmail()
 + GetMatchScore()
 + GetMathScore()
 + GetWordScore()
@@ -768,59 +766,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user)
 	DB.Save(&user)
 	json.NewEncoder(w).Encode(user)
-}
-```
-## UpdateUsername()
-UpdateUsername() is a handler function for updating a user's username. It accepts an HTTP request with a user ID parameter and the updated username information in the request body, updates the username in the database, and returns the updated username as a JSON response.
-```go
-func UpdateUsername(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	DB.First(&user, params["id"])
-	var data map[string]string
-	json.NewDecoder(r.Body).Decode(&data)
-	username, ok := data["username"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Missing username field"})
-		return
-	}
-	user.UserName = username
-	DB.Save(&user)
-	json.NewEncoder(w).Encode(user)
-}
-```
-## UpdateEmail()
-UpdateEmail() is a handler function for updating a user's email address. It accepts an HTTP request with a user ID parameter and the updated user email address information in the request body, updates the email address in the database, and returns the updated email address information as a JSON response.
-```go
-func UpdateEmail(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	DB.First(&user, params["id"])
-	var data map[string]string
-	json.NewDecoder(r.Body).Decode(&data)
-	email, ok := data["email"]
-	if !ok {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Missing email field"})
-		return
-	}
-	user.Email = email
-	DB.Save(&user)
-	json.NewEncoder(w).Encode(user)
-}
-```
-## DeleteUser()
-DeleteUser() is a handler function for deleting a user's information. It accepts an HTTP request with a user ID parameter, deletes the user from the database, and returns a success message as a JSON response.
-```go 
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	var user User
-	DB.Delete(&user, params["id"])
-	json.NewEncoder(w).Encode("The user has been deleted successfully")
 }
 ```
 ## login()
