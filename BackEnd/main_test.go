@@ -85,7 +85,7 @@ func TestLogin(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	// Create a new request to the /login endpoint with a username and password in the request body
-	loginData := []byte(`{"username": "vishalj05", "password": "wack"}`) //make sure this user is in database
+	loginData := []byte(`{"username": "johnsmith", "password": "password123"}`) //make sure this user is in database
 	req, err := http.NewRequest("POST", "/login", bytes.NewBuffer(loginData))
 	if err != nil {
 		t.Fatal(err)
@@ -118,7 +118,7 @@ func TestGetID(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	// Create a new request to the /login endpoint with a username and password in the request body
-	loginData := []byte(`{"username": "vishalj05", "password": "wack"}`)
+	loginData := []byte(`{"username": "johnsmith", "password": "password123"}`)
 	req, err := http.NewRequest("GET", "/getID", bytes.NewBuffer(loginData))
 	if err != nil {
 		t.Fatal(err)
