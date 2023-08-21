@@ -34,7 +34,7 @@ type User struct {
 var DB *gorm.DB
 var err error
 
-const DNS = "root:Teamindia#1@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
+const DNS = "root:root@tcp(127.0.0.1:3306)/credentials?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitialMigration() {
 	DB, err = gorm.Open(mysql.Open(DNS), &gorm.Config{})
