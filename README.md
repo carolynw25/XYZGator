@@ -38,3 +38,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 - [ABCmouse](https://www.abcmouse.com/abc/?8a08850bc2=S2162360615.1677436229.885&gclid=CjwKCAjwov6hBhBsEiwAvrvN6IROyOIuzTRAODE5k_unxgcoDyNqtIKF1OflrczeZw9IjIz1ncpywBoCx_AQAvD_BwE&utm_campaignid=231108314&utm_adgroupid=15429640154&utm_adextensionid=&utm_targetid=kwd-18495549314&utm_matchtype=e&utm_network=g&utm_device=c&utm_devicemodel=&utm_creativeid=534575065139&utm_placement=&utm_adposition=&utm_geo=US&gad=1&gclid=CjwKCAjwov6hBhBsEiwAvrvN6IROyOIuzTRAODE5k_unxgcoDyNqtIKF1OflrczeZw9IjIz1ncpywBoCx_AQAvD_BwE) for providing resources and inspiration for the XYZGator application.
+- Project for CEN3031 (Intro to Software Engineering)
